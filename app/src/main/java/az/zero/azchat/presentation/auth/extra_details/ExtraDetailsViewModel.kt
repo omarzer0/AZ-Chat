@@ -1,11 +1,11 @@
-package az.zero.azchat.presentation.extra_details
+package az.zero.azchat.presentation.auth.extra_details
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import az.zero.azchat.common.TEST_GROUP
 import az.zero.azchat.common.TEST_USER
 import az.zero.azchat.data.models.message.Message
-import az.zero.azchat.repository.MainRepositoryImpl
+import az.zero.azchat.repository.AuthRepositoryImpl
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExtraDetailsViewModel @Inject constructor(
-    private val repository: MainRepositoryImpl,
+    private val repository: AuthRepositoryImpl,
     private val state: SavedStateHandle
 ) : ViewModel() {
 

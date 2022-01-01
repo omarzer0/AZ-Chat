@@ -1,4 +1,4 @@
-package az.zero.azchat.presentation.verify
+package az.zero.azchat.presentation.auth.verify
 
 import android.os.Bundle
 import android.util.Log
@@ -7,11 +7,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
+import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentVerificationBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class VerificationFragment : Fragment(R.layout.fragment_verification) {
+class VerificationFragment : BaseFragment(R.layout.fragment_verification) {
 
     val viewModel: VerificationViewModel by viewModels()
     private lateinit var binding: FragmentVerificationBinding
@@ -35,8 +36,10 @@ class VerificationFragment : Fragment(R.layout.fragment_verification) {
             it.getContentIfNotHandled()?.let { state ->
                 when (state) {
                     is VerifyState.VerificationSuccess -> {
-                        val action = VerificationFragmentDirections
-                            .actionVerificationFragmentToExtraDetailsFragment(state.uid)
+                        val action =
+                            VerificationFragmentDirections.actionVerificationFragmentToExtraDetailsFragment(
+                                state.uid
+                            )
                         findNavController().navigate(action)
                         Log.e("TAG", ":VerificationFragment\nUID= ${state.uid}")
                     }

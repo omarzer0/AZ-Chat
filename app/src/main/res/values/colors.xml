@@ -7,4 +7,19 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="textMainColor">@color/black</color>
+    <color name="secondaryTextColor">#7C7C7C</color>
+
+    <color name="colorPrimary">#2C7A7D</color>
+    <color name="gray">#F2F3F2</color>
+    <color name="dark_gray">#7C7C7C</color>
+    <color name="grey_2">#d3d3d3</color>
+    <color name="grey_3">#6e6a6a</color>
+    <color name="light_grey">#e0e0e0</color>
+    <color name="strokeColor">#E2E2E2</color>
+    <color name="ratingStarColor">@android:color/holo_orange_light</color>
+
+    <color name="green_light">#53B175</color>
+    <color name="green_dark">#43A047</color>
 </resources>

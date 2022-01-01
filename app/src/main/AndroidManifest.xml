@@ -14,7 +14,7 @@
         android:theme="@style/Theme.PhoneLoginMVVM"
         tools:replace="android:supportsRtl">
         <activity
-            android:name="az.zero.azchat.presentation.MainActivity"
+            android:name="az.zero.azchat.presentation.auth.AuthActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

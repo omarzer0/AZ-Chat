@@ -6,7 +6,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Message(
-    val messageText: String,
-    val sentAt: Timestamp,
-    val sentBy: String
-) : Parcelable
+    var messageText: String? = null,
+    var sentAt: Timestamp? = null,
+    var sentBy: String? = null
+) : Parcelable {
+    fun hasNullField() =
+        listOf(messageText, sentAt, sentBy).any { it == null }
+}

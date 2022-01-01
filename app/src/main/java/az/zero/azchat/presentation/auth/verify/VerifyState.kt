@@ -1,4 +1,4 @@
-package az.zero.azchat.presentation.verify
+package az.zero.azchat.presentation.auth.verify
 
 open class VerifyState {
     data class VerificationSuccess(val uid: String) : VerifyState()

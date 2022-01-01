@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.extra_details.ExtraDetailsFragment">
+    tools:context=".presentation.auth.extra_details.ExtraDetailsFragment">
 
     <Button
         android:id="@+id/add_group_btn"

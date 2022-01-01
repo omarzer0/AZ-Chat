@@ -7,8 +7,8 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="az.zero.azchat.presentation.login.LoginFragment"
-        android:label="fragment_login"
+        android:name="az.zero.azchat.presentation.auth.login.LoginFragment"
+        android:label="@string/your_phone"
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_verificationFragment"
@@ -16,23 +16,31 @@
         <action
             android:id="@+id/action_loginFragment_to_extraDetailsFragment"
             app:destination="@id/extraDetailsFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_countryCodeFragment"
+            app:destination="@id/countryCodeFragment" />
     </fragment>
     <fragment
         android:id="@+id/verificationFragment"
-        android:name="az.zero.azchat.presentation.verify.VerificationFragment"
+        android:name="az.zero.azchat.presentation.auth.verify.VerificationFragment"
         android:label="fragment_verification"
-        tools:layout="@layout/fragment_verification" >
+        tools:layout="@layout/fragment_verification">
         <action
             android:id="@+id/action_verificationFragment_to_extraDetailsFragment"
             app:destination="@id/extraDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/extraDetailsFragment"
-        android:name="az.zero.azchat.presentation.extra_details.ExtraDetailsFragment"
+        android:name="az.zero.azchat.presentation.auth.extra_details.ExtraDetailsFragment"
         android:label="fragment_extra_details"
-        tools:layout="@layout/fragment_extra_details" >
+        tools:layout="@layout/fragment_extra_details">
         <argument
             android:name="uid"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/countryCodeFragment"
+        android:name="az.zero.azchat.presentation.auth.login.country.CountryCodeFragment"
+        android:label="@string/choose_a_country"
+        tools:layout="@layout/fragment_country_code" />
 </navigation>

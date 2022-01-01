@@ -1,4 +1,4 @@
-package az.zero.azchat.presentation.login
+package az.zero.azchat.presentation.auth.login
 
 sealed class LoginState {
     object CodeSent : LoginState()

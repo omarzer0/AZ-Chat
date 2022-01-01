@@ -1,8 +1,11 @@
 package az.zero.azchat.repository
 
 import android.app.Activity
+import android.app.Application
 import android.util.Log
 import az.zero.azchat.common.*
+import az.zero.azchat.data.models.country_code.Countries
+import az.zero.azchat.data.models.country_code.CountryCode
 import az.zero.azchat.data.models.group.Group
 import az.zero.azchat.data.models.message.Message
 import com.google.firebase.FirebaseException
@@ -11,14 +14,16 @@ import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.gson.Gson
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MainRepositoryImpl @Inject constructor(
+class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val sharedPreferenceManger: SharedPreferenceManger
+    private val sharedPreferenceManger: SharedPreferenceManger,
+    private val application: Application
 ) {
 
     private val TAG = "TAG"
@@ -179,4 +184,18 @@ class MainRepositoryImpl @Inject constructor(
         firestore.collection(MESSAGES_ID).document(gid).collection(PRIVATE_MESSAGES_ID)
             .document().set(message)
     }
+
+    fun getAllCountryCodes(): List<CountryCode> {
+        val gson = Gson()
+        return try {
+            val allCountries =
+                gson.fromJson(readFile(application, "CountryCode.json"), Countries::class.java)
+            logMe("${allCountries.countries[0]}")
+            return allCountries.countries
+        } catch (e: Exception) {
+            logMe(e.localizedMessage ?: "Unknown")
+            emptyList()
+        }
+    }
+
 }

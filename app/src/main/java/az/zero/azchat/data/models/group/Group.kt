@@ -6,13 +6,13 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Group(
-    val gid: String? = null,
-    val name: String? = null,
-    val ofTypeGroup: Boolean? = null,
-    val members: List<String>? = null,
-    val createdAt: Timestamp? = null,
-    val modifiedAt: Timestamp? = null,
-    val createdBy: String? = null,
+    var gid: String? = null,
+    var name: String? = null,
+    var ofTypeGroup: Boolean? = null,
+    var members: List<String>? = null,
+    var createdAt: Timestamp? = null,
+    var modifiedAt: Timestamp? = null,
+    var createdBy: String? = null,
 ) : Parcelable {
     fun hasNullField() =
         listOf(gid, name, ofTypeGroup, members, createdAt, modifiedAt, createdBy).any { it == null }

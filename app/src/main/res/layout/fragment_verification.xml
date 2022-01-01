@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".presentation.verify.VerificationFragment">
+    tools:context=".presentation.auth.verify.VerificationFragment">
 
     <Button
         android:id="@+id/verify_btn"

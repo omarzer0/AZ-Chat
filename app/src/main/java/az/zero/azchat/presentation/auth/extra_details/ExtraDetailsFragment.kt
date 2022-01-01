@@ -1,15 +1,16 @@
-package az.zero.azchat.presentation.extra_details
+package az.zero.azchat.presentation.auth.extra_details
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import az.zero.azchat.R
+import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentExtraDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ExtraDetailsFragment : Fragment(R.layout.fragment_extra_details) {
+class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
 
     val viewModel: ExtraDetailsViewModel by viewModels()
     private lateinit var binding: FragmentExtraDetailsBinding
