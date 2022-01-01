@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph.xml"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="az.zero.phoneloginmvvm.presentation.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_verificationFragment"
+            app:destination="@id/verificationFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_extraDetailsFragment"
+            app:destination="@id/extraDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verificationFragment"
+        android:name="az.zero.phoneloginmvvm.presentation.verify.VerificationFragment"
+        android:label="fragment_verification"
+        tools:layout="@layout/fragment_verification" >
+        <action
+            android:id="@+id/action_verificationFragment_to_extraDetailsFragment"
+            app:destination="@id/extraDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/extraDetailsFragment"
+        android:name="az.zero.phoneloginmvvm.presentation.extra_details.ExtraDetailsFragment"
+        android:label="fragment_extra_details"
+        tools:layout="@layout/fragment_extra_details" >
+        <argument
+            android:name="uid"
+            app:argType="string" />
+    </fragment>
+</navigation>
