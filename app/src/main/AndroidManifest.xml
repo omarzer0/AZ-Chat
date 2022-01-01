@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="az.zero.phoneloginmvvm">
+    package="az.zero.azchat">
 
     <application
-        android:name=".core.BaseApplication"
+        android:name="az.zero.azchat.core.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.PhoneLoginMVVM"
         tools:replace="android:supportsRtl">
         <activity
-            android:name=".presentation.MainActivity"
+            android:name="az.zero.azchat.presentation.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

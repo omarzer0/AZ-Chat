@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="az.zero.phoneloginmvvm.presentation.login.LoginFragment"
+        android:name="az.zero.azchat.presentation.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/verificationFragment"
-        android:name="az.zero.phoneloginmvvm.presentation.verify.VerificationFragment"
+        android:name="az.zero.azchat.presentation.verify.VerificationFragment"
         android:label="fragment_verification"
         tools:layout="@layout/fragment_verification" >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/extraDetailsFragment"
-        android:name="az.zero.phoneloginmvvm.presentation.extra_details.ExtraDetailsFragment"
+        android:name="az.zero.azchat.presentation.extra_details.ExtraDetailsFragment"
         android:label="fragment_extra_details"
         tools:layout="@layout/fragment_extra_details" >
         <argument
