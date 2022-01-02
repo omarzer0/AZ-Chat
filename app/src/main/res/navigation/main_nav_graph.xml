@@ -18,12 +18,16 @@
             app:destination="@id/extraDetailsFragment" />
         <action
             android:id="@+id/action_loginFragment_to_countryCodeFragment"
-            app:destination="@id/countryCodeFragment" />
+            app:destination="@id/countryCodeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/verificationFragment"
         android:name="az.zero.azchat.presentation.auth.verify.VerificationFragment"
-        android:label="fragment_verification"
+        android:label="@string/verify_phone_number"
         tools:layout="@layout/fragment_verification">
         <action
             android:id="@+id/action_verificationFragment_to_extraDetailsFragment"

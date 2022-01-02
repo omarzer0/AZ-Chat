@@ -2,9 +2,12 @@ package az.zero.azchat.core
 
 import android.net.Uri
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
+import az.zero.azchat.common.Event
 import az.zero.azchat.common.IS_DEBUG
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.logMe
@@ -52,5 +55,21 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
 
     fun navigateToAction(action: NavDirections) {
         findNavController().navigate(action)
+    }
+
+    protected fun <T> LiveData<Event<T>>.observeIfNotHandled(result: (T) -> Unit) {
+        this.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let {
+                result(it)
+            }
+        }
+    }
+
+    protected fun <T> MutableLiveData<Event<T>>.observeIfNotHandled(result: (T) -> Unit) {
+        this.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let {
+                result(it)
+            }
+        }
     }
 }

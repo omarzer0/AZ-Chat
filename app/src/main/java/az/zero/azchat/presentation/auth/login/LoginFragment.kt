@@ -2,14 +2,17 @@ package az.zero.azchat.presentation.auth.login
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import az.zero.azchat.R
-import az.zero.azchat.common.TEST_USER
+import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
+import az.zero.azchat.data.models.country_code.CountryCode
 import az.zero.azchat.databinding.FragmentLoginBinding
-import az.zero.azchat.presentation.auth.login.country.CountryCodeFragment
+import az.zero.azchat.presentation.auth.login.country.CountryCodeFragment.Companion.COUNTRY_CODE_KEY
 import az.zero.azchat.presentation.auth.login.country.CountryCodeFragment.Companion.COUNTRY_CODE_REQUEST
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,57 +26,91 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
-
-        setFragmentResultListener(COUNTRY_CODE_REQUEST) { key, bundle ->
-            // read from the bundle
-            if (key == COUNTRY_CODE_REQUEST) logMe("${bundle.getString("data")}")
-            else logMe("error $key ${bundle.getString("data")}")
-        }
-
         handleClicks()
-        observeData()
+        getDataFromOtherFragmentIFExists()
+        observeViewEvents()
 
     }
 
     private fun handleClicks() {
         binding.loginBtn.setOnClickListener {
-            //viewModel.login("+201234567890", requireActivity())
-
-            // for testing
-            navigateToAction(
-                LoginFragmentDirections.actionLoginFragmentToExtraDetailsFragment(
-                    TEST_USER
-                )
-            )
+            val code = binding.codeEd.text.toString()
+            val number = binding.numberEd.text.toString()
+            viewModel.login(code, number, requireActivity())
         }
 
         binding.countryCl.setOnClickListener {
             navigateToAction(LoginFragmentDirections.actionLoginFragmentToCountryCodeFragment())
         }
+
+        binding.codeEd.doOnTextChanged { code, _, _, _ ->
+            handleTextChanges(code)
+        }
     }
 
-    private fun observeData() {
-        viewModel.state.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { state ->
-                when (state) {
-                    LoginState.CodeSent -> {
-                        navigateToAction(LoginFragmentDirections.actionLoginFragmentToVerificationFragment())
-                    }
-                    is LoginState.VerificationSuccess -> {
-                        navigateToAction(
-                            LoginFragmentDirections.actionLoginFragmentToExtraDetailsFragment(
-                                state.uid
-                            )
+    private fun observeViewEvents() {
+        viewModel.event.observeIfNotHandled { event ->
+            when (event) {
+                LoginEvent.CodeSent -> {
+                    binding.progressBarPb.progress.gone()
+                    navigateToAction(LoginFragmentDirections.actionLoginFragmentToVerificationFragment())
+                }
+                is LoginEvent.VerificationSuccess -> {
+                    binding.progressBarPb.progress.gone()
+                    navigateToAction(
+                        LoginFragmentDirections.actionLoginFragmentToExtraDetailsFragment(
+                            event.uid
                         )
-                        logMe(":LoginFragment\nUID= ${state.uid}")
-                    }
-                    is LoginState.VerificationFailed -> {
-                        logMe(":LoginFragment\nUID= ${state.msg}")
-                    }
+                    )
+                    logMe(":LoginFragment\nUID= ${event.uid}")
+                }
+                is LoginEvent.VerificationFailed -> {
+                    binding.progressBarPb.progress.gone()
+                    event.msg?.let { toastMy(it) }
+                }
+                LoginEvent.LoginBtnClick -> {
+                    binding.progressBarPb.progress.show()
+                }
+                is LoginEvent.InvalidInputs -> {
+                    toastMy(event.msg, false)
+                }
+                is LoginEvent.CountryCodeExists -> {
+                    binding.countryTextTv.text = event.countryName
+                    binding.plusTv.text = "+"
+                }
+                is LoginEvent.CountryCodeInvalid -> {
+                    binding.countryTextTv.text = getString(R.string.invalid_code)
+                    binding.plusTv.text = "+"
+                }
+                LoginEvent.CountryCodeNull -> {
+                    logMe("_countryCode is null")
+                }
+                is LoginEvent.ReceivedCountryCodeFormOtherFragment -> {
+                    binding.codeEd.setText(event.callingCode)
+                    binding.countryTextTv.text = event.countryName
+                    binding.plusTv.text = "+"
                 }
             }
         }
     }
 
+    private fun handleTextChanges(code: CharSequence?) {
+        if (code.isNullOrEmpty()) {
+            binding.countryTextTv.text = getString(R.string.choose_a_country)
+            binding.plusTv.text = ""
+            return
+        }
 
+        binding.plusTv.text = "+"
+        viewModel.getCountryCodeByCode(code.toString())
+    }
+
+    private fun getDataFromOtherFragmentIFExists() {
+        setFragmentResultListener(COUNTRY_CODE_REQUEST) { key, bundle ->
+            if (key == COUNTRY_CODE_REQUEST) {
+                val countryCode = bundle.getParcelable<CountryCode>(COUNTRY_CODE_KEY)
+                viewModel.getFragmentResult(countryCode)
+            } else logMe("error $key")
+        }
+    }
 }

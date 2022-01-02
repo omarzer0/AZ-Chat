@@ -35,15 +35,26 @@
             app:layout_constraintTop_toBottomOf="@+id/country_text_tv" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/plus_tv"
+        style="@style/headerTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="+"
+        app:layout_constraintBottom_toBottomOf="@+id/code_ed"
+        app:layout_constraintStart_toStartOf="@+id/country_cl"
+        app:layout_constraintTop_toTopOf="@+id/code_ed" />
+
     <EditText
         android:id="@+id/code_ed"
         style="@style/headerTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_12sdp"
-        android:hint="+20"
+        android:hint="20"
+        android:maxLength="6"
         android:inputType="number"
-        app:layout_constraintStart_toStartOf="@+id/country_cl"
+        app:layout_constraintStart_toEndOf="@+id/plus_tv"
         app:layout_constraintTop_toBottomOf="@+id/country_cl"
         tools:ignore="TouchTargetSizeCheck" />
 
@@ -51,6 +62,7 @@
         android:id="@+id/number_ed"
         style="@style/headerTextStyle"
         android:layout_width="0dp"
+        android:nextFocusUp="@id/login_btn"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"
         android:hint="1001234567"
@@ -83,13 +95,18 @@
         app:tint="@android:color/white"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <!--    <Button-->
-    <!--        android:id="@+id/login_btn"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:text="Login"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.5"-->
-    <!--        app:layout_constraintStart_toStartOf="parent" />-->
+    <include
+        android:id="@+id/progress_bar_pb"
+        layout="@layout/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_25sdp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

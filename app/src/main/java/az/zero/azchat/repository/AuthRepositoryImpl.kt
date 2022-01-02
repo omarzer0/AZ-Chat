@@ -15,6 +15,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -53,7 +55,7 @@ class AuthRepositoryImpl @Inject constructor(
                 Log.e(TAG, "onVerificationFailed: ${exception.localizedMessage ?: "null msg"}")
                 val msg = exception.localizedMessage?.let {
                     if (it.contains("A network error")) "Check Internet connection!"
-                    else "Code not sent"
+                    else "Number format is incorrect please enter a correct number"
                 } ?: "Code not sent"
 
                 onVerificationFailed(msg)
@@ -71,7 +73,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
             .setPhoneNumber(phoneNumber)
-            .setTimeout(60L, TimeUnit.SECONDS)
+            .setTimeout(1L, TimeUnit.SECONDS)
             .setActivity(activity)
             .setCallbacks(callback)
             .build()
@@ -120,6 +122,24 @@ class AuthRepositoryImpl @Inject constructor(
             }
     }
 
+    suspend fun getAllCountryCodes(
+        onSuccess: (List<CountryCode>) -> Unit,
+        onFailure: (List<CountryCode>) -> Unit
+    ) {
+        withContext(Dispatchers.IO) {
+            val gson = Gson()
+            try {
+                val allCountries =
+                    gson.fromJson(readFile(application, "CountryCode.json"), Countries::class.java)
+                onSuccess(allCountries.countries.sortedBy { it.name })
+
+            } catch (e: Exception) {
+                logMe(e.localizedMessage ?: "Unknown")
+                onFailure(emptyList())
+            }
+        }
+    }
+
     //________________________________________________________________________________
 
 
@@ -134,9 +154,6 @@ class AuthRepositoryImpl @Inject constructor(
                     } else {
                         Log.e(TAG, "HAS NULL : => $group")
                     }
-
-
-//                    Log.e(TAG, "${document.id} => ${document.data}")
                 }
             }
             .addOnFailureListener {
@@ -185,17 +202,5 @@ class AuthRepositoryImpl @Inject constructor(
             .document().set(message)
     }
 
-    fun getAllCountryCodes(): List<CountryCode> {
-        val gson = Gson()
-        return try {
-            val allCountries =
-                gson.fromJson(readFile(application, "CountryCode.json"), Countries::class.java)
-            logMe("${allCountries.countries[0]}")
-            return allCountries.countries
-        } catch (e: Exception) {
-            logMe(e.localizedMessage ?: "Unknown")
-            emptyList()
-        }
-    }
 
 }

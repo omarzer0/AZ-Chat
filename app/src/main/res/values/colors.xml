@@ -22,4 +22,9 @@
 
     <color name="green_light">#53B175</color>
     <color name="green_dark">#43A047</color>
+
+    <color name="mainColor">#0088CC</color>
+    <color name="secondaryColor">#0180BF</color>
+    <color name="spin_kit_color">@color/mainColor</color>
+
 </resources>

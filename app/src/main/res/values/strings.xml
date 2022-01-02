@@ -3,4 +3,7 @@
     <string name="your_phone">Your Phone</string>
     <string name="please_confirm_your_country_code_and_enter_your_phone_number">Please confirm your country code and enter your phone number</string>
     <string name="choose_a_country">Choose a country</string>
+    <string name="invalid_code">Invalid Code</string>
+    <string name="verify_phone_number">Verify phone number</string>
+    <string name="search">Search</string>
 </resources>

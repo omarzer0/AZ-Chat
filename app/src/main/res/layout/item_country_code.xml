@@ -6,16 +6,17 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/_12sdp"
     android:layout_marginTop="@dimen/_12sdp"
-    android:layout_marginEnd="@dimen/_12sdp">
+    android:layout_marginEnd="@dimen/_12sdp"
+    android:layout_marginBottom="@dimen/_12sdp">
 
     <TextView
         android:id="@+id/country_name_tv"
         style="@style/bodyTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_8sdp"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:layout_marginEnd="@dimen/_8sdp"
         app:layout_constraintEnd_toStartOf="@+id/country_number_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +27,7 @@
         style="@style/bodyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/green_light"
+        android:textColor="@color/mainColor"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
