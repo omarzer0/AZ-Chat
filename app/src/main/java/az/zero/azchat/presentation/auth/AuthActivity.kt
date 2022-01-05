@@ -1,5 +1,6 @@
 package az.zero.azchat.presentation.auth
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -10,6 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import az.zero.azchat.R
 import az.zero.azchat.core.BaseActivity
 import az.zero.azchat.databinding.ActivityAuthBinding
+import az.zero.azchat.presentation.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

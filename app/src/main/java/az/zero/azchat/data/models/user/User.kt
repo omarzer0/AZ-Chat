@@ -7,11 +7,12 @@ import kotlinx.parcelize.Parcelize
 data class User(
     var uid: String? = null,
     var name: String? = null,
-    var address: String? = null,
+//    var address: String? = null,
     var imageUrl: String? = null,
     var bio: String? = null,
-    var groups: List<String>? = null
+    var groups: List<String>? = null,
+    var phoneNumber: String? = null
 ) : Parcelable {
     fun hasNullField() =
-        listOf(uid, name, address, imageUrl, bio, groups).any { it == null }
+        listOf(uid, name, imageUrl, bio, groups, phoneNumber).any { it == null }
 }

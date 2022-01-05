@@ -36,7 +36,10 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
         binding.loginBtn.setOnClickListener {
             val code = binding.codeEd.text.toString()
             val number = binding.numberEd.text.toString()
+            logMe(code)
+            logMe(number)
             viewModel.login(code, number, requireActivity())
+//            viewModel.login("20", "1001111111", requireActivity())
         }
 
         binding.countryCl.setOnClickListener {
@@ -57,11 +60,28 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
                 }
                 is LoginEvent.VerificationSuccess -> {
                     binding.progressBarPb.progress.gone()
+                    viewModel.getIfUserExist()
+                    logMe(":LoginFragment\nUID= ${event.uid}")
+                }
+                LoginEvent.VerificationTimeOut -> {
+                    navigateToAction(LoginFragmentDirections.actionLoginFragmentToVerificationFragment())
+                }
+
+                LoginEvent.UserExist -> {
+                    // go to main activity
+                    loginInToActivity()
+                }
+
+                LoginEvent.UserDoesNotExist -> {
                     navigateToAction(
                         LoginFragmentDirections.actionLoginFragmentToExtraDetailsFragment()
                     )
-                    logMe(":LoginFragment\nUID= ${event.uid}")
                 }
+
+                is LoginEvent.OnUserExistCallFail -> {
+                    logMe(event.error)
+                }
+
                 is LoginEvent.VerificationFailed -> {
                     binding.progressBarPb.progress.gone()
                     event.msg?.let { toastMy(it) }

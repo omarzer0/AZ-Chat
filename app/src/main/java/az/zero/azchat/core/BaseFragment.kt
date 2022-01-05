@@ -1,5 +1,6 @@
 package az.zero.azchat.core
 
+import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -11,6 +12,8 @@ import az.zero.azchat.common.Event
 import az.zero.azchat.common.IS_DEBUG
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.logMe
+import az.zero.azchat.presentation.auth.AuthActivity
+import az.zero.azchat.presentation.main.MainActivity
 import es.dmoral.toasty.Toasty
 import gun0912.tedimagepicker.builder.TedImagePicker
 import javax.inject.Inject
@@ -71,5 +74,17 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
                 result(it)
             }
         }
+    }
+
+    fun loginInToActivity() {
+        startActivity(Intent(requireActivity(), MainActivity::class.java))
+        sharedPreferences.hasLoggedIn = true
+        requireActivity().finish()
+    }
+
+    fun loginOutFromActivity() {
+        startActivity(Intent(requireActivity(), AuthActivity::class.java))
+        sharedPreferences.hasLoggedIn = false
+        requireActivity().finish()
     }
 }

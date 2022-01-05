@@ -120,8 +120,14 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-auth-ktx'
 
+    // Firebase storage
+    implementation 'com.google.firebase:firebase-storage-ktx'
+
+
     // gson
     implementation 'com.google.code.gson:gson:2.8.9'
+
+    implementation 'com.github.swapnil1104:OtpEditText:1.0.2-rc'
 
 }
 

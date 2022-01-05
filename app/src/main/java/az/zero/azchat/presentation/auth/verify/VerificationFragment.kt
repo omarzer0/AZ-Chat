@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
-import az.zero.azchat.common.TEST_VERIFICATION_CODE
 import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.extension.showKeyboard
+import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentVerificationBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,32 +26,50 @@ class VerificationFragment : BaseFragment(R.layout.fragment_verification) {
         binding = FragmentVerificationBinding.bind(view)
         handleClicks()
         observeData()
+
+        binding.otpEd.requestFocus()
+        showKeyboard()
     }
 
     private fun handleClicks() {
-        binding.verifyBtn.setOnClickListener {
-            viewModel.sendVerificationCode(requireActivity(), TEST_VERIFICATION_CODE)
+        binding.otpEd.setOnCompleteListener { verificationCode ->
+            hideKeyboard()
+            viewModel.sendVerificationCode(requireActivity(), verificationCode)
         }
     }
 
     private fun observeData() {
         viewModel.event.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { state ->
-                when (state) {
+            it.getContentIfNotHandled()?.let { event ->
+                when (event) {
                     is VerificationEvent.VerificationSuccess -> {
+                        viewModel.getIfUserExist()
+
                         binding.progressBarPb.progress.gone()
-                        val action =
-                            VerificationFragmentDirections.actionVerificationFragmentToExtraDetailsFragment()
-                        findNavController().navigate(action)
-                        Log.e("TAG", ":VerificationFragment\nUID= ${state.uid}")
+                        Log.e("TAG", ":VerificationFragment\nUID= ${event.uid}")
+                        toastMy(getString(R.string.verified_successfully), true)
+
                     }
                     is VerificationEvent.VerificationFailed -> {
                         binding.progressBarPb.progress.gone()
-                        Log.e("TAG", ":VerificationFragment\nerror= ${state.msg}")
-                        state.msg?.let { it1 -> toastMy(it1) }
+                        Log.e("TAG", ":VerificationFragment\nerror= ${event.msg}")
+                        binding.otpEd.triggerErrorAnimation()
                     }
                     VerificationEvent.VerifyButtonClick -> {
                         binding.progressBarPb.progress.show()
+                    }
+
+                    VerificationEvent.UserExist -> {
+                        // go to main activity
+                        loginInToActivity()
+                    }
+
+                    VerificationEvent.UserDoesNotExist -> {
+                        navigateToAction(VerificationFragmentDirections.actionVerificationFragmentToExtraDetailsFragment())
+                    }
+
+                    is VerificationEvent.OnUserExistCallFail -> {
+                        logMe(event.error)
                     }
                 }
             }

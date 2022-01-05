@@ -2,21 +2,25 @@ package az.zero.azchat.repository
 
 import android.app.Activity
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import az.zero.azchat.common.*
 import az.zero.azchat.data.models.country_code.Countries
 import az.zero.azchat.data.models.country_code.CountryCode
 import az.zero.azchat.data.models.group.Group
 import az.zero.azchat.data.models.message.Message
+import az.zero.azchat.data.models.user.User
 import com.google.firebase.FirebaseException
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -24,6 +28,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage,
     private val sharedPreferenceManger: SharedPreferenceManger,
     private val application: Application
 ) {
@@ -36,13 +41,16 @@ class AuthRepositoryImpl @Inject constructor(
         onCodeSentListener: () -> Unit,
         onVerificationSuccess: (String) -> Unit,
         onVerificationFailed: (String) -> Unit,
+        onVerificationTimeOut: () -> Unit
     ) {
         // clear sharedPreferenceManger.authToken
         sharedPreferenceManger.authToken = ""
+        sharedPreferenceManger.phoneNumber = phoneNumber
+        logMe("login")
 
         val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
-                Log.e(TAG, "onVerificationCompleted: ${phoneAuthCredential.smsCode ?: "null code"}")
+                logMe("onVerificationCompleted: ${phoneAuthCredential.smsCode ?: "null code"}")
                 signInWithPhoneAuthCredential(
                     activity,
                     phoneAuthCredential,
@@ -52,7 +60,7 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             override fun onVerificationFailed(exception: FirebaseException) {
-                Log.e(TAG, "onVerificationFailed: ${exception.localizedMessage ?: "null msg"}")
+                logMe("onVerificationFailed: ${exception.localizedMessage ?: "null msg"}")
                 val msg = exception.localizedMessage?.let {
                     if (it.contains("A network error")) "Check Internet connection!"
                     else "Number format is incorrect please enter a correct number"
@@ -66,14 +74,20 @@ class AuthRepositoryImpl @Inject constructor(
                 token: PhoneAuthProvider.ForceResendingToken
             ) {
                 super.onCodeSent(verificationId, token)
-                Log.e(TAG, "onCodeSent: $verificationId $token")
+                logMe("onCodeSent: $verificationId $token")
                 sharedPreferenceManger.authToken = verificationId
                 onCodeSentListener()
+            }
+
+            override fun onCodeAutoRetrievalTimeOut(p0: String) {
+                super.onCodeAutoRetrievalTimeOut(p0)
+                logMe("onCodeAutoRetrievalTimeOut")
+                onVerificationTimeOut()
             }
         }
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
             .setPhoneNumber(phoneNumber)
-            .setTimeout(1L, TimeUnit.SECONDS)
+            .setTimeout(60, TimeUnit.SECONDS)
             .setActivity(activity)
             .setCallbacks(callback)
             .build()
@@ -140,32 +154,76 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    fun createUserIfNotExist() {
-        firestore.collection(USERS_ID).document("test14rer").get()
+    fun checkIfUserExists(
+        onExist: () -> Unit,
+        onDoesNotExist: () -> Unit,
+        onFail: (String) -> Unit,
+    ) {
+        firestore.collection(USERS_ID).document(sharedPreferenceManger.uid).get()
             .addOnSuccessListener {
                 if (it.exists()) {
                     logMe("exist")
+                    onExist()
                 } else {
                     logMe("does not exist")
+                    onDoesNotExist()
                 }
             }
             .addOnFailureListener {
                 logMe(it.localizedMessage ?: "Failed")
+                onFail(it.localizedMessage ?: "Failed")
+            }
+    }
+
+    fun addUser(
+        user: User,
+        onAddUserSuccess: () -> Unit,
+        onAddUserFail: (String) -> Unit
+    ) {
+        val uid = sharedPreferenceManger.uid
+        user.uid = uid
+        user.phoneNumber = sharedPreferenceManger.phoneNumber
+        firestore.collection(USERS_ID).document(uid).set(user)
+            .addOnSuccessListener {
+                onAddUserSuccess()
+            }.addOnFailureListener {
+                onAddUserFail(it.localizedMessage ?: "Failed")
+                logMe(it.localizedMessage ?: "addUser error")
             }
 
-        firestore.collection(USERS_ID).addSnapshotListener { value, error ->
-            if (error != null) {
-                logMe(error.localizedMessage ?: "Unknown createUserIfNotExist error")
-                return@addSnapshotListener
+
+    }
+
+    fun uploadProfileImageByUserId(
+        uri: Uri,
+        onUploadImageSuccess: (Uri) -> Unit,
+        onUploadImageFailed: (String) -> Unit,
+    ) {
+        val realPath = RealPathUtil.getRealPath(application, uri)
+//        val type = realPath.split(".")[1]
+        val file = Uri.fromFile(File(realPath))
+        val userId = sharedPreferenceManger.uid
+        val storageRef = storage.reference.child("profileImages/$userId.jpg")
+        val uploadTask = storageRef.putFile(file)
+
+        uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    logMe(it.localizedMessage ?: "taskUrl unknown error")
+                    onUploadImageFailed(it.localizedMessage ?: "unknown error")
+                }
             }
-
-            if (value == null) return@addSnapshotListener
-
-            for (dc in value.documentChanges) {
-                logMe("New value: ${dc.document.data}")
+            storageRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+                logMe("success $downloadUri")
+                onUploadImageSuccess(downloadUri)
+            } else {
+                logMe("taskUrl addOnCompleteListener failed")
+                onUploadImageFailed("unknown error")
             }
         }
-
     }
 
     //________________________________________________________________________________

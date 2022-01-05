@@ -6,4 +6,13 @@
     <string name="invalid_code">Invalid Code</string>
     <string name="verify_phone_number">Verify phone number</string>
     <string name="search">Search</string>
+    <string name="verified_successfully">Verified successfully</string>
+    <string name="username">Username</string>
+    <string name="bio">Bio</string>
+    <string name="done">done</string>
+    <string name="about_you">About you</string>
+    <string name="enter_user_name">Enter a username</string>
+    <string name="enter_bio">Enter a bio</string>
+    <string name="bio_under_three">Bio should be more than 3 characters</string>
+    <string name="not_granted">Can\'t use without permission</string>
 </resources>

@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="az.zero.azchat">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
-        android:name="az.zero.azchat.core.BaseApplication"
+        android:name=".core.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,8 +17,20 @@
         android:theme="@style/Theme.PhoneLoginMVVM"
         tools:replace="android:supportsRtl">
         <activity
-            android:name="az.zero.azchat.presentation.auth.AuthActivity"
-            android:exported="true">
+            android:name=".presentation.main.MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".presentation.auth.AuthActivity"
+            android:exported="true"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".presentation.splash.SplashActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:theme="@style/SplashScreenTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

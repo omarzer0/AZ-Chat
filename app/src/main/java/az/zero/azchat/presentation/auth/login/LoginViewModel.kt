@@ -26,7 +26,6 @@ class LoginViewModel @Inject constructor(
 
     init {
         getAllCountryCodes()
-//        repository.createUserIfNotExist()
     }
 
     fun login(code: String, number: String, activity: Activity) {
@@ -35,14 +34,19 @@ class LoginViewModel @Inject constructor(
         _event.postValue(Event(LoginEvent.LoginBtnClick))
         repository.login("+$code$number", activity,
             onCodeSentListener = {
+                logMe("sent")
                 _event.postValue(Event(LoginEvent.CodeSent))
                 Event(State.Success())
             },
             onVerificationSuccess = {
+                logMe("success")
                 _event.postValue(Event(LoginEvent.VerificationSuccess(it)))
             },
             onVerificationFailed = {
+                logMe("fail")
                 _event.postValue(Event(LoginEvent.VerificationFailed(it)))
+            }, onVerificationTimeOut = {
+                _event.postValue(Event(LoginEvent.VerificationTimeOut))
             })
     }
 
@@ -103,6 +107,20 @@ class LoginViewModel @Inject constructor(
             _countryCodeFromVerifyFragment.postValue(it)
 
         } ?: logMe("fragment result for some code is null")
+    }
+
+    fun getIfUserExist() {
+        repository.checkIfUserExists(
+            onExist = {
+                _event.postValue(Event(LoginEvent.UserExist))
+            },
+            onDoesNotExist = {
+                _event.postValue(Event(LoginEvent.UserDoesNotExist))
+            },
+            onFail = {
+                _event.postValue(Event(LoginEvent.OnUserExistCallFail(it)))
+            }
+        )
     }
 
 }

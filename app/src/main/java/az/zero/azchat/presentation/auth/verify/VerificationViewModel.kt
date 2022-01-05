@@ -28,5 +28,19 @@ class VerificationViewModel @Inject constructor(
                 _event.postValue(Event(VerificationEvent.VerificationFailed(it)))
             })
     }
+
+    fun getIfUserExist() {
+        repository.checkIfUserExists(
+            onExist = {
+                _event.postValue(Event(VerificationEvent.UserExist))
+            },
+            onDoesNotExist = {
+                _event.postValue(Event(VerificationEvent.UserDoesNotExist))
+            },
+            onFail = {
+                _event.postValue(Event(VerificationEvent.OnUserExistCallFail(it)))
+            }
+        )
+    }
 }
 

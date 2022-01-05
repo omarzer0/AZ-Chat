@@ -19,9 +19,21 @@ class SharedPreferenceManger @Inject constructor(
         get() = getStringValue(AUTH_TOKEN) ?: ""
         set(value) = setValue(AUTH_TOKEN, value)
 
+    var phoneNumber: String
+        get() = getStringValue(PHONE_NUMBER) ?: ""
+        set(value) = setValue(PHONE_NUMBER, value)
+
     var uid: String
         get() = getStringValue(UID) ?: ""
         set(value) = setValue(UID, value)
+
+    var hasLoggedIn: Boolean
+        get() = getBooleanValue(LOGGED_IN)
+        set(value) = setValue(LOGGED_IN, value)
+
+    var openedTheAppBefore: Boolean
+        get() = getBooleanValue(OPENED_THE_APP_BEFORE)
+        set(value) = setValue(OPENED_THE_APP_BEFORE, value)
 
     fun setValue(key: String, value: String) {
         editor.putString(key, value)
@@ -67,8 +79,10 @@ class SharedPreferenceManger @Inject constructor(
     companion object {
         const val SHARED_PREFERENCES_NAME = "login shared pref"
         const val EMPTY = ""
-
         const val AUTH_TOKEN = "AUTH_TOKEN"
         const val UID = "uid"
+        const val LOGGED_IN = "logged_in"
+        const val OPENED_THE_APP_BEFORE = "opened the app before"
+        const val PHONE_NUMBER = "phone number"
     }
 }

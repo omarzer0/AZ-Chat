@@ -94,6 +94,9 @@ fun readFile(context: Context, assetFileName: String): String {
     return jsonString
 }
 
+val <T> T.exhaustive: T
+    get() = this
+
 //fun setUpSearchView(searchBar: SearchBarBinding, actionWhenSearch: (searchString: String) -> Unit) {
 //    searchBar.apply {
 //        searchEt.doOnTextChanged { text, _, _, _ ->

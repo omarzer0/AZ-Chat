@@ -17,6 +17,26 @@
 
     </style>
 
+    <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/mainColor</item>
+        <item name="colorPrimaryDark">@color/mainColor</item>
+        <item name="android:navigationBarColor">@color/mainColor</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <style name="roundInputTextField" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_12sdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_12sdp</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/_12sdp</item>
+        <item name="boxBackgroundColor">@color/gray</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_12sdp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+    </style>
+
     <style name="headerTextStyle" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/textMainColor</item>
         <item name="android:textSize">@dimen/_16ssp</item>
@@ -43,4 +63,13 @@
     <style name="Cornered">
         <item name="cornerSize">20%</item>
     </style>
+
+    <style name="roundShapeableImage">
+        <item name="shapeAppearanceOverlay">@style/Circular</item>
+    </style>
+
+    <style name="corneredShapeableImage">
+        <item name="shapeAppearanceOverlay">@style/Cornered</item>
+    </style>
+
 </resources>

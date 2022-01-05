@@ -7,3 +7,7 @@ import az.zero.azchat.common.extension.hideKeyboard
 fun Fragment.hideKeyboard() {
     requireActivity().hideKeyboard()
 }
+
+fun Fragment.showKeyboard() {
+    requireActivity().showKeyboard()
+}
