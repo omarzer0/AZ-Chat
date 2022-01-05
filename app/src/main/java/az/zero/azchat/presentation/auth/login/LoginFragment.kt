@@ -58,9 +58,7 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
                 is LoginEvent.VerificationSuccess -> {
                     binding.progressBarPb.progress.gone()
                     navigateToAction(
-                        LoginFragmentDirections.actionLoginFragmentToExtraDetailsFragment(
-                            event.uid
-                        )
+                        LoginFragmentDirections.actionLoginFragmentToExtraDetailsFragment()
                     )
                     logMe(":LoginFragment\nUID= ${event.uid}")
                 }

@@ -61,9 +61,9 @@ class CountryCodeFragment : BaseFragment(R.layout.fragment_country_code) {
         val searchItem = menu.findItem(R.id.action_search)
         searchView = searchItem.actionView as SearchView
 
-        searchItem.expandActionView()
         val pendingQuery = viewModel.searchQuery.value
         if (pendingQuery != null && pendingQuery.isNotEmpty() && pendingQuery != START_SEARCH_QUERY) {
+            searchItem.expandActionView()
             searchView.setQuery(pendingQuery, false)
         }
 

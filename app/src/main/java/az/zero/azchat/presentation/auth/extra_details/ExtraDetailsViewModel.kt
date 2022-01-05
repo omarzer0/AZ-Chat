@@ -1,6 +1,5 @@
 package az.zero.azchat.presentation.auth.extra_details
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import az.zero.azchat.common.TEST_GROUP
 import az.zero.azchat.common.TEST_USER
@@ -13,15 +12,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExtraDetailsViewModel @Inject constructor(
-    private val repository: AuthRepositoryImpl,
-    private val state: SavedStateHandle
+    private val repository: AuthRepositoryImpl
 ) : ViewModel() {
-
-    private val uid = state.get<String>("uid") ?: ""
 
 
     fun getAllGroupsByUserUID() {
-        repository.getAllGroupsByUserUID(uid)
+        repository.getAllGroupsByUserUID()
     }
 
     fun addGroup() {
@@ -34,7 +30,7 @@ class ExtraDetailsViewModel @Inject constructor(
 
     fun addMessage() {
         val message = Message("added msg", Timestamp(Date()), TEST_USER)
-        repository.addMessage(message,TEST_GROUP)
+        repository.addMessage(message, TEST_GROUP)
     }
 
 }

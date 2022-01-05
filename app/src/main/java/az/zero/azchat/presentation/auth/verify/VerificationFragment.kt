@@ -40,9 +40,7 @@ class VerificationFragment : BaseFragment(R.layout.fragment_verification) {
                     is VerificationEvent.VerificationSuccess -> {
                         binding.progressBarPb.progress.gone()
                         val action =
-                            VerificationFragmentDirections.actionVerificationFragmentToExtraDetailsFragment(
-                                state.uid
-                            )
+                            VerificationFragmentDirections.actionVerificationFragmentToExtraDetailsFragment()
                         findNavController().navigate(action)
                         Log.e("TAG", ":VerificationFragment\nUID= ${state.uid}")
                     }

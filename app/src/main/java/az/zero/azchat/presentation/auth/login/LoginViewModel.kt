@@ -26,6 +26,7 @@ class LoginViewModel @Inject constructor(
 
     init {
         getAllCountryCodes()
+//        repository.createUserIfNotExist()
     }
 
     fun login(code: String, number: String, activity: Activity) {

@@ -37,11 +37,7 @@
         android:id="@+id/extraDetailsFragment"
         android:name="az.zero.azchat.presentation.auth.extra_details.ExtraDetailsFragment"
         android:label="fragment_extra_details"
-        tools:layout="@layout/fragment_extra_details">
-        <argument
-            android:name="uid"
-            app:argType="string" />
-    </fragment>
+        tools:layout="@layout/fragment_extra_details"/>
     <fragment
         android:id="@+id/countryCodeFragment"
         android:name="az.zero.azchat.presentation.auth.login.country.CountryCodeFragment"

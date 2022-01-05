@@ -140,11 +140,39 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    fun createUserIfNotExist() {
+        firestore.collection(USERS_ID).document("test14rer").get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    logMe("exist")
+                } else {
+                    logMe("does not exist")
+                }
+            }
+            .addOnFailureListener {
+                logMe(it.localizedMessage ?: "Failed")
+            }
+
+        firestore.collection(USERS_ID).addSnapshotListener { value, error ->
+            if (error != null) {
+                logMe(error.localizedMessage ?: "Unknown createUserIfNotExist error")
+                return@addSnapshotListener
+            }
+
+            if (value == null) return@addSnapshotListener
+
+            for (dc in value.documentChanges) {
+                logMe("New value: ${dc.document.data}")
+            }
+        }
+
+    }
+
     //________________________________________________________________________________
 
 
-    fun getAllGroupsByUserUID(uid: String) {
-        firestore.collection(GROUPS_ID).whereArrayContains("members", uid)
+    fun getAllGroupsByUserUID() {
+        firestore.collection(GROUPS_ID).whereArrayContains("members", sharedPreferenceManger.uid)
             .get()
             .addOnSuccessListener { documents ->
                 for (document: DocumentSnapshot in documents) {
