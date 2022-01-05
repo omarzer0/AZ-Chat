@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <item
-        android:id="@+id/country_code_action_search"
+        android:id="@+id/add_chat_action_search"
         android:icon="@drawable/ic_search"
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView"
-        tools:ignore="AlwaysShowAction"
-        />
-</menu>
+        tools:ignore="AlwaysShowAction" />
 
+</menu>

@@ -27,22 +27,22 @@ class ExtraDetailsViewModel @Inject constructor(
     private val _imageMLD = MutableLiveData<Uri>()
     val imageMLD: LiveData<Uri> = _imageMLD
 
-    fun getAllGroupsByUserUID() {
-        repository.getAllGroupsByUserUID()
-    }
-
-    fun addGroup() {
-        repository.addGroup()
-    }
-
-    fun getMessagesByGroupId() {
-        repository.getMessagesByGroupId(TEST_GROUP)
-    }
-
-    fun addMessage() {
-        val message = Message("added msg", Timestamp(Date()), TEST_USER)
-        repository.addMessage(message, TEST_GROUP)
-    }
+//    fun getAllGroupsByUserUID() {
+//        repository.getAllGroupsByUserUID()
+//    }
+//
+//    fun addGroup() {
+//        repository.addGroup()
+//    }
+//
+//    fun getMessagesByGroupId() {
+//        repository.getMessagesByGroupId(TEST_GROUP)
+//    }
+//
+//    fun addMessage() {
+//        val message = Message("added msg", Timestamp(Date()), TEST_USER)
+//        repository.addMessage(message, TEST_GROUP)
+//    }
 
     fun uploadProfileImageByUserId(uri: Uri) {
         _event.postValue(Event(ExtraDetailsEvent.UploadingImageLoading))

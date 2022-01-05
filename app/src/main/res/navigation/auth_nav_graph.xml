@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph.xml"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="az.zero.azchat.presentation.auth.login.LoginFragment"
+        android:label="@string/your_phone"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_verificationFragment"
+            app:destination="@id/verificationFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_extraDetailsFragment"
+            app:destination="@id/extraDetailsFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_countryCodeFragment"
+            app:destination="@id/countryCodeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/verificationFragment"
+        android:name="az.zero.azchat.presentation.auth.verify.VerificationFragment"
+        android:label="@string/verify_phone_number"
+        tools:layout="@layout/fragment_verification">
+        <action
+            android:id="@+id/action_verificationFragment_to_extraDetailsFragment"
+            app:destination="@id/extraDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/extraDetailsFragment"
+        android:name="az.zero.azchat.presentation.auth.extra_details.ExtraDetailsFragment"
+        android:label="@string/about_you"
+        tools:layout="@layout/fragment_extra_details" />
+    <fragment
+        android:id="@+id/countryCodeFragment"
+        android:name="az.zero.azchat.presentation.auth.country.CountryCodeFragment"
+        android:label="@string/choose_a_country"
+        tools:layout="@layout/fragment_country_code" />
+</navigation>

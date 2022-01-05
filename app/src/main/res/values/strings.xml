@@ -11,6 +11,8 @@
     <string name="bio">Bio</string>
     <string name="done">done</string>
     <string name="about_you">About you</string>
+    <string name="search_chats">Search chats</string>
+    <string name="search_users">Search users</string>
     <string name="enter_user_name">Enter a username</string>
     <string name="enter_bio">Enter a bio</string>
     <string name="bio_under_three">Bio should be more than 3 characters</string>

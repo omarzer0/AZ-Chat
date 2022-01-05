@@ -1,4 +1,4 @@
-package az.zero.azchat.presentation.auth.login.country
+package az.zero.azchat.presentation.auth.country
 
 import androidx.lifecycle.*
 import az.zero.azchat.common.Event
@@ -20,7 +20,7 @@ class CountryCodeViewModel @Inject constructor(
     private val _countryCode = MutableLiveData<List<CountryCode>>()
     val countryCode: LiveData<List<CountryCode>> = _countryCode
 
-    val _searchQuery: MutableLiveData<String> =
+    private val _searchQuery: MutableLiveData<String> =
         state.getLiveData(SEARCH_QUERY, START_SEARCH_QUERY)
     val searchQuery: LiveData<String> = _searchQuery
 

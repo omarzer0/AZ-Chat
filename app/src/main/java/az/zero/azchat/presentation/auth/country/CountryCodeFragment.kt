@@ -1,4 +1,4 @@
-package az.zero.azchat.presentation.auth.login.country
+package az.zero.azchat.presentation.auth.country
 
 import android.os.Bundle
 import android.view.Menu
@@ -16,7 +16,7 @@ import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentCountryCodeBinding
 import az.zero.azchat.presentation.auth.adapter.country_code.CountryCodeAdapter
-import az.zero.azchat.presentation.auth.login.country.CountryCodeViewModel.Companion.START_SEARCH_QUERY
+import az.zero.azchat.presentation.auth.country.CountryCodeViewModel.Companion.START_SEARCH_QUERY
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,7 +58,7 @@ class CountryCodeFragment : BaseFragment(R.layout.fragment_country_code) {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.country_code_menu, menu)
-        val searchItem = menu.findItem(R.id.action_search)
+        val searchItem = menu.findItem(R.id.country_code_action_search)
         searchView = searchItem.actionView as SearchView
 
         val pendingQuery = viewModel.searchQuery.value

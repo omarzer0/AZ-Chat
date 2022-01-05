@@ -1,0 +1,63 @@
+package az.zero.azchat.presentation.main.add_chat
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import az.zero.azchat.common.Event
+import az.zero.azchat.data.models.user.User
+import az.zero.azchat.repository.MainRepositoryImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class AddChatViewModel @Inject constructor(
+    private val repositoryImpl: MainRepositoryImpl,
+    state: SavedStateHandle
+) : ViewModel() {
+
+    private val _event = MutableLiveData<Event<AddChatEvent>>()
+    val event: LiveData<Event<AddChatEvent>> = _event
+
+    private val _users = MutableLiveData<List<User>>()
+//    val user: LiveData<List<User>> = _users
+
+    private val _searchQuery: MutableLiveData<String> = state.getLiveData(
+        SEARCH_QUERY,
+        START_SEARCH_QUERY
+    )
+    val searchQuery: LiveData<String> = _searchQuery
+
+    init {
+        getAllUsers()
+    }
+
+    fun getAllUsers() {
+        repositoryImpl.getAllUsers(
+            onGetUsersDone = {
+                _users.postValue(it)
+                _event.postValue(Event(AddChatEvent.GetUsersToChatDone(it)))
+            })
+    }
+
+
+    fun searchUserByNameOrPhone(query: String) {
+        _users.value?.let { users ->
+            val searchedUsers = users.filter {
+                it.name!!.toString().lowercase().trim().contains(query) ||
+                        it.phoneNumber!!.toString().lowercase().trim().contains(query)
+            }
+            _event.postValue(Event(AddChatEvent.GetUsersToChatDone(searchedUsers)))
+        }
+    }
+
+    fun setSearchQueryValue(country: String) {
+        _searchQuery.postValue(country)
+    }
+
+    companion object {
+        const val SEARCH_QUERY = "AddChatViewModel search query"
+        const val START_SEARCH_QUERY = "START_SEARCH_QUERY search query"
+    }
+}
+

@@ -123,6 +123,9 @@ dependencies {
     // Firebase storage
     implementation 'com.google.firebase:firebase-storage-ktx'
 
+    // FireStore UI
+    implementation 'com.firebaseui:firebase-ui-firestore:4.3.1'
+
 
     // gson
     implementation 'com.google.code.gson:gson:2.8.9'

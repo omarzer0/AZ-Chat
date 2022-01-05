@@ -1,4 +1,4 @@
-package az.zero.azchat.presentation.auth.login.country
+package az.zero.azchat.presentation.auth.country
 
 import az.zero.azchat.data.models.country_code.CountryCode
 

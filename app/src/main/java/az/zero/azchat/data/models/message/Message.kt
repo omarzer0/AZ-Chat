@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Message(
+    var id: String? = null,
     var messageText: String? = null,
     var sentAt: Timestamp? = null,
     var sentBy: String? = null,
@@ -14,5 +15,5 @@ data class Message(
     var loved: Boolean? = null,
 ) : Parcelable {
     fun hasNullField() =
-        listOf(messageText, sentAt, sentBy, deleted, updated, loved).any { it == null }
+        listOf(id, messageText, sentAt, sentBy, deleted, updated, loved).any { it == null }
 }

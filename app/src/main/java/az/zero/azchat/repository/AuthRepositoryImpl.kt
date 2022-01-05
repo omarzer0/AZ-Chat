@@ -7,24 +7,20 @@ import android.util.Log
 import az.zero.azchat.common.*
 import az.zero.azchat.data.models.country_code.Countries
 import az.zero.azchat.data.models.country_code.CountryCode
-import az.zero.azchat.data.models.group.Group
-import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.data.models.user.User
 import com.google.firebase.FirebaseException
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.*
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
@@ -33,7 +29,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val application: Application
 ) {
 
-    private val TAG = "TAG"
+    private val TAG = "tag"
 
     fun login(
         phoneNumber: String,
@@ -225,68 +221,5 @@ class AuthRepositoryImpl @Inject constructor(
             }
         }
     }
-
-    //________________________________________________________________________________
-
-
-    fun getAllGroupsByUserUID() {
-        firestore.collection(GROUPS_ID).whereArrayContains("members", sharedPreferenceManger.uid)
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document: DocumentSnapshot in documents) {
-                    val group = document.toObject<Group>() ?: continue
-                    if (!group.hasNullField()) {
-                        Log.e(TAG, "$group")
-                    } else {
-                        Log.e(TAG, "HAS NULL : => $group")
-                    }
-                }
-            }
-            .addOnFailureListener {
-                Log.e(TAG, it.localizedMessage ?: "Unknown")
-            }
-    }
-
-    fun getMessagesByGroupId(gid: String) {
-        firestore.collection(MESSAGES_ID)
-            .document(gid)
-            .collection(PRIVATE_MESSAGES_ID)
-            .orderBy("sentAt")
-            .get()
-            .addOnSuccessListener { docs ->
-                docs.forEach { doc ->
-                    Log.e(TAG, "msg: ${doc.data}")
-                }
-            }
-            .addOnFailureListener {
-                Log.e(TAG, "getMessagesByGroupId: ${it.localizedMessage}")
-            }
-    }
-
-    fun addGroup() {
-        // get random id
-        val gid = firestore.collection(GROUPS_ID).document().id
-        Log.e(TAG, "addGroup: $gid")
-
-        val newGroup = Group(
-            gid,
-            "new g1",
-            false,
-            emptyList(),
-            Timestamp(Date()),
-            Timestamp(Date()),
-            TEST_USER
-
-        )
-        firestore.collection(GROUPS_ID)
-            .document(gid)
-            .set(newGroup)
-    }
-
-    fun addMessage(message: Message, gid: String) {
-        firestore.collection(MESSAGES_ID).document(gid).collection(PRIVATE_MESSAGES_ID)
-            .document().set(message)
-    }
-
 
 }

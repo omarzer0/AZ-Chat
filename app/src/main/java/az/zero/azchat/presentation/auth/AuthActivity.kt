@@ -1,6 +1,5 @@
 package az.zero.azchat.presentation.auth
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -11,7 +10,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import az.zero.azchat.R
 import az.zero.azchat.core.BaseActivity
 import az.zero.azchat.databinding.ActivityAuthBinding
-import az.zero.azchat.presentation.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,7 +26,7 @@ class AuthActivity : BaseActivity() {
         setContentView(binding.root)
 
         val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+            supportFragmentManager.findFragmentById(R.id.auth_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
 
         appBarrConfiguration = AppBarConfiguration(setOf(R.id.loginFragment))
