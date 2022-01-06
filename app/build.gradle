@@ -126,6 +126,10 @@ dependencies {
     // FireStore UI
     implementation 'com.firebaseui:firebase-ui-firestore:4.3.1'
 
+    // Coroutines for firebase
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.5'
+
+
 
     // gson
     implementation 'com.google.code.gson:gson:2.8.9'

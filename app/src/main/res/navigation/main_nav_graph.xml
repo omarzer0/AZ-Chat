@@ -12,11 +12,25 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_addChatFragment"
-            app:destination="@id/addChatFragment" />
+            app:destination="@id/addChatFragment"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_privateChatRoomFragment"
+            app:destination="@id/privateChatRoomFragment"
+            app:launchSingleTop="true" />
     </fragment>
     <fragment
         android:id="@+id/addChatFragment"
         android:name="az.zero.azchat.presentation.main.add_chat.AddChatFragment"
         android:label="@string/search_users"
         tools:layout="@layout/fragment_add_chat" />
+    <fragment
+        android:id="@+id/privateChatRoomFragment"
+        android:name="az.zero.azchat.presentation.main.private_chat_room.PrivateChatRoomFragment"
+        android:label="fragment_private_chat_room"
+        tools:layout="@layout/fragment_private_chat_room" >
+        <argument
+            android:name="gid"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -3,6 +3,7 @@ package az.zero.azchat.presentation.main.adapter.group
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.data.models.group.Group
 import az.zero.azchat.databinding.ItemGroupBinding
@@ -39,15 +40,16 @@ class GroupAdapter(options: FirestoreRecyclerOptions<Group>, val uid: String) :
         fun bind(group: Group) {
             if (group.hasNullField()) return
             binding.apply {
+                logMe("adapter => $group")
                 groupNameTv.text = group.name
 //                lastMessageTv.text = group.
-                try {
-                    val imageKey = group.imageMap!!.keys.filter { it != uid }[0]
-                    val image = group.imageMap!![imageKey]
-                    setImageUsingGlide(groupImageIv, image)
-                }catch (e:Exception){
-
-                }
+//                try {
+//                    val imageKey = group.imageMap!!.keys.filter { it != uid }[0]
+//                    val image = group.imageMap!![imageKey]
+//                    setImageUsingGlide(groupImageIv, image)
+//                }catch (e:Exception){
+//
+//                }
 
             }
         }

@@ -27,4 +27,7 @@
     <color name="secondaryColor">#0180BF</color>
     <color name="spin_kit_color">@color/mainColor</color>
 
+    <color name="messages_text_color">@color/black</color>
+    <color name="messages_bg_color">#A6CECF</color>
+
 </resources>
