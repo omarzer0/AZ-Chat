@@ -20,7 +20,7 @@ class AddChatViewModel @Inject constructor(
     val event: LiveData<Event<AddChatEvent>> = _event
 
     private val _users = MutableLiveData<List<User>>()
-//    val user: LiveData<List<User>> = _users
+    val user: LiveData<List<User>> = _users
 
     private val _searchQuery: MutableLiveData<String> = state.getLiveData(
         SEARCH_QUERY,
@@ -32,7 +32,7 @@ class AddChatViewModel @Inject constructor(
         getAllUsers()
     }
 
-    fun getAllUsers() {
+    private fun getAllUsers() {
         repositoryImpl.getAllUsers(
             onGetUsersDone = {
                 _users.postValue(it)

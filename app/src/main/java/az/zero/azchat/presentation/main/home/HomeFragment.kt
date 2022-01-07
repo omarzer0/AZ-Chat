@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.viewModels
 import az.zero.azchat.R
+import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentHomeBinding
 import az.zero.azchat.presentation.main.adapter.group.PrivateChatAdapter
@@ -31,13 +32,14 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
     private fun observeViewEvents() {
+        viewModel.privateChat.observe(viewLifecycleOwner) {
+            privateChatAdapter.submitList(it)
+        }
+
         viewModel.event.observeIfNotHandled { event ->
             when (event) {
                 HomeFragmentEvent.AddChat -> {
                     navigateToAction(HomeFragmentDirections.actionHomeFragmentToAddChatFragment())
-                }
-                is HomeFragmentEvent.GetPrivateChats -> {
-                    privateChatAdapter.submitList(event.privateChats)
                 }
                 is HomeFragmentEvent.PrivateChatsClick -> {
                     // go to chat screen

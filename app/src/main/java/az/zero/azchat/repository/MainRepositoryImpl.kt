@@ -1,6 +1,5 @@
 package az.zero.azchat.repository
 
-import android.app.Application
 import android.util.Log
 import az.zero.azchat.common.*
 import az.zero.azchat.data.models.group.Group
@@ -8,15 +7,11 @@ import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.data.models.user.User
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,22 +19,15 @@ import kotlin.math.abs
 
 @Singleton
 class MainRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
     private val storage: FirebaseStorage,
     private val sharedPreferenceManger: SharedPreferenceManger,
-    private val application: Application
 ) {
     private val TAG = "tag"
 
     fun getAllUsers(
         onGetUsersDone: (List<User>) -> Unit,
     ) {
-//        val p = storage.reference.child("profileImages/${sharedPreferenceManger.uid}.jpg")
-//        p.downloadUrl.addOnSuccessListener {
-//            logMe(it.toString(),"testtt")
-//        }
-
         val uid = sharedPreferenceManger.uid
         logMe("uid ===> $uid")
         val users = ArrayList<User>()
@@ -61,39 +49,12 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-//    fun getAllGroupsByUserUID() {
-//        logMe("getAllGroupsByUserUID---------")
-//        val uid = sharedPreferenceManger.uid
-//        firestore.collection(GROUPS_ID).whereArrayContains("members", uid)
-//            .get()
-//            .addOnSuccessListener { documents ->
-//                documents.forEach { document ->
-//                    val group = document.toObject<Group>()
-//                    if (group.hasNullField()) return@forEach
-//                    Log.e(TAG, "$group")
-//                    firestore.document(group.user1!!.path).get().addOnSuccessListener {
-//                        if (it.exists()) {
-//                            val user = it.toObject<User>()
-//                            if (user != null && user.uid != uid) {
-//                                logMe("not null or same id")
-//                                group.image = user.imageUrl
-//                                group.name = user.name
-//                            }
-//
-//                        }
-//                    }
-//                }
-//            }
-//            .addOnFailureListener {
-//                Log.e(TAG, it.localizedMessage ?: "Unknown")
-//            }
-//    }
-
     @ExperimentalCoroutinesApi
-    fun getPrivateChatsForUser(): Flow<List<PrivateChat>> = callbackFlow {
+    fun getPrivateChatsForUser(
+        onSuccess: (List<PrivateChat>) -> Unit
+    ) {
         val uid = sharedPreferenceManger.uid
-        logMe("$uid +++++++++++++")
-        val listener = firestore.collection(GROUPS_ID)
+        firestore.collection(GROUPS_ID)
             .whereArrayContains("members", uid).addSnapshotListener { value, error ->
                 if (error != null) {
                     logMe("listenForGroupChanges $error")
@@ -107,29 +68,21 @@ class MainRepositoryImpl @Inject constructor(
                     val otherUserId =
                         if (!group.user1!!.path.contains(uid)) group.user1!!.path
                         else group.user2!!.path
-
-                    logMe(
-                        "$uid =======\n1==${group.user1!!.path}\n2==${group.user2!!.path}",
-                        "userTesttttt"
-                    )
-                    firestore.document(otherUserId).get().addOnSuccessListener {
-                        if (it.exists()) {
-                            val user = it.toObject<User>() ?: return@addOnSuccessListener
-                            trySend(listOf(PrivateChat(group, user)))
-                        }
-                    }
+                    getUser(group, otherUserId, onSuccess)
                 }
             }
+    }
 
-        awaitClose {
-            // This block is executed when producer channel is cancelled
-            // This function resumes with a cancellation exception.
-            // Dispose listener
-            logMe("closed", "close")
-            listener.remove()
-            cancel()
+    private fun getUser(
+        group: Group, uid: String,
+        onSuccess: (List<PrivateChat>) -> Unit
+    ) {
+        firestore.document(uid).get().addOnSuccessListener {
+            if (it.exists()) {
+                val user = it.toObject<User>() ?: return@addOnSuccessListener
+                onSuccess(listOf(PrivateChat(group, user)))
+            }
         }
-
     }
 
     private fun getImageByUID(uid: String, onSuccess: (String) -> Unit) {

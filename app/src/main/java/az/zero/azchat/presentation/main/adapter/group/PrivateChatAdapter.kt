@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.databinding.ItemGroupBinding
 
 class PrivateChatAdapter :
-    ListAdapter<PrivateChat, PrivateChatAdapter.PrivateChatViewHolder>(DiffUtil) {
-
+    ListAdapter<PrivateChat, PrivateChatAdapter.PrivateChatViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrivateChatViewHolder {
         val binding = ItemGroupBinding.inflate(
@@ -54,15 +54,26 @@ class PrivateChatAdapter :
         onStudentClickListener = listener
     }
 
-    companion object {
-        private val DiffUtil = object : DiffUtil.ItemCallback<PrivateChat>() {
-            override fun areItemsTheSame(oldItem: PrivateChat, newItem: PrivateChat) =
-                oldItem == newItem
+//    companion object {
+//        private val DiffUtil = object : DiffUtil.ItemCallback<PrivateChat>() {
+//            override fun areItemsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean {
+//                logMe("${oldItem.id == newItem.id}", "testadapter")
+//                return oldItem.id == newItem.id
+//            }
+//
+//            override fun areContentsTheSame(oldItem: PrivateChat, newItem: PrivateChat) =
+//                oldItem == newItem
+//        }
+//    }
 
-            override fun areContentsTheSame(oldItem: PrivateChat, newItem: PrivateChat) =
-                oldItem == newItem
+    class DiffCallback : DiffUtil.ItemCallback<PrivateChat>() {
+        override fun areItemsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean{
+            logMe("${oldItem.id == newItem.id}", "testadapter")
+            return oldItem.id == newItem.id
         }
-    }
 
+        override fun areContentsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean =
+            oldItem == newItem
+    }
 
 }

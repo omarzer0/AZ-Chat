@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import az.zero.azchat.common.Event
+import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.repository.MainRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,13 +25,14 @@ class HomeViewModel @Inject constructor(
     private val _event = MutableLiveData<Event<HomeFragmentEvent>>()
     val event: LiveData<Event<HomeFragmentEvent>> = _event
 
-    private fun getPrivateChatsForUser() {
-        viewModelScope.launch {
-            repositoryImpl.getPrivateChatsForUser().collect {
-                _event.postValue(Event(HomeFragmentEvent.GetPrivateChats(it)))
-            }
-        }
+    private val _privateChats = MutableLiveData<List<PrivateChat>>()
+    val privateChat: LiveData<List<PrivateChat>>
+        get() = _privateChats
 
+    private fun getPrivateChatsForUser() = viewModelScope.launch {
+        repositoryImpl.getPrivateChatsForUser {
+            _privateChats.postValue(it)
+        }
     }
 
     fun addUserClick() {
@@ -40,7 +41,5 @@ class HomeViewModel @Inject constructor(
 
     fun privateChatClick(gid: String) {
         _event.postValue(Event(HomeFragmentEvent.PrivateChatsClick(gid)))
-
     }
 }
-

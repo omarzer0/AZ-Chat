@@ -116,3 +116,62 @@ val <T> T.exhaustive: T
 //        }
 //    }
 //}
+
+
+////
+////    private val _status = MutableLiveData<Event<Status>>()
+////    val status: LiveData<Event<Status>> = _status
+////
+////    private fun <QuerySnapshot> safeCallApi(
+////        action: suspend () -> Task<QuerySnapshot>,
+////        response: (QuerySnapshot) -> Unit,
+////        messageIfSuccess: String? = null,
+////        showLoadingBar: Boolean = true
+////    ) {
+////        viewModelScope.launch(exceptionHandler) {
+////            if (showLoadingBar) {
+////                _status.value = Event(Status.Loading)
+////            }
+////            val callResponse = action()
+////
+////            callResponse.addOnSuccessListener {
+////                response(it)
+////                _status.value = Event(Status.Success(messageIfSuccess))
+////            }.addOnFailureListener {
+////                _status.value = Event(Status.Error(it.localizedMessage ?: "Unknown"))
+////            }
+////        }
+////    }
+////
+////    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+////        viewModelScope.launch(Dispatchers.Main) {
+////
+////
+////            val throwableMessage = throwable.localizedMessage
+////            val errorMessage =
+////                if (throwableMessage != null && throwableMessage.contains("No address associated with hostname"))
+////                    "Check your internet connection!"
+////                else "error"
+////
+////            _status.value =
+////                Event(Status.Error(errorMessage))
+////        }
+////    }
+////}
+////
+////sealed class Result<T>(
+////    val message: String? = null,
+////    val data: T? = null
+////) {
+////    class Success<T>(message: String? = null, data: T? = null) : Result<T>(message, data)
+////    class Loading<T>(message: String? = null, data: T? = null) : Result<T>(message, data)
+////    class Error<T>(message: String? = null, data: T? = null) : Result<T>(message, data)
+////}
+////
+////sealed class Status {
+////    data class Success(val message: String?) : Status()
+////    data class Error(val message: String?) : Status()
+////    object Loading : Status()
+////    object Empty : Status()
+////}
+////

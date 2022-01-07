@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import az.zero.azchat.common.Event
-import az.zero.azchat.common.State
 import az.zero.azchat.common.logMe
 import az.zero.azchat.data.models.country_code.CountryCode
 import az.zero.azchat.repository.AuthRepositoryImpl
@@ -36,7 +35,7 @@ class LoginViewModel @Inject constructor(
             onCodeSentListener = {
                 logMe("sent")
                 _event.postValue(Event(LoginEvent.CodeSent))
-                Event(State.Success())
+//                Event(State.Success())
             },
             onVerificationSuccess = {
                 logMe("success")
