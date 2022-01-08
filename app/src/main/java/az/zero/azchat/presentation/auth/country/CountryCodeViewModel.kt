@@ -1,7 +1,7 @@
 package az.zero.azchat.presentation.auth.country
 
 import androidx.lifecycle.*
-import az.zero.azchat.common.Event
+import az.zero.azchat.common.event.Event
 import az.zero.azchat.data.models.country_code.CountryCode
 import az.zero.azchat.repository.AuthRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel

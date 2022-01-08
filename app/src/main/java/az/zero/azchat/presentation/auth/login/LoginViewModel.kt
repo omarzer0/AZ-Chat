@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import az.zero.azchat.common.Event
+import az.zero.azchat.common.event.Event
 import az.zero.azchat.common.logMe
 import az.zero.azchat.data.models.country_code.CountryCode
 import az.zero.azchat.repository.AuthRepositoryImpl

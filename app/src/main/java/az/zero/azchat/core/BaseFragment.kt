@@ -8,9 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
-import az.zero.azchat.common.Event
 import az.zero.azchat.common.IS_DEBUG
 import az.zero.azchat.common.SharedPreferenceManger
+import az.zero.azchat.common.event.Event
 import az.zero.azchat.common.logMe
 import az.zero.azchat.presentation.auth.AuthActivity
 import az.zero.azchat.presentation.main.MainActivity

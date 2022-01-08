@@ -3,13 +3,19 @@ package az.zero.azchat.common
 import android.content.Context
 import android.util.Log
 import android.widget.ImageView
+import androidx.core.widget.doOnTextChanged
 import az.zero.azchat.R
+import az.zero.azchat.common.extension.hideKeyboard
+import az.zero.azchat.databinding.SendEditTextBinding
 import com.bumptech.glide.Glide
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
+import com.google.firebase.Timestamp
 import es.dmoral.toasty.Toasty
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 fun logMe(msg: String, tag: String = "TAG") {
@@ -97,27 +103,30 @@ fun readFile(context: Context, assetFileName: String): String {
 val <T> T.exhaustive: T
     get() = this
 
-//fun setUpSearchView(searchBar: SearchBarBinding, actionWhenSearch: (searchString: String) -> Unit) {
-//    searchBar.apply {
-//        searchEt.doOnTextChanged { text, _, _, _ ->
-//            cancelIconIv.isVisible = !text.isNullOrBlank()
-//        }
-//
-//        cancelIconIv.setOnClickListener {
-//            searchEt.setText("")
-//        }
-//
-//        searchEt.setOnEditorActionListener { textView, actionId, _ ->
-//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                actionWhenSearch(textView.text.toString())
-//                textView.context.hideKeyboard(textView)
-//                true
-//            } else false
-//        }
-//    }
-//}
+fun setUpSearchView(
+    sendEditText: SendEditTextBinding,
+    actionWhenSend: (sendMessage: String) -> Unit
+) {
+    sendEditText.apply {
+        writeMessageEd.doOnTextChanged { text, _, _, _ ->
+            sendIv.isEnabled = !text.isNullOrBlank()
+        }
 
+        sendIv.setOnClickListener {
+            actionWhenSend(writeMessageEd.text.toString().trim())
+            writeMessageEd.setText("")
+        }
+    }
+}
 
+fun convertTimeStampToDate(timestamp: Timestamp): String = try {
+    val language = Locale.getDefault().displayLanguage
+    val sfd = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale(language))
+    sfd.format(Date(timestamp.seconds * 1000))
+} catch (e: Exception) {
+    logMe(e.localizedMessage ?: "convertTimeStampToDate unknown")
+    ""
+}
 ////
 ////    private val _status = MutableLiveData<Event<Status>>()
 ////    val status: LiveData<Event<Status>> = _status

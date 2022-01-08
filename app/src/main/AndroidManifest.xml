@@ -19,7 +19,8 @@
         <activity
             android:name=".presentation.main.MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            />
         <activity
             android:name=".presentation.auth.AuthActivity"
             android:exported="true"

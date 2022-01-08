@@ -27,10 +27,13 @@
     <fragment
         android:id="@+id/privateChatRoomFragment"
         android:name="az.zero.azchat.presentation.main.private_chat_room.PrivateChatRoomFragment"
-        android:label="fragment_private_chat_room"
-        tools:layout="@layout/fragment_private_chat_room" >
+        android:label="{username}"
+        tools:layout="@layout/fragment_private_chat_room">
         <argument
             android:name="gid"
+            app:argType="string" />
+        <argument
+            android:name="username"
             app:argType="string" />
     </fragment>
 </navigation>

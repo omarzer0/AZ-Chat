@@ -1,20 +1,19 @@
-package az.zero.azchat.presentation.main.adapter.group
+package az.zero.azchat.presentation.main.adapter.private_chat
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.data.models.private_chat.PrivateChat
-import az.zero.azchat.databinding.ItemGroupBinding
+import az.zero.azchat.databinding.ItemPrivateChatBinding
 
 class PrivateChatAdapter :
     ListAdapter<PrivateChat, PrivateChatAdapter.PrivateChatViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrivateChatViewHolder {
-        val binding = ItemGroupBinding.inflate(
+        val binding = ItemPrivateChatBinding.inflate(
             LayoutInflater.from(parent.context),
             parent, false
         )
@@ -26,22 +25,22 @@ class PrivateChatAdapter :
         if (currentItem != null) holder.bind(currentItem)
     }
 
-    inner class PrivateChatViewHolder(private val binding: ItemGroupBinding) :
+    inner class PrivateChatViewHolder(private val binding: ItemPrivateChatBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.root.setOnClickListener {
                 onStudentClickListener?.let {
-                    it(getItem(adapterPosition).group.gid!!)
+                    val item = getItem(adapterPosition)
+                    it(item.group.gid!!, item.user.name!!)
                 }
             }
         }
 
         fun bind(currentItem: PrivateChat) {
             binding.apply {
-                groupNameTv.text = currentItem.user.name ?: ""
-                setImageUsingGlide(groupImageIv, currentItem.user.imageUrl ?: "")
-//                lastMessageTv.text = currentItem.message?.messageText ?: currentItem.user.bio
+                privateChatNameTv.text = currentItem.user.name ?: ""
+                setImageUsingGlide(privateChatImageIv, currentItem.user.imageUrl ?: "")
                 lastMessageTv.text =
                     currentItem.group.lastSentMessage?.messageText ?: currentItem.user.bio
             }
@@ -49,26 +48,13 @@ class PrivateChatAdapter :
     }
 
 
-    private var onStudentClickListener: ((String) -> Unit)? = null
-    fun setOnStudentClickListener(listener: (String) -> Unit) {
+    private var onStudentClickListener: ((String, String) -> Unit)? = null
+    fun setOnStudentClickListener(listener: (String, String) -> Unit) {
         onStudentClickListener = listener
     }
 
-//    companion object {
-//        private val DiffUtil = object : DiffUtil.ItemCallback<PrivateChat>() {
-//            override fun areItemsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean {
-//                logMe("${oldItem.id == newItem.id}", "testadapter")
-//                return oldItem.id == newItem.id
-//            }
-//
-//            override fun areContentsTheSame(oldItem: PrivateChat, newItem: PrivateChat) =
-//                oldItem == newItem
-//        }
-//    }
-
     class DiffCallback : DiffUtil.ItemCallback<PrivateChat>() {
-        override fun areItemsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean{
-            logMe("${oldItem.id == newItem.id}", "testadapter")
+        override fun areItemsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean {
             return oldItem.id == newItem.id
         }
 

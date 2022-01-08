@@ -4,7 +4,7 @@ import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import az.zero.azchat.common.Event
+import az.zero.azchat.common.event.Event
 import az.zero.azchat.repository.AuthRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

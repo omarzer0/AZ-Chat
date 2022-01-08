@@ -10,11 +10,9 @@ import az.zero.azchat.R
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentHomeBinding
-import az.zero.azchat.presentation.main.adapter.group.PrivateChatAdapter
+import az.zero.azchat.presentation.main.adapter.private_chat.PrivateChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
@@ -43,9 +41,11 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                 }
                 is HomeFragmentEvent.PrivateChatsClick -> {
                     // go to chat screen
+                    logMe("home ${event.gid}")
                     navigateToAction(
                         HomeFragmentDirections.actionHomeFragmentToPrivateChatRoomFragment(
-                            event.gid
+                            event.gid,
+                            event.username
                         )
                     )
                 }
@@ -62,8 +62,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             viewModel.addUserClick()
         }
 
-        privateChatAdapter.setOnStudentClickListener {
-            viewModel.privateChatClick(it)
+        privateChatAdapter.setOnStudentClickListener { gid, username ->
+            viewModel.privateChatClick(gid, username)
         }
     }
 

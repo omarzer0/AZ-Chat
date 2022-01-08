@@ -1,4 +1,4 @@
-package az.zero.azchat.common
+package az.zero.azchat.common.event
 
 open class Event<out T>(private val content: T) {
 

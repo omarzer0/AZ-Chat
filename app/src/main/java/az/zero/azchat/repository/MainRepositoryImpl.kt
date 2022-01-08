@@ -9,6 +9,7 @@ import az.zero.azchat.data.models.user.User
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
@@ -49,7 +50,6 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    @ExperimentalCoroutinesApi
     fun getPrivateChatsForUser(
         onSuccess: (List<PrivateChat>) -> Unit
     ) {
@@ -93,18 +93,38 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    fun getMessagesByGroupId(gid: String) {
+
+    fun getMessagesQuery(gid: String): Query {
+        return firestore.collection(MESSAGES_ID)
+            .document(gid)
+            .collection(PRIVATE_MESSAGES_ID)
+            .orderBy("sentAt", Query.Direction.ASCENDING)
+    }
+
+    fun getUID() = sharedPreferenceManger.uid
+
+    fun getMessagesByGroupId(
+        gid: String,
+        onSuccess: (List<Message>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         firestore.collection(MESSAGES_ID)
             .document(gid)
             .collection(PRIVATE_MESSAGES_ID)
             .orderBy("sentAt")
             .get()
             .addOnSuccessListener { docs ->
+                val messages = ArrayList<Message>()
                 docs.forEach { doc ->
-                    Log.e(TAG, "msg: ${doc.data}")
+                    val message = doc.toObject<Message>()
+                    if (!message.hasNullField()) {
+                        messages.add(message)
+                    }
                 }
+                onSuccess(messages)
             }
             .addOnFailureListener {
+                onFailure(it)
                 Log.e(TAG, "getMessagesByGroupId: ${it.localizedMessage}")
             }
     }
@@ -148,27 +168,29 @@ class MainRepositoryImpl @Inject constructor(
             .set(newGroup)
     }
 
-    fun addMessage(message: Message, gid: String) {
+    fun sendMessage(messageText: String, gid: String) {
         val randomId = abs(Random().nextLong())
-        val textGroupID = "F0rLNHDqXZdZz6sqIeJj"
-        val textOmarUserID = "9704maSB3ETKq1jF0rTtOhaUq8m2"
-        val testMessageText = "Fine Thx!"
-
-        val testMsg = Message(
+//        val textGroupID = "F0rLNHDqXZdZz6sqIeJj"
+//        val textOmarUserID = "9704maSB3ETKq1jF0rTtOhaUq8m2"
+//        val testMessageText = "Fine Thx!"
+//
+        val message = Message(
             randomId.toString(),
-            testMessageText,
+            messageText,
             Timestamp(Date()),
-            textOmarUserID,
+            sharedPreferenceManger.uid,
             deleted = false,
             updated = false,
             loved = false
         )
-        firestore.collection(MESSAGES_ID).document(textGroupID)
-            .collection(PRIVATE_MESSAGES_ID)
-            .document().set(testMsg)
 
-        firestore.collection(GROUPS_ID).document(textGroupID)
-            .update("lastSentMessage", testMsg)
+        logMe("repo\n$message")
+        firestore.collection(MESSAGES_ID).document(gid)
+            .collection(PRIVATE_MESSAGES_ID)
+            .document().set(message)
+
+        firestore.collection(GROUPS_ID).document(gid)
+            .update("lastSentMessage", message)
     }
 
     fun getCollectionReference(): CollectionReference {
