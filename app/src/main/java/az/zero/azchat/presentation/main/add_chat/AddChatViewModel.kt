@@ -57,7 +57,7 @@ class AddChatViewModel @Inject constructor(
 
     companion object {
         const val SEARCH_QUERY = "AddChatViewModel search query"
-        const val START_SEARCH_QUERY = "START_SEARCH_QUERY search query"
+        const val START_SEARCH_QUERY = ""
     }
 }
 

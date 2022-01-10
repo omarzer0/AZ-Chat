@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import az.zero.azchat.R
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
+import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.databinding.FragmentHomeBinding
 import az.zero.azchat.presentation.main.adapter.private_chat.PrivateChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,8 +30,10 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         observeViewEvents()
     }
 
+
+
     private fun observeViewEvents() {
-        viewModel.privateChat.observe(viewLifecycleOwner) {
+        viewModel.privateChats.observe(viewLifecycleOwner) {
             privateChatAdapter.submitList(it)
         }
 

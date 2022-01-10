@@ -25,13 +25,13 @@ class AuthActivity : BaseActivity() {
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.auth_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
 
         appBarrConfiguration = AppBarConfiguration(setOf(R.id.loginFragment))
         setupActionBarWithNavController(navController, appBarrConfiguration)
-
 
     }
 

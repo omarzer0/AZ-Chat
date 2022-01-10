@@ -29,6 +29,6 @@
 
     <color name="messages_text_color">@color/black</color>
     <color name="sender_messages_bg_color">#A6CECF</color>
-    <color name="receiver_messages_bg_color">#9FB69F</color>
+    <color name="receiver_messages_bg_color">#6D9CEA</color>
 
 </resources>

@@ -13,6 +13,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -51,7 +52,7 @@ class MainRepositoryImpl @Inject constructor(
     }
 
     fun getPrivateChatsForUser(
-        onSuccess: (List<PrivateChat>) -> Unit
+        onSuccess: (PrivateChat) -> Unit
     ) {
         val uid = sharedPreferenceManger.uid
         firestore.collection(GROUPS_ID)
@@ -71,16 +72,24 @@ class MainRepositoryImpl @Inject constructor(
                     getUser(group, otherUserId, onSuccess)
                 }
             }
+
+//        tryAsyncNow {
+//            val groups = firestore.collection(GROUPS_ID)
+//                .whereArrayContains("members", uid).get().await()
+//
+//            for ()
+//        }
+
     }
 
     private fun getUser(
         group: Group, uid: String,
-        onSuccess: (List<PrivateChat>) -> Unit
+        onSuccess: (PrivateChat) -> Unit
     ) {
         firestore.document(uid).get().addOnSuccessListener {
             if (it.exists()) {
                 val user = it.toObject<User>() ?: return@addOnSuccessListener
-                onSuccess(listOf(PrivateChat(group, user)))
+                onSuccess(PrivateChat(group, user))
             }
         }
     }
@@ -197,6 +206,41 @@ class MainRepositoryImpl @Inject constructor(
         return firestore.collection(GROUPS_ID)
     }
 
+    suspend fun getUserInfo(onSuccess: (User) -> Unit) {
+        val uid = sharedPreferenceManger.uid
+        tryAsyncNow {
+            val user = firestore.collection(USERS_ID)
+                .document(uid).get().await().toObject<User>() ?: return@tryAsyncNow
+            if (user.hasNullField()) return@tryAsyncNow
+            onSuccess(user)
+        }
+
+        firestore.collection(USERS_ID).document(uid).addSnapshotListener { value, error ->
+            if (error != null) {
+                logMe("getUserInfo $error")
+                return@addSnapshotListener
+            }
+            if (value == null) return@addSnapshotListener
+            val user = value.toObject<User>() ?: return@addSnapshotListener
+            onSuccess(user)
+        }
+    }
+
+    private fun tryNow(action: () -> Unit) {
+        try {
+            action()
+        } catch (e: Exception) {
+            logMe(e.localizedMessage ?: "Unknown", "tryNow")
+        }
+    }
+
+    private suspend fun tryAsyncNow(action: suspend () -> Unit) {
+        try {
+            action()
+        } catch (e: Exception) {
+            logMe(e.localizedMessage ?: "Unknown", "tryNow")
+        }
+    }
 }
 //9704maSB3ETKq1jF0rTtOhaUq8m2 0100
 //Uhp7yfvA8HW4HIS49sQBoe7wovQ2 0155

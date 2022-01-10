@@ -18,4 +18,7 @@
     <string name="bio_under_three">Bio should be more than 3 characters</string>
     <string name="not_granted">Can\'t use without permission</string>
     <string name="your_message">Your message...</string>
+    <string name="sure_want_to_logout">Are you sure you want to logout?</string>
+    <string name="logout">Logout</string>
+    <string name="stay">Stay</string>
 </resources>

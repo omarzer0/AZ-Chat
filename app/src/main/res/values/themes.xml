@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.PhoneLoginMVVM" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="Theme.PhoneLoginMVVM" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/mainColor</item>
         <item name="colorPrimaryVariant">@color/secondaryColor</item>
@@ -39,7 +39,7 @@
 
     <style name="headerTextStyle" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/textMainColor</item>
-        <item name="android:textSize">@dimen/_16ssp</item>
+        <item name="android:textSize">@dimen/_14ssp</item>
         <item name="android:textStyle">bold</item>
         <item name="theme">@style/singleLine</item>
     </style>
