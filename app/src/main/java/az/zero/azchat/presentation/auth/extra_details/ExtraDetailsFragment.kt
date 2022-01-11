@@ -129,7 +129,7 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
             pickImage { imageUrl ->
                 logMe(imageUrl.toString())
 //                setImageUsingGlide(binding.userImageIv, imageUrl.toString())
-                viewModel.uploadProfileImageByUserId(imageUrl)
+                viewModel.uploadProfileImageByUserId(imageUrl, requireActivity().contentResolver)
 
             }
         }

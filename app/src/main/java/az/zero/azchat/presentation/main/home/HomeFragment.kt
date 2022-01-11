@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import az.zero.azchat.R
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
-import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.databinding.FragmentHomeBinding
 import az.zero.azchat.presentation.main.adapter.private_chat.PrivateChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +28,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         setUpRVs()
         observeViewEvents()
     }
-
 
 
     private fun observeViewEvents() {
@@ -82,6 +80,16 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         }
 
         else -> super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.viewCreated()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.viewDestroyed()
     }
 
 }

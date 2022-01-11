@@ -2,7 +2,13 @@ package az.zero.azchat.repository
 
 import android.app.Activity
 import android.app.Application
+import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.provider.MediaStore.Images.Media.getBitmap
 import android.util.Log
 import az.zero.azchat.common.*
 import az.zero.azchat.data.models.country_code.Countries
@@ -15,10 +21,12 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
@@ -192,15 +200,26 @@ class AuthRepositoryImpl @Inject constructor(
 
     fun uploadProfileImageByUserId(
         uri: Uri,
+        contentResolver: ContentResolver,
         onUploadImageSuccess: (Uri) -> Unit,
         onUploadImageFailed: (String) -> Unit,
     ) {
         val realPath = RealPathUtil.getRealPath(application, uri)
-//        val type = realPath.split(".")[1]
         val file = Uri.fromFile(File(realPath))
         val userId = sharedPreferenceManger.uid
         val storageRef = storage.reference.child("profileImages/$userId.jpg")
-        val uploadTask = storageRef.putFile(file)
+//        val uploadTask = storageRef.putFile(file)
+
+        val uploadTask = try {
+            val bmp = getBitmap(contentResolver, file)
+            val byteStreamArray = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.JPEG, 25, byteStreamArray)
+            val data: ByteArray = byteStreamArray.toByteArray()
+            storageRef.putBytes(data)
+        }catch (e:Exception){
+            onUploadImageFailed("Failed to upload the image Please try again!")
+            return
+        }
 
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {

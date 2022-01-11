@@ -1,5 +1,6 @@
 package az.zero.azchat.presentation.auth.extra_details
 
+import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,27 +23,11 @@ class ExtraDetailsViewModel @Inject constructor(
     private val _imageMLD = MutableLiveData<Uri>()
     val imageMLD: LiveData<Uri> = _imageMLD
 
-//    fun getAllGroupsByUserUID() {
-//        repository.getAllGroupsByUserUID()
-//    }
-//
-//    fun addGroup() {
-//        repository.addGroup()
-//    }
-//
-//    fun getMessagesByGroupId() {
-//        repository.getMessagesByGroupId(TEST_GROUP)
-//    }
-//
-//    fun addMessage() {
-//        val message = Message("added msg", Timestamp(Date()), TEST_USER)
-//        repository.addMessage(message, TEST_GROUP)
-//    }
-
-    fun uploadProfileImageByUserId(uri: Uri) {
+    fun uploadProfileImageByUserId(uri: Uri, contentResolver: ContentResolver) {
         _event.postValue(Event(ExtraDetailsEvent.UploadingImageLoading))
         repository.uploadProfileImageByUserId(
             uri,
+            contentResolver,
             onUploadImageSuccess = {
                 _imageMLD.postValue(it)
                 _event.postValue(Event(ExtraDetailsEvent.UploadImageSuccess(it)))
@@ -69,7 +54,7 @@ class ExtraDetailsViewModel @Inject constructor(
                 if (_imageMLD.value != null) {
                     image = _imageMLD.value.toString()
                 }
-                val user = User("", username, image, bio, emptyList(),"")
+                val user = User("", username, image, bio, emptyList(), "")
                 repository.addUser(
                     user,
                     onAddUserSuccess = {

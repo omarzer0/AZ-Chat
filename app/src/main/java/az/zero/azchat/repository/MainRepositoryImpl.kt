@@ -7,10 +7,10 @@ import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.data.models.user.User
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
@@ -26,6 +26,11 @@ class MainRepositoryImpl @Inject constructor(
     private val sharedPreferenceManger: SharedPreferenceManger,
 ) {
     private val TAG = "tag"
+    private var privateChatsListener: ListenerRegistration? = null
+
+    fun removePrivateChatsListener() {
+        privateChatsListener?.remove()
+    }
 
     fun getAllUsers(
         onGetUsersDone: (List<User>) -> Unit,
@@ -55,7 +60,8 @@ class MainRepositoryImpl @Inject constructor(
         onSuccess: (PrivateChat) -> Unit
     ) {
         val uid = sharedPreferenceManger.uid
-        firestore.collection(GROUPS_ID)
+        privateChatsListener?.remove()
+        privateChatsListener = firestore.collection(GROUPS_ID)
             .whereArrayContains("members", uid).addSnapshotListener { value, error ->
                 if (error != null) {
                     logMe("listenForGroupChanges $error")
@@ -69,28 +75,28 @@ class MainRepositoryImpl @Inject constructor(
                     val otherUserId =
                         if (!group.user1!!.path.contains(uid)) group.user1!!.path
                         else group.user2!!.path
-                    getUser(group, otherUserId, onSuccess)
+                    if (document.metadata.isFromCache){
+                        getUser(group, otherUserId, onSuccess,Source.CACHE)
+                    }else{
+                        getUser(group, otherUserId, onSuccess,Source.SERVER)
+                    }
                 }
+                firestore.enableNetwork()
             }
-
-//        tryAsyncNow {
-//            val groups = firestore.collection(GROUPS_ID)
-//                .whereArrayContains("members", uid).get().await()
-//
-//            for ()
-//        }
-
     }
 
     private fun getUser(
         group: Group, uid: String,
-        onSuccess: (PrivateChat) -> Unit
+        onSuccess: (PrivateChat) -> Unit,
+        from: Source
     ) {
-        firestore.document(uid).get().addOnSuccessListener {
+        firestore.document(uid).get(from).addOnSuccessListener {
             if (it.exists()) {
                 val user = it.toObject<User>() ?: return@addOnSuccessListener
                 onSuccess(PrivateChat(group, user))
             }
+
+            logMe("user from cache ${it.metadata.isFromCache}")
         }
     }
 
@@ -179,10 +185,6 @@ class MainRepositoryImpl @Inject constructor(
 
     fun sendMessage(messageText: String, gid: String) {
         val randomId = abs(Random().nextLong())
-//        val textGroupID = "F0rLNHDqXZdZz6sqIeJj"
-//        val textOmarUserID = "9704maSB3ETKq1jF0rTtOhaUq8m2"
-//        val testMessageText = "Fine Thx!"
-//
         val message = Message(
             randomId.toString(),
             messageText,
@@ -241,7 +243,67 @@ class MainRepositoryImpl @Inject constructor(
             logMe(e.localizedMessage ?: "Unknown", "tryNow")
         }
     }
+
+//    suspend fun getPrivates(): List<PrivateChat> {
+//        val list = mutableListOf<PrivateChat>()
+//        withContext(Dispatchers.IO) {
+//            Firebase.firestore.collection(GROUPS_ID)
+//                .whereArrayContains("members", "uid").get().await().forEach {
+//                    val g = it.toObject<Group>()
+//                    val otherUserId = if (!g.user1!!.path.contains("uid"))
+//                        g.user1!!.path else g.user2!!.path
+//                    val u = Firebase.firestore.collection(USERS_ID)
+//                        .document(otherUserId).get().await().toObject<User>() ?: return@forEach
+//                    list.add(PrivateChat(g, u, g.gid!!.toLong()))
+//                }
+//        }
+//        return list.toList()
+//    }
+
+
+    //    @ExperimentalCoroutinesApi
+//    fun getPrivateChatsForUser2(): Flow<List<PrivateChat>> {
+//        return callbackFlow {
+//            val privateChats = mutableListOf<PrivateChat>()
+//            val uid = sharedPreferenceManger.uid
+//            val listener = firestore.collection(GROUPS_ID).whereArrayContains("members", uid)
+//                .addSnapshotListener { value, error ->
+//                    if (error != null) {
+//                        logMe("listenForGroupChanges $error")
+//                        return@addSnapshotListener
+//                    }
+//
+//                    val gList = mutableListOf<Group>()
+//                    value?.forEach { document ->
+//                        val group = document.toObject<Group>()
+//                        if (group.ofTypeGroup == true) return@forEach
+//                        if (group.hasNullField()) return@forEach
+//                        gList.add(group)
+//                    }
+//
+//                    gList.forEach { group ->
+//                        val otherUserId = if (!group.user1!!.path.contains(uid)) group.user1!!.path
+//                        else group.user2!!.path
+//
+//                        firestore.document(otherUserId).get().addOnSuccessListener {
+//                            if (it.exists()) {
+//                                val user = it.toObject<User>() ?: return@addOnSuccessListener
+//                                privateChats.add(PrivateChat(group, user, 12))
+//                            }
+//                        }
+//                    }
+//
+//                    trySend(privateChats)
+//                }
+//
+//            awaitClose {
+//                listener.remove()
+//            }
+//        }
+//
+//    }
 }
+
 //9704maSB3ETKq1jF0rTtOhaUq8m2 0100
 //Uhp7yfvA8HW4HIS49sQBoe7wovQ2 0155
 //F0rLNHDqXZdZz6sqIeJj
