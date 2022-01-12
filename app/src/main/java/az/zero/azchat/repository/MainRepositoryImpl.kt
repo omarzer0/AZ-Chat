@@ -7,10 +7,8 @@ import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.data.models.user.User
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
@@ -68,6 +66,7 @@ class MainRepositoryImpl @Inject constructor(
                     return@addSnapshotListener
                 }
 
+                logMe("document from cache ${value?.metadata?.isFromCache} ${value?.size()}")
                 value?.forEach { document ->
                     val group = document.toObject<Group>()
                     if (group.ofTypeGroup == true) return@forEach
@@ -75,13 +74,13 @@ class MainRepositoryImpl @Inject constructor(
                     val otherUserId =
                         if (!group.user1!!.path.contains(uid)) group.user1!!.path
                         else group.user2!!.path
-                    if (document.metadata.isFromCache){
-                        getUser(group, otherUserId, onSuccess,Source.CACHE)
-                    }else{
-                        getUser(group, otherUserId, onSuccess,Source.SERVER)
+                    if (document.metadata.isFromCache) {
+                        getUser(group, otherUserId, onSuccess, Source.CACHE)
+                    } else {
+                        getUser(group, otherUserId, onSuccess, Source.SERVER)
                     }
                 }
-                firestore.enableNetwork()
+//                firestore.enableNetwork()
             }
     }
 

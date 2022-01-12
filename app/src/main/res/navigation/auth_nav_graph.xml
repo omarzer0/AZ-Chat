@@ -15,7 +15,8 @@
             app:destination="@id/verificationFragment" />
         <action
             android:id="@+id/action_loginFragment_to_extraDetailsFragment"
-            app:destination="@id/extraDetailsFragment" />
+            app:destination="@id/extraDetailsFragment"
+            app:popUpTo="@id/loginFragment" />
         <action
             android:id="@+id/action_loginFragment_to_countryCodeFragment"
             app:destination="@id/countryCodeFragment"
@@ -31,7 +32,8 @@
         tools:layout="@layout/fragment_verification">
         <action
             android:id="@+id/action_verificationFragment_to_extraDetailsFragment"
-            app:destination="@id/extraDetailsFragment" />
+            app:destination="@id/extraDetailsFragment"
+            app:popUpTo="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/extraDetailsFragment"

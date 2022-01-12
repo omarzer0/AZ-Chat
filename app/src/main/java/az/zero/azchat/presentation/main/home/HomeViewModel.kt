@@ -48,8 +48,8 @@ class HomeViewModel @Inject constructor(
         _event.postValue(Event(HomeFragmentEvent.AddChat))
     }
 
-    fun privateChatClick(gid: String, username: String) {
-        _event.postValue(Event(HomeFragmentEvent.PrivateChatsClick(gid, username)))
+    fun privateChatClick(gid: String, username: String, userImage: String) {
+        _event.postValue(Event(HomeFragmentEvent.PrivateChatsClick(gid, username, userImage)))
     }
 
     init {

@@ -13,6 +13,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import az.zero.azchat.R
+import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseActivity
@@ -43,6 +45,30 @@ class MainActivity : BaseActivity() {
 
         handleClicks()
         observeData()
+        observeDestinations()
+    }
+
+    private fun observeDestinations() {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+
+                R.id.privateChatRoomFragment -> {
+                    hideMainAppBar()
+                }
+
+                else -> {
+                    showMainAppBar()
+                }
+            }
+        }
+    }
+
+    private fun showMainAppBar() {
+        binding.toolbar.show()
+    }
+
+    private fun hideMainAppBar() {
+        binding.toolbar.gone()
     }
 
     private fun observeData() {

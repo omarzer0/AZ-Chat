@@ -16,6 +16,8 @@ class PrivateChatRoomViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val gid = stateHandler.get<String>("gid")
+    val username = stateHandler.get<String>("username") ?: ""
+    val userImage = stateHandler.get<String>("userImage") ?: ""
 
     fun getUID() = repository.getUID()
 

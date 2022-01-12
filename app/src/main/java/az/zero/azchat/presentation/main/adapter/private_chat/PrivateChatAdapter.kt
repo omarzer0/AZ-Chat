@@ -32,7 +32,7 @@ class PrivateChatAdapter :
             binding.root.setOnClickListener {
                 onStudentClickListener?.let {
                     val item = getItem(adapterPosition)
-                    it(item.group.gid!!, item.user.name!!)
+                    it(item.group.gid!!, item.user.name!!, item.user.imageUrl ?: "")
                 }
             }
         }
@@ -54,8 +54,8 @@ class PrivateChatAdapter :
     }
 
 
-    private var onStudentClickListener: ((String, String) -> Unit)? = null
-    fun setOnStudentClickListener(listener: (String, String) -> Unit) {
+    private var onStudentClickListener: ((String, String, String) -> Unit)? = null
+    fun setOnStudentClickListener(listener: (String, String, String) -> Unit) {
         onStudentClickListener = listener
     }
 

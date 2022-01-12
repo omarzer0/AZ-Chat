@@ -7,6 +7,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import az.zero.azchat.R
 import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
@@ -88,6 +89,7 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
                 }
                 LoginEvent.LoginBtnClick -> {
                     binding.progressBarPb.progress.show()
+                    hideKeyboard()
                 }
                 is LoginEvent.InvalidInputs -> {
                     toastMy(event.msg, false)

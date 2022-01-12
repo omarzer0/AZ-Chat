@@ -2,27 +2,24 @@ package az.zero.azchat.presentation.main.adapter.messages
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import az.zero.azchat.R
 import az.zero.azchat.common.convertTimeStampToDate
+import az.zero.azchat.common.extension.toggle
 import az.zero.azchat.common.logMe
 import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.databinding.ItemMessageBinding
 import az.zero.azchat.databinding.ItemMessageMirroredBinding
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.Timestamp
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class MessagesAdapter(
     private val uid: String,
     private val options: FirestoreRecyclerOptions<Message>,
-    val onMessageClick: (Message) -> Unit
+    val onMessageLongClick: (Message) -> Unit
 ) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options) {
 
+    private var lastedClickedMessage = -1
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == SENDER_VIEW) {
             val binding = ItemMessageBinding.inflate(
@@ -59,19 +56,17 @@ class MessagesAdapter(
 
         init {
             binding.root.setOnLongClickListener {
-                onMessageClick(getItem(adapterPosition))
+                onMessageLongClick(getItem(adapterPosition))
                 true
+            }
+
+            binding.root.setOnClickListener {
+                binding.sendAtTextTv.toggle()
             }
         }
 
         fun bind(currentItem: Message) {
             binding.apply {
-                cvRoot.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        cvRoot.context,
-                        R.color.receiver_messages_bg_color
-                    )
-                )
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
             }
@@ -83,21 +78,22 @@ class MessagesAdapter(
 
         init {
             binding.root.setOnLongClickListener {
-                onMessageClick(getItem(adapterPosition))
+                onMessageLongClick(getItem(adapterPosition))
                 true
             }
+
+            binding.root.setOnClickListener {
+                binding.sendAtTextTv.toggle()
+            }
+
         }
 
         fun bind(currentItem: Message) {
             binding.apply {
-                cvRoot.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        cvRoot.context,
-                        R.color.sender_messages_bg_color
-                    )
-                )
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
+
+
             }
         }
     }
@@ -110,6 +106,16 @@ class MessagesAdapter(
         }
     }
 
+
+//    private fun toggleSentAt(view: View, position: Int) {
+//        if (lastedClickedMessage == -1) {
+//            lastedClickedMessage = position
+//            return
+//        }
+//
+//        view.gone()
+//
+//    }
 
     companion object {
         const val SENDER_VIEW = 1

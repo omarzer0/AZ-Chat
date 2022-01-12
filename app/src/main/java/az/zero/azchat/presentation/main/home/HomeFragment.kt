@@ -46,7 +46,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                     navigateToAction(
                         HomeFragmentDirections.actionHomeFragmentToPrivateChatRoomFragment(
                             event.gid,
-                            event.username
+                            event.username,
+                            event.userImage
                         )
                     )
                 }
@@ -63,8 +64,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             viewModel.addUserClick()
         }
 
-        privateChatAdapter.setOnStudentClickListener { gid, username ->
-            viewModel.privateChatClick(gid, username)
+        privateChatAdapter.setOnStudentClickListener { gid, username, userImage ->
+            viewModel.privateChatClick(gid, username, userImage)
         }
     }
 

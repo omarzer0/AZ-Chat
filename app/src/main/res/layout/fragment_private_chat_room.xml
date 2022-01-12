@@ -6,18 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".presentation.main.private_chat_room.PrivateChatRoomFragment">
 
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/custom_action_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chats_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/_4sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/send_at_text_ed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBar"
         tools:itemCount="20"
-        android:layout_marginBottom="@dimen/_4sdp"
         tools:listitem="@layout/item_message_mirrored" />
 
     <include

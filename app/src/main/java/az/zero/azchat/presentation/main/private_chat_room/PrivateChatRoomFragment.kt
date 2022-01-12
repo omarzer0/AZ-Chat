@@ -3,9 +3,12 @@ package az.zero.azchat.presentation.main.private_chat_room
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.R
+import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.logMe
+import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.common.setUpSearchView
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.data.models.message.Message
@@ -44,7 +47,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         messageAdapter = MessagesAdapter(
             uid,
             options,
-            onMessageClick = {
+            onMessageLongClick = {
                 viewModel.postAction(PrivateChatActions.MessageLongClick(it))
             }
         )
@@ -52,11 +55,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         messageAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
-                try {
-                    binding.chatsRv.scrollToPosition(positionStart)
-                } catch (e: Exception) {
-                    logMe("PrivateChatRoomFragment registerAdapterDataObserver${e.localizedMessage}")
-                }
+                tryScroll(positionStart)
             }
         })
     }
@@ -66,7 +65,20 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
     }
 
     private fun handleClicks() {
+        binding.apply {
+            appBar.backBtn.setOnClickListener { findNavController().navigateUp() }
+            appBar.usernameTv.text = viewModel.username
+            setImageUsingGlide(appBar.userImageIv,viewModel.userImage)
+            appBar.userStateTv.gone()
+        }
+    }
 
+    private fun tryScroll(position: Int) {
+        try {
+            binding.chatsRv.scrollToPosition(position)
+        } catch (e: Exception) {
+            logMe("PrivateChatRoomFragment registerAdapterDataObserver${e.localizedMessage}")
+        }
     }
 
     override fun onDestroyView() {
