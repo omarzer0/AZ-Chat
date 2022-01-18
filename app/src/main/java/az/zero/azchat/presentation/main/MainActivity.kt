@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -20,6 +21,7 @@ import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseActivity
 import az.zero.azchat.databinding.ActivityMainBinding
 import com.google.android.material.imageview.ShapeableImageView
+import gun0912.tedimagepicker.extenstion.setLock
 
 class MainActivity : BaseActivity() {
 
@@ -54,10 +56,17 @@ class MainActivity : BaseActivity() {
 
                 R.id.privateChatRoomFragment -> {
                     hideMainAppBar()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
+                }
+                R.id.homeFragment -> {
+                    showMainAppBar()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
 
                 else -> {
                     showMainAppBar()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
             }
         }
@@ -83,7 +92,7 @@ class MainActivity : BaseActivity() {
                 .setPositiveButton(getString(R.string.logout)) { dialog, _ ->
                     loginOutFromActivity()
                     dialog.dismiss()
-                }.setNeutralButton(getString(R.string.stay)) { dialog, _ ->
+                }.setNegativeButton(getString(R.string.stay)) { dialog, _ ->
                     dialog.dismiss()
                 }.show()
         }
