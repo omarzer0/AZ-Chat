@@ -29,7 +29,7 @@ class UserAdapter :
 
         init {
             binding.root.setOnClickListener {
-                onStudentClickListener?.let {
+                onUserClickListener?.let {
                     it(getItem(adapterPosition))
                 }
             }
@@ -44,9 +44,9 @@ class UserAdapter :
         }
     }
 
-    private var onStudentClickListener: ((User) -> Unit)? = null
-    fun setOnStudentClickListener(listener: (User) -> Unit) {
-        onStudentClickListener = listener
+    private var onUserClickListener: ((User) -> Unit)? = null
+    fun setOnUserClickListener(listener: (User) -> Unit) {
+        onUserClickListener = listener
     }
 
 

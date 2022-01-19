@@ -3,10 +3,12 @@ package az.zero.azchat.presentation.main.private_chat_room
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.R
 import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.common.setUpSearchView
@@ -31,14 +33,44 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         initAdapter()
         handleClicks()
         setUpRVs()
-        setUpSearchView(binding.sendAtTextEd) {
-            logMe(it)
-            viewModel.postAction(PrivateChatActions.SendMessage(it))
+        observeData()
+        lifecycleScope.launchWhenStarted {
+            setUpSearchView(binding.sendAtTextEd, actionWhenSend = {
+                logMe(it)
+                viewModel.postAction(PrivateChatActions.SendMessage(it))
+            }, writing = {
+                viewModel.postAction(PrivateChatActions.Writing(it))
+            })
         }
+    }
 
+    private fun observeData() {
+        viewModel.event.observeIfNotHandled { event ->
+            when (event) {
+                PrivateChatEvents.MessageLongClicked -> {
+                }
+                is PrivateChatEvents.OtherUserState -> {
+                    binding.appBar.userStateTv.text = when (event.otherUserStatus) {
+                        UserStatus.ONLINE -> {
+                            binding.appBar.userStateTv.show()
+                            getString(R.string.online)
+                        }
+                        UserStatus.WRITING -> {
+                            binding.appBar.userStateTv.show()
+                            getString(R.string.writing)
+                        }
+                        UserStatus.OFFLINE -> {
+                            binding.appBar.userStateTv.gone()
+                            ""
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun initAdapter() {
+        binding.chatsRv.itemAnimator = null
         val uid = viewModel.getUID()
         val query = viewModel.getMessagesQuery()
         val options: FirestoreRecyclerOptions<Message> = FirestoreRecyclerOptions.Builder<Message>()
@@ -49,6 +81,9 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
             options,
             onMessageLongClick = {
                 viewModel.postAction(PrivateChatActions.MessageLongClick(it))
+            },
+            onDataChange = {
+                viewModel.postAction(PrivateChatActions.DataChanged)
             }
         )
         messageAdapter.startListening()
@@ -68,7 +103,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         binding.apply {
             appBar.backBtn.setOnClickListener { findNavController().navigateUp() }
             appBar.usernameTv.text = viewModel.username
-            setImageUsingGlide(appBar.userImageIv,viewModel.userImage)
+            setImageUsingGlide(appBar.userImageIv, viewModel.userImage)
             appBar.userStateTv.gone()
         }
     }
@@ -84,5 +119,15 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
     override fun onDestroyView() {
         super.onDestroyView()
         messageAdapter.stopListening()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.postAction(PrivateChatActions.ViewResumed)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.postAction(PrivateChatActions.ViewPaused)
     }
 }

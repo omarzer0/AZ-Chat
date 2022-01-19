@@ -16,14 +16,18 @@
             app:launchSingleTop="true" />
         <action
             android:id="@+id/action_homeFragment_to_privateChatRoomFragment"
-            app:destination="@id/privateChatRoomFragment"
-            app:launchSingleTop="true" />
+            app:destination="@id/privateChatRoomFragment" />
     </fragment>
     <fragment
         android:id="@+id/addChatFragment"
         android:name="az.zero.azchat.presentation.main.add_chat.AddChatFragment"
         android:label="@string/search_users"
-        tools:layout="@layout/fragment_add_chat" />
+        tools:layout="@layout/fragment_add_chat" >
+        <action
+            android:id="@+id/action_addChatFragment_to_privateChatRoomFragment"
+            app:destination="@id/privateChatRoomFragment"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/privateChatRoomFragment"
         android:name="az.zero.azchat.presentation.main.private_chat_room.PrivateChatRoomFragment"
@@ -38,5 +42,11 @@
         <argument
             android:name="userImage"
             app:argType="string" />
+        <argument
+            android:name="otherUserUID"
+            app:argType="string" />
+        <argument
+            android:name="isNewGroup"
+            app:argType="boolean" />
     </fragment>
 </navigation>

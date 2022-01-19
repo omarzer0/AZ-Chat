@@ -30,7 +30,6 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAddChatBinding.bind(view)
         handleClicks()
-        observeData()
         setUpRvs()
         observeViewEvents()
         setHasOptionsMenu(true)
@@ -43,6 +42,12 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
     private fun observeViewEvents() {
         viewModel.event.observeIfNotHandled { event ->
             when (event) {
+                /*
+                beware that this event called only once and not been used when rotate the screen
+                but I use {viewModel.searchUserByNameOrPhone(it)} which called again and handles
+                the rotation and configuration changes
+                 */
+                // TODO MAY_ERROR
                 is AddChatEvent.GetUsersToChatDone -> {
                     userAdapter.submitList(event.users)
                     logMe("${event.users}")
@@ -51,12 +56,23 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
         }
     }
 
-    private fun observeData() {
-
-    }
-
     private fun handleClicks() {
+        userAdapter.setOnUserClickListener {
+            viewModel.checkIfGroupExists(viewModel.getUID(), it.uid!!) { gid ->
+                val groupGID = if (gid.isEmpty()) viewModel.getGID()
+                else gid
 
+                val action =AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
+                    groupGID,
+                    it.name!!,
+                    it.imageUrl!!,
+                    it.uid!!,
+                    gid.isEmpty()
+                )
+                navigateToAction(action)
+            }
+
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

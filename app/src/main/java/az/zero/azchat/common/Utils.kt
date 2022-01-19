@@ -3,15 +3,19 @@ package az.zero.azchat.common
 import android.content.Context
 import android.util.Log
 import android.widget.ImageView
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import az.zero.azchat.R
-import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.databinding.SendEditTextBinding
 import com.bumptech.glide.Glide
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
 import com.google.firebase.Timestamp
 import es.dmoral.toasty.Toasty
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
@@ -103,9 +107,10 @@ fun readFile(context: Context, assetFileName: String): String {
 val <T> T.exhaustive: T
     get() = this
 
-fun setUpSearchView(
+suspend fun setUpSearchView(
     sendEditText: SendEditTextBinding,
-    actionWhenSend: (sendMessage: String) -> Unit
+    actionWhenSend: (sendMessage: String) -> Unit,
+    writing: ((Boolean) -> Unit)? = null
 ) {
     sendEditText.apply {
         writeMessageEd.doOnTextChanged { text, _, _, _ ->
@@ -116,17 +121,49 @@ fun setUpSearchView(
             actionWhenSend(writeMessageEd.text.toString().trim())
             writeMessageEd.setText("")
         }
+
+        writeMessageEd.addTextChangedListener {
+            val text = it?.toString()
+            if (text.isNullOrEmpty()) writing?.invoke(false)
+            else writing?.invoke(true)
+        }
     }
 }
 
 fun convertTimeStampToDate(timestamp: Timestamp): String = try {
     val language = Locale.getDefault().displayLanguage
-    val sfd = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale(language))
+    val sfd = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale(language))
     sfd.format(Date(timestamp.seconds * 1000))
 } catch (e: Exception) {
     logMe(e.localizedMessage ?: "convertTimeStampToDate unknown")
     ""
 }
+
+fun tryNow(action: () -> Unit) {
+    try {
+        action()
+    } catch (e: Exception) {
+        logMe(e.localizedMessage ?: "Unknown", "tryNow")
+    }
+}
+
+suspend fun tryAsyncNow(action: suspend () -> Unit) {
+    try {
+        action()
+    } catch (e: Exception) {
+        logMe(e.localizedMessage ?: "Unknown", "tryNow")
+    }
+}
+
+
+//inline fun <reified T> DocumentSnapshot.toValidObject(): T? {
+//    return try {
+//        this.toObject<T>()
+//    } catch (e: Exception) {
+//        null
+//    }
+//}
+
 ////
 ////    private val _status = MutableLiveData<Event<Status>>()
 ////    val status: LiveData<Event<Status>> = _status

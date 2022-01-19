@@ -2,10 +2,10 @@ package az.zero.azchat.presentation.main.adapter.messages
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.common.convertTimeStampToDate
-import az.zero.azchat.common.extension.toggle
-import az.zero.azchat.common.logMe
+import az.zero.azchat.common.extension.gone
 import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.databinding.ItemMessageBinding
 import az.zero.azchat.databinding.ItemMessageMirroredBinding
@@ -16,7 +16,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 class MessagesAdapter(
     private val uid: String,
     private val options: FirestoreRecyclerOptions<Message>,
-    val onMessageLongClick: (Message) -> Unit
+    val onMessageLongClick: (Message) -> Unit,
+    val onDataChange: () -> Unit,
 ) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options) {
 
     private var lastedClickedMessage = -1
@@ -50,6 +51,10 @@ class MessagesAdapter(
 
     }
 
+    override fun onDataChanged() {
+        super.onDataChanged()
+        onDataChange()
+    }
 
     inner class ReceiverMessagesViewHolder(private val binding: ItemMessageMirroredBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -61,7 +66,15 @@ class MessagesAdapter(
             }
 
             binding.root.setOnClickListener {
-                binding.sendAtTextTv.toggle()
+                if (lastedClickedMessage != -1 && lastedClickedMessage != adapterPosition) {
+                    getItem(lastedClickedMessage).clicked = false
+                    notifyItemChanged(lastedClickedMessage)
+                }
+
+                getItem(adapterPosition).clicked = !getItem(adapterPosition).clicked
+                lastedClickedMessage = adapterPosition
+                notifyItemChanged(adapterPosition)
+
             }
         }
 
@@ -69,6 +82,8 @@ class MessagesAdapter(
             binding.apply {
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
+                binding.sendAtTextTv.isVisible = currentItem.clicked
+                binding.constraintLayout2.gone()
             }
         }
     }
@@ -83,17 +98,26 @@ class MessagesAdapter(
             }
 
             binding.root.setOnClickListener {
-                binding.sendAtTextTv.toggle()
-            }
+                if (lastedClickedMessage != -1 && lastedClickedMessage != adapterPosition) {
+                    getItem(lastedClickedMessage).clicked = false
+                    notifyItemChanged(lastedClickedMessage)
+                }
 
+                getItem(adapterPosition).clicked = !getItem(adapterPosition).clicked
+                lastedClickedMessage = adapterPosition
+                notifyItemChanged(adapterPosition)
+
+            }
         }
 
         fun bind(currentItem: Message) {
             binding.apply {
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
+                binding.sendAtTextTv.isVisible = currentItem.clicked
 
-
+                binding.msgSeenIv.isVisible = currentItem.seen
+                binding.msgSentIv.isVisible = !currentItem.seen
             }
         }
     }
@@ -105,17 +129,6 @@ class MessagesAdapter(
             RECEIVER_VIEW
         }
     }
-
-
-//    private fun toggleSentAt(view: View, position: Int) {
-//        if (lastedClickedMessage == -1) {
-//            lastedClickedMessage = position
-//            return
-//        }
-//
-//        view.gone()
-//
-//    }
 
     companion object {
         const val SENDER_VIEW = 1

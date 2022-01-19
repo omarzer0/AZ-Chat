@@ -21,7 +21,6 @@ import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseActivity
 import az.zero.azchat.databinding.ActivityMainBinding
 import com.google.android.material.imageview.ShapeableImageView
-import gun0912.tedimagepicker.extenstion.setLock
 
 class MainActivity : BaseActivity() {
 

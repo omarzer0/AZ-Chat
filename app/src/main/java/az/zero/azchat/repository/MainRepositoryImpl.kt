@@ -15,7 +15,6 @@ import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.abs
 
 @Singleton
 class MainRepositoryImpl @Inject constructor(
@@ -26,6 +25,7 @@ class MainRepositoryImpl @Inject constructor(
     private val TAG = "tag"
     private var privateChatsListener: ListenerRegistration? = null
 
+    fun getRandomFirebaseGID() = firestore.collection(GROUPS_ID).document().id
     fun removePrivateChatsListener() {
         privateChatsListener?.remove()
     }
@@ -52,6 +52,45 @@ class MainRepositoryImpl @Inject constructor(
             logMe("getAllUsersByPhoneNumber ${it.localizedMessage}")
             onGetUsersDone(emptyList())
         }
+    }
+
+    fun checkIfGroupExists(
+        uID: String,
+        otherUserID: String,
+        onSuccess: (String) -> Unit
+    ) {
+        firestore.collection(GROUPS_ID)
+            .whereArrayContains("members", uID)
+            .get().addOnSuccessListener {
+                val group = it.find { document ->
+                    val group = document.toObject<Group>()
+                    if (group.hasNullField()) return@addOnSuccessListener
+                    group.members!!.contains(otherUserID)
+                }
+                group?.let { document ->
+                    val existGroup = document.toObject<Group>()
+                    if (existGroup.hasNullField()) return@addOnSuccessListener
+                    onSuccess(existGroup.gid!!)
+                } ?: onSuccess("")
+            }
+    }
+
+    fun addFakeUser() {
+
+        val fakeUser = User(
+            "uid1234",
+            "fakeUser",
+            "",
+            "bio1234",
+            emptyList(),
+            "+201010101010"
+        )
+        firestore.collection(USERS_ID).document("uid1234").set(fakeUser)
+            .addOnSuccessListener {
+                logMe("Add fake user success")
+            }.addOnFailureListener {
+                logMe(it.localizedMessage ?: "addUser error")
+            }
     }
 
     fun getPrivateChatsForUser(
@@ -174,7 +213,7 @@ class MainRepositoryImpl @Inject constructor(
             Timestamp(Date()),
             TEST_USER,
             "",
-            emptyMap(),
+//            emptyMap(),
             Message()
         )
         firestore.collection(GROUPS_ID)
@@ -182,26 +221,26 @@ class MainRepositoryImpl @Inject constructor(
             .set(newGroup)
     }
 
-    fun sendMessage(messageText: String, gid: String) {
-        val randomId = abs(Random().nextLong())
-        val message = Message(
-            randomId.toString(),
-            messageText,
-            Timestamp(Date()),
-            sharedPreferenceManger.uid,
-            deleted = false,
-            updated = false,
-            loved = false
-        )
-
-        logMe("repo\n$message")
-        firestore.collection(MESSAGES_ID).document(gid)
-            .collection(PRIVATE_MESSAGES_ID)
-            .document().set(message)
-
-        firestore.collection(GROUPS_ID).document(gid)
-            .update("lastSentMessage", message)
-    }
+//    fun sendMessage(messageText: String, gid: String) {
+//        val randomId = abs(Random().nextLong())
+//        val message = Message(
+//            randomId.toString(),
+//            messageText,
+//            Timestamp(Date()),
+//            sharedPreferenceManger.uid,
+//            deleted = false,
+//            updated = false,
+//            loved = false
+//        )
+//
+//        logMe("repo\n$message")
+//        firestore.collection(MESSAGES_ID).document(gid)
+//            .collection(PRIVATE_MESSAGES_ID)
+//            .document().set(message)
+//
+//        firestore.collection(GROUPS_ID).document(gid)
+//            .update("lastSentMessage", message)
+//    }
 
     fun getCollectionReference(): CollectionReference {
         return firestore.collection(GROUPS_ID)
@@ -227,21 +266,6 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun tryNow(action: () -> Unit) {
-        try {
-            action()
-        } catch (e: Exception) {
-            logMe(e.localizedMessage ?: "Unknown", "tryNow")
-        }
-    }
-
-    private suspend fun tryAsyncNow(action: suspend () -> Unit) {
-        try {
-            action()
-        } catch (e: Exception) {
-            logMe(e.localizedMessage ?: "Unknown", "tryNow")
-        }
-    }
 
 //    suspend fun getPrivates(): List<PrivateChat> {
 //        val list = mutableListOf<PrivateChat>()
@@ -305,4 +329,5 @@ class MainRepositoryImpl @Inject constructor(
 
 //9704maSB3ETKq1jF0rTtOhaUq8m2 0100
 //Uhp7yfvA8HW4HIS49sQBoe7wovQ2 0155
+//XkfoWUX1p3VWMzGzwk9khqEQ0yG2 EMU
 //F0rLNHDqXZdZz6sqIeJj

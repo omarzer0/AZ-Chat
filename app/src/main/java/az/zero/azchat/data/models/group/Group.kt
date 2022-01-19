@@ -13,7 +13,7 @@ data class Group(
     var modifiedAt: Timestamp? = null,
     var createdBy: String? = null,
     var image: String? = null,
-    var imageMap: Map<String, String>? = null,
+//    var imageMap: Map<String, String>? = null,
     var lastSentMessage: Message? = null,
     var user1: DocumentReference? = null,
     var user2: DocumentReference? = null
@@ -28,7 +28,7 @@ data class Group(
             modifiedAt,
             createdBy,
             image,
-            imageMap,
+//            imageMap,
             user1,
             user2
         )

@@ -40,6 +40,12 @@ class AddChatViewModel @Inject constructor(
             })
     }
 
+    fun getGID() = repositoryImpl.getRandomFirebaseGID()
+    fun getUID() = repositoryImpl.getUID()
+
+    fun checkIfGroupExists(uID: String, otherUID: String, onSuccess: (String) -> Unit) {
+        repositoryImpl.checkIfGroupExists(uID, otherUID, onSuccess)
+    }
 
     fun searchUserByNameOrPhone(query: String) {
         _users.value?.let { users ->

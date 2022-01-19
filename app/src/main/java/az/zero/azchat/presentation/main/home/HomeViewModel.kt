@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import az.zero.azchat.common.event.Event
-import az.zero.azchat.common.logMe
 import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.repository.MainRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,17 +47,8 @@ class HomeViewModel @Inject constructor(
         _event.postValue(Event(HomeFragmentEvent.AddChat))
     }
 
-    fun privateChatClick(gid: String, username: String, userImage: String) {
-        _event.postValue(Event(HomeFragmentEvent.PrivateChatsClick(gid, username, userImage)))
-    }
-
-    init {
-//        getPrivateChatsForUser()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        logMe("cleared")
+    fun privateChatClick(gid: String, username: String, userImage: String,otherUserUID:String) {
+        _event.postValue(Event(HomeFragmentEvent.PrivateChatsClick(gid, username, userImage,otherUserUID)))
     }
 
     fun viewDestroyed() {

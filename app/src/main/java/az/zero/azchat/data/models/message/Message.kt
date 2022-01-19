@@ -13,7 +13,10 @@ data class Message(
     var deleted: Boolean? = null,
     var updated: Boolean? = null,
     var loved: Boolean? = null,
+    var seen: Boolean = false
 ) : Parcelable {
     fun hasNullField() =
         listOf(id, messageText, sentAt, sentBy, deleted, updated, loved).any { it == null }
+
+    var clicked: Boolean = false
 }

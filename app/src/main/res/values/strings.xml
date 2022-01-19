@@ -21,4 +21,6 @@
     <string name="sure_want_to_logout">Are you sure you want to logout?</string>
     <string name="logout">Logout</string>
     <string name="stay">Stay</string>
+    <string name="online">Online</string>
+    <string name="writing">writing...</string>
 </resources>
