@@ -38,11 +38,11 @@ class LoginViewModel @Inject constructor(
 //                Event(State.Success())
             },
             onVerificationSuccess = {
-                logMe("success")
+                logMe("login success")
                 _event.postValue(Event(LoginEvent.VerificationSuccess(it)))
             },
             onVerificationFailed = {
-                logMe("fail")
+                logMe("login fail")
                 _event.postValue(Event(LoginEvent.VerificationFailed(it)))
             }, onVerificationTimeOut = {
                 _event.postValue(Event(LoginEvent.VerificationTimeOut))

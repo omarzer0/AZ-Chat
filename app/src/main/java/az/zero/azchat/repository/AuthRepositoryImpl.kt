@@ -4,10 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.ContentResolver
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media.getBitmap
 import android.util.Log
 import az.zero.azchat.common.*
@@ -110,8 +107,19 @@ class AuthRepositoryImpl @Inject constructor(
             activity,
             credential,
             onVerificationSuccess,
-            onVerificationFailed
+            onVerificationFailed,
         )
+    }
+
+    private var onAutoVerifyDone: AutoVerify? = null
+
+    interface AutoVerify {
+        fun onAutoVerifyDone(uid: String)
+    }
+
+    fun registerAutoVerify(autoVerify: AutoVerify) {
+        onAutoVerifyDone = autoVerify
+        logMe("autoVerify added init")
     }
 
     private fun signInWithPhoneAuthCredential(
@@ -125,8 +133,10 @@ class AuthRepositoryImpl @Inject constructor(
                 if (task.isSuccessful) {
                     Log.e(TAG, "signInWithCredential: Success")
                     val user = task.result?.user
+
                     Log.e(TAG, "signInWithPhoneAuthCredential: ${user?.uid}")
                     user?.let {
+                        onAutoVerifyDone?.onAutoVerifyDone(it.uid) ?: logMe("nulllllllllllllllllll")
                         onVerificationSuccess(it.uid)
                         sharedPreferenceManger.uid = it.uid
                     }
@@ -216,7 +226,7 @@ class AuthRepositoryImpl @Inject constructor(
             bmp.compress(Bitmap.CompressFormat.JPEG, 25, byteStreamArray)
             val data: ByteArray = byteStreamArray.toByteArray()
             storageRef.putBytes(data)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             onUploadImageFailed("Failed to upload the image Please try again!")
             return
         }
