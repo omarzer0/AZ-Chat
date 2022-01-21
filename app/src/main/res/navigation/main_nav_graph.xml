@@ -21,8 +21,7 @@
     <fragment
         android:id="@+id/addChatFragment"
         android:name="az.zero.azchat.presentation.main.add_chat.AddChatFragment"
-        android:label="@string/search_users"
-        tools:layout="@layout/fragment_add_chat" >
+        tools:layout="@layout/fragment_add_chat">
         <action
             android:id="@+id/action_addChatFragment_to_privateChatRoomFragment"
             app:destination="@id/privateChatRoomFragment"

@@ -12,9 +12,7 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
 import com.google.firebase.Timestamp
 import es.dmoral.toasty.Toasty
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -139,7 +137,10 @@ fun convertTimeStampToDate(timestamp: Timestamp): String = try {
     ""
 }
 
-fun tryNow(action: () -> Unit) {
+fun tryNow(
+    error: ((Exception) -> Unit)? = null,
+    action: () -> Unit
+) {
     try {
         action()
     } catch (e: Exception) {
@@ -147,11 +148,21 @@ fun tryNow(action: () -> Unit) {
     }
 }
 
-suspend fun tryAsyncNow(action: suspend () -> Unit) {
-    try {
-        action()
-    } catch (e: Exception) {
-        logMe(e.localizedMessage ?: "Unknown", "tryNow")
+fun tryAsyncNow(
+    scope: CoroutineScope,
+    error: (suspend (Exception) -> Unit)? = null,
+    finally: (() -> Unit)? = null,
+    action: suspend () -> Unit
+) {
+    scope.launch {
+        try {
+            action()
+        } catch (e: Exception) {
+            error?.invoke(e)
+            logMe(e.localizedMessage ?: "Unknown", "tryAsyncNow")
+        } finally {
+            finally?.invoke()
+        }
     }
 }
 

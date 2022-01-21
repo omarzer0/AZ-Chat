@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.logMe
 import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.databinding.ItemMessageBinding
 import az.zero.azchat.databinding.ItemMessageMirroredBinding

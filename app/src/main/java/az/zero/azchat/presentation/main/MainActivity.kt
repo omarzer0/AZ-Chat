@@ -89,8 +89,9 @@ class MainActivity : BaseActivity() {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.sure_want_to_logout))
                 .setPositiveButton(getString(R.string.logout)) { dialog, _ ->
-                    loginOutFromActivity()
+                    viewModel.logOut()
                     dialog.dismiss()
+                    loginOutFromActivity()
                 }.setNegativeButton(getString(R.string.stay)) { dialog, _ ->
                     dialog.dismiss()
                 }.show()

@@ -15,7 +15,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.firestore.ktx.toObjects
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
@@ -163,6 +162,7 @@ class PrivateRoomUseCase @Inject constructor(
                     return@addSnapshotListener
                 }
                 if (value == null) return@addSnapshotListener
+
                 val status = value.toObject<Status>() ?: return@addSnapshotListener
                 val userStatus = when {
                     status.writing!! -> UserStatus.WRITING
@@ -190,15 +190,17 @@ class PrivateRoomUseCase @Inject constructor(
     }
 
     fun setAllMessagesAsSeen(gid: String) {
-        logMe("setAllMessagesAsSeen called")
+        val uid = sharedPreferenceManger.uid
         firestore.collection(MESSAGES_ID).document(gid)
             .collection(PRIVATE_MESSAGES_ID)
-            .whereNotEqualTo("sentBy", sharedPreferenceManger.uid)
+            .whereEqualTo("seen", false)
             .get().addOnSuccessListener { querySnapShot ->
                 querySnapShot.documents.forEach {
-                    it.reference.update("seen", true)
+                    val message = it.toObject<Message>() ?: return@forEach
+                    if (message.sentBy != uid) {
+                        it.reference.update("seen", true)
+                    }
                 }
-                logMe("setAllMessagesAsSeen: ${querySnapShot.size()}\n\n ${querySnapShot.toObjects<Message>()}\n\n")
             }
     }
 

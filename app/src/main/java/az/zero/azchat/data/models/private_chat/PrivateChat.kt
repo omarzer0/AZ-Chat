@@ -8,5 +8,6 @@ import kotlin.math.abs
 data class PrivateChat(
     val group: Group,
     val user: User,
-    val id: Long = abs(Random().nextLong())
+//    val id: Long = abs(Random().nextLong())
+    val id: String = group.gid!!
 )

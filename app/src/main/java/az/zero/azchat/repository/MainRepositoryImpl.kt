@@ -6,6 +6,7 @@ import az.zero.azchat.data.models.group.Group
 import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.data.models.user.User
+import az.zero.azchat.di.remote.ApplicationScope
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
@@ -21,6 +22,7 @@ class MainRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val storage: FirebaseStorage,
     private val sharedPreferenceManger: SharedPreferenceManger,
+    @ApplicationScope private val applicationScope: CoroutineScope
 ) {
     private val TAG = "tag"
     private var privateChatsListener: ListenerRegistration? = null
@@ -93,50 +95,52 @@ class MainRepositoryImpl @Inject constructor(
             }
     }
 
-    fun getPrivateChatsForUser(
-        onSuccess: (PrivateChat) -> Unit
-    ) {
-        val uid = sharedPreferenceManger.uid
-        privateChatsListener?.remove()
-        privateChatsListener = firestore.collection(GROUPS_ID)
-            .whereArrayContains("members", uid).addSnapshotListener { value, error ->
-                if (error != null) {
-                    logMe("listenForGroupChanges $error")
-                    return@addSnapshotListener
-                }
-
-                logMe("document from cache ${value?.metadata?.isFromCache} ${value?.size()}")
-                value?.forEach { document ->
-                    val group = document.toObject<Group>()
-                    if (group.ofTypeGroup == true) return@forEach
-                    if (group.hasNullField()) return@forEach
-                    val otherUserId =
-                        if (!group.user1!!.path.contains(uid)) group.user1!!.path
-                        else group.user2!!.path
-                    if (document.metadata.isFromCache) {
-                        getUser(group, otherUserId, onSuccess, Source.CACHE)
-                    } else {
-                        getUser(group, otherUserId, onSuccess, Source.SERVER)
-                    }
-                }
-//                firestore.enableNetwork()
-            }
-    }
-
-    private fun getUser(
-        group: Group, uid: String,
-        onSuccess: (PrivateChat) -> Unit,
-        from: Source
-    ) {
-        firestore.document(uid).get(from).addOnSuccessListener {
-            if (it.exists()) {
-                val user = it.toObject<User>() ?: return@addOnSuccessListener
-                onSuccess(PrivateChat(group, user))
-            }
-
-            logMe("user from cache ${it.metadata.isFromCache}")
-        }
-    }
+//    fun getPrivateChatsForUser(
+//        onSuccess: (PrivateChat) -> Unit
+//    ) {
+//        val uid = sharedPreferenceManger.uid
+//        privateChatsListener?.remove()
+//        privateChatsListener = firestore.collection(GROUPS_ID)
+//            .whereArrayContains("members", uid).addSnapshotListener { value, error ->
+//                if (error != null) {
+//                    logMe("listenForGroupChanges $error")
+//                    return@addSnapshotListener
+//                }
+//
+//                logMe("document from cache ${value?.metadata?.isFromCache} ${value?.size()}")
+//                value?.forEach { document ->
+//                    val group = document.toObject<Group>()
+//                    if (group.ofTypeGroup == true) return@forEach
+//                    if (group.hasNullField()) return@forEach
+//                    val otherUserId =
+//                        if (!group.user1!!.path.contains(uid)) group.user1!!.path
+//                        else group.user2!!.path
+//                    if (document.metadata.isFromCache) {
+//                        logMe("data from cache","tryAsyncNow")
+//                        getUser(group, otherUserId, onSuccess, Source.CACHE)
+//                    } else {
+//                        logMe("data from server","tryAsyncNow")
+//                        getUser(group, otherUserId, onSuccess, Source.SERVER)
+//                    }
+//                }
+////                firestore.enableNetwork()
+//            }
+//    }
+//
+//    private fun getUser(
+//        group: Group, uid: String,
+//        onSuccess: (PrivateChat) -> Unit,
+//        from: Source
+//    ) {
+//        firestore.document(uid).get(from).addOnSuccessListener {
+//            if (it.exists()) {
+//                val user = it.toObject<User>() ?: return@addOnSuccessListener
+//                onSuccess(PrivateChat(group, user))
+//            }
+//
+//            logMe("user from cache ")
+//        }
+//    }
 
     private fun getImageByUID(uid: String, onSuccess: (String) -> Unit) {
         val imageRef = storage.reference.child("profileImages/$uid.jpg")
@@ -248,7 +252,7 @@ class MainRepositoryImpl @Inject constructor(
 
     suspend fun getUserInfo(onSuccess: (User) -> Unit) {
         val uid = sharedPreferenceManger.uid
-        tryAsyncNow {
+        tryAsyncNow(applicationScope) {
             val user = firestore.collection(USERS_ID)
                 .document(uid).get().await().toObject<User>() ?: return@tryAsyncNow
             if (user.hasNullField()) return@tryAsyncNow
@@ -284,6 +288,15 @@ class MainRepositoryImpl @Inject constructor(
 //    }
 
 
+//    firestore.document(uid).get(from).addOnSuccessListener {
+//        if (it.exists()) {
+//            val user = it.toObject<User>() ?: return@addOnSuccessListener
+//            onSuccess(PrivateChat(group, user))
+//        }
+//
+//        logMe("user from cache ${it.metadata.isFromCache}")
+//    }
+//
     //    @ExperimentalCoroutinesApi
 //    fun getPrivateChatsForUser2(): Flow<List<PrivateChat>> {
 //        return callbackFlow {

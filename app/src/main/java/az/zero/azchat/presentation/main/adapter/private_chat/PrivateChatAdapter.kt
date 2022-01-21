@@ -50,7 +50,7 @@ class PrivateChatAdapter :
     override fun submitList(list: MutableList<PrivateChat>?) {
         super.submitList(list)
         // Forced to notify as the recycler view updates silently when the same list ref is passed :(
-        notifyDataSetChanged()
+//        notifyDataSetChanged()
     }
 
 
@@ -61,7 +61,7 @@ class PrivateChatAdapter :
 
     class DiffCallback : DiffUtil.ItemCallback<PrivateChat>() {
         override fun areItemsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean {
-            return oldItem.group.gid == newItem.group.gid
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean {
