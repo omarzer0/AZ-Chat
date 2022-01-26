@@ -13,8 +13,11 @@
         android:id="@+id/mirrored_cl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
         android:background="@drawable/four_corner_mirrored_background"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -33,6 +36,23 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <TextView
+        android:id="@+id/updated_text_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:ellipsize="end"
+        android:text="@string/updated"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="@dimen/_8ssp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintEnd_toStartOf="@+id/constraintLayout2"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+        tools:visibility="visible" />
+
     <TextView
         android:id="@+id/send_at_text_tv"
         android:layout_width="wrap_content"
@@ -43,10 +63,11 @@
         android:textSize="@dimen/_8ssp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/constraintLayout2"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintEnd_toStartOf="@+id/updated_text_tv"
         app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
-        tools:text="12:00" />
+        tools:text="12:00"
+        tools:visibility="visible" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,6 +75,7 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginEnd="@dimen/_2sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mirrored_cl">
 
@@ -78,5 +100,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/loved_img_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_love"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/mirrored_cl"
+        app:layout_constraintEnd_toStartOf="@+id/mirrored_cl"
+        app:layout_constraintStart_toStartOf="@+id/mirrored_cl"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

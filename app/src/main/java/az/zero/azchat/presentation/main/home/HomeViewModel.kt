@@ -39,18 +39,6 @@ class HomeViewModel @Inject constructor(
             .addSnapshotListener { value, error ->
                 localList = mutableListOf()
                 if (error != null || value == null) return@addSnapshotListener
-
-//                value.documentChanges.forEach {
-//                    logMe("${it.document.metadata.isFromCache}", "documentChanges")
-//                }
-                val groupsFromServer = value.documentChanges.filter {
-                    !it.document.metadata.isFromCache
-                }.map {
-                    it.document.toObject<Group>()
-                }
-
-
-                logMe("$groupsFromServer", "documentChanges")
                 tryAsyncNow(viewModelScope, action = {
                     value.forEach { document ->
                         val group = document.toObject<Group>()
@@ -59,16 +47,13 @@ class HomeViewModel @Inject constructor(
                         val otherUserID = if (!group.user1!!.path.contains(uid)) group.user1!!.path
                         else group.user2!!.path
 
-                        val fromServer = groupsFromServer.any { it.gid == group.gid }
-                        val getFrom = if (fromServer) {
-                            logMe("server ${group.gid}", "tryAsyncNow")
-                            Source.SERVER
-                        } else {
-                            logMe("cache ${group.gid}", "tryAsyncNow")
-                            Source.CACHE
-                        }
-                        val user = firestore.document(otherUserID).get(getFrom)
-                            .await().toObject<User>() ?: return@forEach
+                        // TODO 2: The user is not gonna update in the home screen
+                        //  as we are getting it form the cache first
+
+                        val user = firestore.document(otherUserID).get(Source.CACHE)
+                            .await().toObject<User>() ?: firestore.document(otherUserID)
+                            .get(Source.SERVER).await().toObject<User>() ?: return@forEach
+
                         if (user.hasNullField()) return@forEach
                         val privateChat = PrivateChat(group, user)
                         localList.add(privateChat)
@@ -86,14 +71,7 @@ class HomeViewModel @Inject constructor(
 
     fun privateChatClick(gid: String, username: String, userImage: String, otherUserUID: String) {
         _event.postValue(
-            Event(
-                HomeFragmentEvent.PrivateChatsClick(
-                    gid,
-                    username,
-                    userImage,
-                    otherUserUID
-                )
-            )
+            Event(HomeFragmentEvent.PrivateChatsClick(gid, username, userImage, otherUserUID))
         )
     }
 

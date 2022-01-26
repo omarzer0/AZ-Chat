@@ -6,7 +6,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
-import az.zero.azchat.common.logMe
 import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.databinding.ItemMessageBinding
 import az.zero.azchat.databinding.ItemMessageMirroredBinding
@@ -81,6 +80,8 @@ class MessagesAdapter(
 
         fun bind(currentItem: Message) {
             binding.apply {
+                if (currentItem.deleted!!) return
+                binding.lovedImgIv.isVisible = currentItem.loved!!
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 binding.sendAtTextTv.isVisible = currentItem.clicked
@@ -113,6 +114,8 @@ class MessagesAdapter(
 
         fun bind(currentItem: Message) {
             binding.apply {
+                if (currentItem.deleted!!) return
+                binding.lovedImgIv.isVisible = currentItem.loved!!
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 binding.sendAtTextTv.isVisible = currentItem.clicked

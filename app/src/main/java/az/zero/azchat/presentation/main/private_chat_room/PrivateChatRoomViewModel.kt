@@ -1,9 +1,6 @@
 package az.zero.azchat.presentation.main.private_chat_room
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import az.zero.azchat.common.*
 import az.zero.azchat.common.event.Event
 import az.zero.azchat.data.models.group.Group
@@ -24,7 +21,8 @@ import kotlin.math.abs
 class PrivateChatRoomViewModel @Inject constructor(
     private val repository: MainRepositoryImpl,
     private val stateHandler: SavedStateHandle,
-    private val privateRoomUseCase: PrivateRoomUseCase
+    private val privateRoomUseCase: PrivateRoomUseCase,
+    private val firestore: FirebaseFirestore,
 ) : ViewModel() {
 
     private val gid = stateHandler.get<String>("gid") ?: ""
@@ -48,6 +46,18 @@ class PrivateChatRoomViewModel @Inject constructor(
         when (action) {
             is PrivateChatActions.MessageLongClick -> {
                 logMe("Tabbed ${action.message.messageText}")
+                tryAsyncNow(viewModelScope) {
+                    firestore.collection(MESSAGES_ID).document(gid)
+                        .collection(PRIVATE_MESSAGES_ID)
+                        .document(action.message.id!!)
+                        .update("loved", !action.message.loved!!).addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                logMe("update love done!")
+                            } else {
+                                logMe("update love failed! ${it.exception}")
+                            }
+                        }
+                }
             }
             is PrivateChatActions.SendMessage -> {
                 if (newGroupChat) {
@@ -125,9 +135,9 @@ class PrivateRoomUseCase @Inject constructor(
 ) {
     private var listener: ListenerRegistration? = null
     fun sendMessage(messageText: String, gid: String) {
-        val randomId = abs(Random().nextLong())
+        val randomId = firestore.collection(GROUPS_ID).document().id
         val message = Message(
-            randomId.toString(),
+            randomId,
             messageText,
             Timestamp(Date()),
             sharedPreferenceManger.uid,
@@ -140,7 +150,7 @@ class PrivateRoomUseCase @Inject constructor(
         logMe("repo\n$message")
         firestore.collection(MESSAGES_ID).document(gid)
             .collection(PRIVATE_MESSAGES_ID)
-            .document().set(message)
+            .document(randomId).set(message)
 
         firestore.collection(GROUPS_ID).document(gid)
             .update("lastSentMessage", message)
@@ -164,6 +174,10 @@ class PrivateRoomUseCase @Inject constructor(
                 if (value == null) return@addSnapshotListener
 
                 val status = value.toObject<Status>() ?: return@addSnapshotListener
+                if (value.metadata.isFromCache) {
+                    onSuccess(UserStatus.OFFLINE)
+                    return@addSnapshotListener
+                }
                 val userStatus = when {
                     status.writing!! -> UserStatus.WRITING
                     status.online!! -> UserStatus.ONLINE
