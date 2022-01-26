@@ -3,7 +3,6 @@ package az.zero.azchat.presentation.main.private_chat_room
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.R
@@ -34,14 +33,12 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         handleClicks()
         setUpRVs()
         observeData()
-        lifecycleScope.launchWhenStarted {
-            setUpSearchView(binding.sendAtTextEd, actionWhenSend = {
-                logMe(it)
-                viewModel.postAction(PrivateChatActions.SendMessage(it))
-            }, writing = {
-                viewModel.postAction(PrivateChatActions.Writing(it))
-            })
-        }
+        setUpSearchView(binding.sendAtTextEd, actionWhenSend = {
+            logMe(it)
+            viewModel.postAction(PrivateChatActions.SendMessage(it))
+        }, writing = {
+            viewModel.postAction(PrivateChatActions.Writing(it))
+        })
     }
 
     private fun observeData() {
@@ -97,6 +94,9 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
 
     private fun setUpRVs() {
         binding.chatsRv.adapter = messageAdapter
+        binding.chatsRv.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+            if (bottom < oldBottom) binding.chatsRv.smoothScrollToPosition(bottom)
+        }
     }
 
     private fun handleClicks() {

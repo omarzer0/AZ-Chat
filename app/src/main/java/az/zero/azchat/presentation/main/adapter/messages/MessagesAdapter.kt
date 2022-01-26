@@ -2,10 +2,14 @@ package az.zero.azchat.presentation.main.adapter.messages
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.R
 import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.databinding.ItemMessageBinding
 import az.zero.azchat.databinding.ItemMessageMirroredBinding
@@ -81,11 +85,23 @@ class MessagesAdapter(
         fun bind(currentItem: Message) {
             binding.apply {
                 if (currentItem.deleted!!) return
-                binding.lovedImgIv.isVisible = currentItem.loved!!
+                lovedImgIv.isVisible = currentItem.loved!!
+
+                if (currentItem.imageUrl != null && currentItem.imageUrl != "") {
+                    setImageUsingGlide(messageImageIv, currentItem.imageUrl)
+                    mirroredCl.background =
+                        getDrawable(mirroredCl.context, R.drawable.four_corner_mirrored_background)
+                    messageImageContainerCv.show()
+                } else {
+                    messageImageContainerCv.gone()
+                    mirroredCl.background =
+                        getDrawable(mirroredCl.context, R.drawable.three_corner_mirrored_background)
+                }
+
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
-                binding.sendAtTextTv.isVisible = currentItem.clicked
-                binding.constraintLayout2.gone()
+                sendAtTextTv.isVisible = currentItem.clicked
+                constraintLayout2.gone()
             }
         }
     }
@@ -116,10 +132,21 @@ class MessagesAdapter(
             binding.apply {
                 if (currentItem.deleted!!) return
                 binding.lovedImgIv.isVisible = currentItem.loved!!
+
+                if (currentItem.imageUrl != null && currentItem.imageUrl != "") {
+                    setImageUsingGlide(messageImageIv, currentItem.imageUrl)
+                    normalCl.background =
+                        getDrawable(normalCl.context, R.drawable.four_corner_normal_background)
+                    messageImageContainerCv.show()
+                } else {
+                    messageImageContainerCv.gone()
+                    normalCl.background =
+                        getDrawable(normalCl.context, R.drawable.three_corner_normal_background)
+                }
+
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 binding.sendAtTextTv.isVisible = currentItem.clicked
-
                 binding.msgSeenIv.isVisible = currentItem.seen
                 binding.msgSentIv.isVisible = !currentItem.seen
             }

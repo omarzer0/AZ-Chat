@@ -2,6 +2,10 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
     <solid android:color="@color/receiver_messages_bg_color" />
-    <corners android:radius="@dimen/_12sdp" />
+    <corners
+        android:bottomLeftRadius="@dimen/_12sdp"
+        android:bottomRightRadius="@dimen/_12sdp"
+        android:topLeftRadius="@dimen/_12sdp"
+        />
 
 </shape>

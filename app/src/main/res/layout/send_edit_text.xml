@@ -18,7 +18,7 @@
         android:paddingTop="@dimen/_12sdp"
         android:paddingEnd="@dimen/_6sdp"
         android:paddingBottom="@dimen/_12sdp"
-        android:singleLine="true"
+        android:singleLine="false"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_iv"

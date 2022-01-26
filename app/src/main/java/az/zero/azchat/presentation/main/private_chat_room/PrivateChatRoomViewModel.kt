@@ -70,6 +70,7 @@ class PrivateChatRoomViewModel @Inject constructor(
                 }
             }
             PrivateChatActions.ViewPaused -> {
+                logMe("ViewPaused")
                 privateRoomUseCase.updateCurrentUserStatus(
                     gid,
                     UserStatus.OFFLINE
@@ -78,6 +79,7 @@ class PrivateChatRoomViewModel @Inject constructor(
                 privateRoomUseCase.clearOtherUserStatusListener()
             }
             PrivateChatActions.ViewResumed -> {
+                logMe("ViewResumed")
                 privateRoomUseCase.updateCurrentUserStatus(
                     gid,
                     UserStatus.ONLINE
@@ -174,10 +176,10 @@ class PrivateRoomUseCase @Inject constructor(
                 if (value == null) return@addSnapshotListener
 
                 val status = value.toObject<Status>() ?: return@addSnapshotListener
-                if (value.metadata.isFromCache) {
-                    onSuccess(UserStatus.OFFLINE)
-                    return@addSnapshotListener
-                }
+//                if (value.metadata.isFromCache) {
+//                    onSuccess(UserStatus.OFFLINE)
+//                    return@addSnapshotListener
+//                }
                 val userStatus = when {
                     status.writing!! -> UserStatus.WRITING
                     status.online!! -> UserStatus.ONLINE

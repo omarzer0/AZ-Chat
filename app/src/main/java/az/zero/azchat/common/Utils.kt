@@ -105,10 +105,11 @@ fun readFile(context: Context, assetFileName: String): String {
 val <T> T.exhaustive: T
     get() = this
 
-suspend fun setUpSearchView(
+fun setUpSearchView(
     sendEditText: SendEditTextBinding,
     actionWhenSend: (sendMessage: String) -> Unit,
-    writing: ((Boolean) -> Unit)? = null
+    writing: ((Boolean) -> Unit)? = null,
+    actionWhenClick: (() -> Unit)? = null
 ) {
     sendEditText.apply {
         writeMessageEd.doOnTextChanged { text, _, _, _ ->
@@ -124,6 +125,9 @@ suspend fun setUpSearchView(
             val text = it?.toString()
             if (text.isNullOrEmpty()) writing?.invoke(false)
             else writing?.invoke(true)
+        }
+        writeMessageEd.setOnClickListener {
+            actionWhenClick?.invoke()
         }
     }
 }
