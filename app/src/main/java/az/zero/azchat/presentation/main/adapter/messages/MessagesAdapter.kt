@@ -86,8 +86,9 @@ class MessagesAdapter(
             binding.apply {
                 if (currentItem.deleted!!) return
                 lovedImgIv.isVisible = currentItem.loved!!
+                binding.messageTextTv.isVisible = currentItem.messageText!!.isNotEmpty()
 
-                if (currentItem.imageUrl != null && currentItem.imageUrl != "") {
+                if (currentItem.imageUrl != "") {
                     setImageUsingGlide(messageImageIv, currentItem.imageUrl)
                     mirroredCl.background =
                         getDrawable(mirroredCl.context, R.drawable.four_corner_mirrored_background)
@@ -131,9 +132,10 @@ class MessagesAdapter(
         fun bind(currentItem: Message) {
             binding.apply {
                 if (currentItem.deleted!!) return
-                binding.lovedImgIv.isVisible = currentItem.loved!!
+                lovedImgIv.isVisible = currentItem.loved!!
+                binding.messageTextTv.isVisible = currentItem.messageText!!.isNotEmpty()
 
-                if (currentItem.imageUrl != null && currentItem.imageUrl != "") {
+                if (currentItem.imageUrl != "") {
                     setImageUsingGlide(messageImageIv, currentItem.imageUrl)
                     normalCl.background =
                         getDrawable(normalCl.context, R.drawable.four_corner_normal_background)
@@ -146,9 +148,9 @@ class MessagesAdapter(
 
                 messageTextTv.text = currentItem.messageText
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
-                binding.sendAtTextTv.isVisible = currentItem.clicked
-                binding.msgSeenIv.isVisible = currentItem.seen
-                binding.msgSentIv.isVisible = !currentItem.seen
+                sendAtTextTv.isVisible = currentItem.clicked
+                msgSeenIv.isVisible = currentItem.seen
+                msgSentIv.isVisible = !currentItem.seen
             }
         }
     }

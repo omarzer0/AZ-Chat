@@ -1,5 +1,7 @@
 package az.zero.azchat.presentation.main.private_chat_room
 
+import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.*
 import az.zero.azchat.common.*
 import az.zero.azchat.common.event.Event
@@ -12,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
@@ -30,6 +33,9 @@ class PrivateChatRoomViewModel @Inject constructor(
     val userImage = stateHandler.get<String>("userImage") ?: ""
     private val otherUserUID = stateHandler.get<String>("otherUserUID") ?: ""
     private var newGroupChat = stateHandler.get<Boolean>("isNewGroup") ?: false
+
+    private val _messageImage = MutableLiveData<Uri?>()
+    val messageImage: LiveData<Uri?> = _messageImage
 
     private val _event = MutableLiveData<Event<PrivateChatEvents>>()
     val event: LiveData<Event<PrivateChatEvents>> = _event
@@ -60,13 +66,23 @@ class PrivateChatRoomViewModel @Inject constructor(
                 }
             }
             is PrivateChatActions.SendMessage -> {
+                if (action.messageText.isEmpty() && messageImage.value == null) return
+
                 if (newGroupChat) {
-                    privateRoomUseCase.addGroup(gid, otherUserUID, action.messageText,
+                    privateRoomUseCase.addGroup(
+                        gid,
+                        otherUserUID,
+                        action.messageText,
+                        messageImage.value,
                         onSuccess = { newGroupChat = it }
                     )
 
                 } else {
-                    privateRoomUseCase.sendMessage(action.messageText, gid)
+                    privateRoomUseCase.checkForImageAndSend(
+                        action.messageText,
+                        messageImage.value,
+                        gid
+                    )
                 }
             }
             PrivateChatActions.ViewPaused -> {
@@ -106,9 +122,9 @@ class PrivateChatRoomViewModel @Inject constructor(
         }
     }
 
-//    init {
-//        privateRoomUseCase.setAllMessagesAsSeen(gid)
-//    }
+    fun onMessageImageSelected(uri: Uri?) {
+        _messageImage.value = uri
+    }
 
 }
 
@@ -126,7 +142,6 @@ sealed class PrivateChatActions {
 }
 
 sealed class PrivateChatEvents {
-    object MessageLongClicked : PrivateChatEvents()
     data class OtherUserState(val otherUserStatus: UserStatus) : PrivateChatEvents()
 }
 
@@ -134,9 +149,32 @@ sealed class PrivateChatEvents {
 class PrivateRoomUseCase @Inject constructor(
     private val sharedPreferenceManger: SharedPreferenceManger,
     private val firestore: FirebaseFirestore,
+    private val application: Application,
+    private val storage: FirebaseStorage
 ) {
     private var listener: ListenerRegistration? = null
-    fun sendMessage(messageText: String, gid: String) {
+    fun checkForImageAndSend(messageText: String, imageUri: Uri?, gid: String) {
+        val realPath = imageUri?.let { RealPathUtil.getRealPath(application, it) } ?: ""
+        if (realPath.isNotEmpty()) {
+            val userId = sharedPreferenceManger.uid
+            val timeInMill = System.currentTimeMillis()
+            uploadImageByUserId(
+                application.contentResolver,
+                realPath,
+                storage.reference.child("profileImages/$userId/$timeInMill.jpg"),
+                onUploadImageSuccess = {
+                    sendMessage(messageText, it.toString(), gid)
+                },
+                onUploadImageFailed = {
+                    logMe("Failed to upload! checkForImageAndSend")
+                })
+        } else {
+            sendMessage(messageText, "", gid)
+        }
+
+    }
+
+    private fun sendMessage(messageText: String, imageUri: String, gid: String) {
         val randomId = firestore.collection(GROUPS_ID).document().id
         val message = Message(
             randomId,
@@ -146,7 +184,8 @@ class PrivateRoomUseCase @Inject constructor(
             deleted = false,
             updated = false,
             loved = false,
-            seen = false
+            seen = false,
+            imageUrl = imageUri
         )
 
         logMe("repo\n$message")
@@ -176,10 +215,6 @@ class PrivateRoomUseCase @Inject constructor(
                 if (value == null) return@addSnapshotListener
 
                 val status = value.toObject<Status>() ?: return@addSnapshotListener
-//                if (value.metadata.isFromCache) {
-//                    onSuccess(UserStatus.OFFLINE)
-//                    return@addSnapshotListener
-//                }
                 val userStatus = when {
                     status.writing!! -> UserStatus.WRITING
                     status.online!! -> UserStatus.ONLINE
@@ -224,6 +259,7 @@ class PrivateRoomUseCase @Inject constructor(
         gid: String,
         otherUserID: String,
         messageText: String,
+        messageImage: Uri?,
         onSuccess: (Boolean) -> Unit
     ) {
         val uID = sharedPreferenceManger.uid
@@ -265,7 +301,7 @@ class PrivateRoomUseCase @Inject constructor(
                 onSuccess(true)
             }
             logMe("add check")
-            sendMessage(messageText, gid)
+            checkForImageAndSend(messageText, messageImage, gid)
         })
 
 

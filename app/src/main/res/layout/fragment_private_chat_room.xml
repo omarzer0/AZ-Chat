@@ -28,6 +28,31 @@
         tools:itemCount="20"
         tools:listitem="@layout/item_message_mirrored" />
 
+    <FrameLayout
+        android:id="@+id/send_message_container_fl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/chats_rv"
+        app:layout_constraintStart_toStartOf="@+id/send_at_text_ed">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="@dimen/_140sdp"
+            app:cardCornerRadius="@dimen/_12sdp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/send_message_image_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@color/green_light" />
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+
     <include
         android:id="@+id/send_at_text_ed"
         layout="@layout/send_edit_text"

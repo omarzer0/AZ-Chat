@@ -1,20 +1,26 @@
 package az.zero.azchat.common
 
+import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doOnTextChanged
 import az.zero.azchat.R
-import az.zero.azchat.databinding.SendEditTextBinding
 import com.bumptech.glide.Glide
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
 import com.google.firebase.Timestamp
+import com.google.firebase.storage.StorageReference
 import es.dmoral.toasty.Toasty
+import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
@@ -105,31 +111,59 @@ fun readFile(context: Context, assetFileName: String): String {
 val <T> T.exhaustive: T
     get() = this
 
-fun setUpSearchView(
-    sendEditText: SendEditTextBinding,
-    actionWhenSend: (sendMessage: String) -> Unit,
-    writing: ((Boolean) -> Unit)? = null,
-    actionWhenClick: (() -> Unit)? = null
+
+fun uploadImageByUserId(
+    contentResolver: ContentResolver,
+    realPath:String,
+    storageRef: StorageReference,
+    onUploadImageSuccess: (Uri) -> Unit,
+    onUploadImageFailed: (String) -> Unit,
 ) {
-    sendEditText.apply {
-        writeMessageEd.doOnTextChanged { text, _, _, _ ->
-            sendIv.isEnabled = !text.isNullOrBlank()
-        }
+    val file = Uri.fromFile(File(realPath))
 
-        sendIv.setOnClickListener {
-            actionWhenSend(writeMessageEd.text.toString().trim())
-            writeMessageEd.setText("")
-        }
+    val uploadTask = try {
+        val bmp = MediaStore.Images.Media.getBitmap(contentResolver, file)
+        val byteStreamArray = ByteArrayOutputStream()
+        bmp.compress(Bitmap.CompressFormat.JPEG, 25, byteStreamArray)
+        val data: ByteArray = byteStreamArray.toByteArray()
+        storageRef.putBytes(data)
+    } catch (e: Exception) {
+        onUploadImageFailed("Failed to upload the image Please try again!")
+        return
+    }
 
-        writeMessageEd.addTextChangedListener {
-            val text = it?.toString()
-            if (text.isNullOrEmpty()) writing?.invoke(false)
-            else writing?.invoke(true)
+    uploadTask.continueWithTask { task ->
+        if (!task.isSuccessful) {
+            task.exception?.let {
+                logMe(it.localizedMessage ?: "taskUrl unknown error")
+                onUploadImageFailed(it.localizedMessage ?: "unknown error")
+            }
         }
-        writeMessageEd.setOnClickListener {
-            actionWhenClick?.invoke()
+        storageRef.downloadUrl
+    }.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val downloadUri = task.result
+            logMe("success $downloadUri")
+            onUploadImageSuccess(downloadUri)
+        } else {
+            logMe("taskUrl addOnCompleteListener failed")
+            onUploadImageFailed("unknown error")
         }
     }
+}
+
+fun pickImage(view: View, action: (Uri) -> Unit) {
+    TedImagePicker.with(view.context)
+        .title("Choose image")
+        .backButton(R.drawable.ic_arrow_back_black_24dp)
+        .showCameraTile(true)
+        .buttonBackground(R.drawable.btn_done_button)
+        .buttonTextColor(R.color.white)
+        .buttonText("Choose image")
+        .errorListener { throwable -> logMe(throwable.localizedMessage ?: "pickImage") }
+        .start { uri ->
+            action(uri)
+        }
 }
 
 fun convertTimeStampToDate(timestamp: Timestamp): String = try {

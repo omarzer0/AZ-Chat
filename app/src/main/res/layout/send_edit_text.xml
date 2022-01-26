@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/_4sdp"
     android:paddingStart="@dimen/_8sdp"
-    android:paddingEnd="@dimen/_8sdp">
+    android:paddingEnd="@dimen/_8sdp"
+    android:paddingBottom="@dimen/_4sdp">
+
 
     <EditText
         android:id="@+id/write_message_ed"
@@ -21,9 +23,22 @@
         android:singleLine="false"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/send_iv"
+        app:layout_constraintEnd_toStartOf="@+id/gallery_iv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/gallery_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:padding="@dimen/_4sdp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/write_message_ed"
+        app:layout_constraintEnd_toStartOf="@+id/send_iv"
+        app:layout_constraintTop_toTopOf="@+id/write_message_ed"
+        app:srcCompat="@drawable/ic_gallery"
+        app:tint="@color/mainColor" />
 
     <ImageView
         android:id="@+id/send_iv"
@@ -31,9 +46,9 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/_4sdp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/write_message_ed"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/write_message_ed"
         app:srcCompat="@drawable/ic_send"
         app:tint="@color/mainColor" />
 

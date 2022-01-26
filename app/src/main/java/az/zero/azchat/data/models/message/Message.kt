@@ -14,7 +14,7 @@ data class Message(
     var updated: Boolean? = null,
     var loved: Boolean? = null,
     var seen: Boolean = false,
-    var imageUrl:String? = ""
+    var imageUrl:String = ""
 ) : Parcelable {
     fun hasNullField() =
         listOf(id, messageText, sentAt, sentBy, deleted, updated, loved).any { it == null }

@@ -1,7 +1,10 @@
 package az.zero.azchat.presentation.main.private_chat_room
 
+import android.Manifest
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -10,10 +13,10 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
-import az.zero.azchat.common.setUpSearchView
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.data.models.message.Message
 import az.zero.azchat.databinding.FragmentPrivateChatRoomBinding
+import az.zero.azchat.databinding.SendEditTextBinding
 import az.zero.azchat.presentation.main.adapter.messages.MessagesAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +35,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         initAdapter()
         handleClicks()
         setUpRVs()
+        observeEvents()
         observeData()
         setUpSearchView(binding.sendAtTextEd, actionWhenSend = {
             logMe(it)
@@ -42,10 +46,20 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
     }
 
     private fun observeData() {
+        viewModel.messageImage.observe(viewLifecycleOwner) {
+            if (it == null) {
+                binding.sendMessageContainerFl.gone()
+                return@observe
+            }
+            binding.sendMessageContainerFl.show()
+            setImageUsingGlide(binding.sendMessageImageIv, it.toString())
+        }
+    }
+
+
+    private fun observeEvents() {
         viewModel.event.observeIfNotHandled { event ->
             when (event) {
-                PrivateChatEvents.MessageLongClicked -> {
-                }
                 is PrivateChatEvents.OtherUserState -> {
                     binding.appBar.userStateTv.text = when (event.otherUserStatus) {
                         UserStatus.ONLINE -> {
@@ -115,6 +129,60 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
             logMe("PrivateChatRoomFragment registerAdapterDataObserver${e.localizedMessage}")
         }
     }
+
+    private fun setUpSearchView(
+        sendEditText: SendEditTextBinding,
+        actionWhenSend: (sendMessage: String) -> Unit,
+        writing: ((Boolean) -> Unit)? = null,
+        actionWhenClick: (() -> Unit)? = null
+    ) {
+        sendEditText.apply {
+//            writeMessageEd.doOnTextChanged { text, _, _, _ ->
+//                sendIv.isEnabled = !text.isNullOrBlank()
+//            }
+
+            sendIv.setOnClickListener {
+                actionWhenSend(writeMessageEd.text.toString().trim())
+                viewModel.onMessageImageSelected(null)
+                writeMessageEd.setText("")
+            }
+
+            writeMessageEd.addTextChangedListener {
+                val text = it?.toString()
+                if (text.isNullOrEmpty()) writing?.invoke(false)
+                else writing?.invoke(true)
+            }
+            writeMessageEd.setOnClickListener {
+                actionWhenClick?.invoke()
+            }
+
+            galleryIv.setOnClickListener {
+                checkMyPermissions()
+            }
+        }
+    }
+
+    private fun checkMyPermissions() {
+        activityResultLauncher.launch(
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        )
+    }
+
+    private val activityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val failedToGrant = permissions.entries.any { it.value == false }
+            if (failedToGrant) {
+                toastMy(getString(R.string.not_granted))
+                return@registerForActivityResult
+            }
+
+            pickImage { uri ->
+                viewModel.onMessageImageSelected(uri)
+            }
+        }
 
     override fun onDestroyView() {
         super.onDestroyView()
