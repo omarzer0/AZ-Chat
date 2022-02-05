@@ -24,11 +24,11 @@
         android:id="@+id/private_chat_name_tv"
         style="@style/headerTextStyle"
         android:layout_width="0dp"
+        android:layout_marginEnd="@dimen/_12sdp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
         app:layout_constraintBottom_toTopOf="@+id/last_message_tv"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/new_message_indicator"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/private_chat_image_iv"
         app:layout_constraintTop_toTopOf="parent"
@@ -57,5 +57,16 @@
         app:layout_constraintTop_toBottomOf="@+id/private_chat_image_iv"
         app:layout_constraintVertical_bias="0" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/new_message_indicator"
+        android:layout_width="10dp"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:layout_height="10dp"
+        app:cardBackgroundColor="@android:color/holo_blue_dark"
+        app:cardCornerRadius="999dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

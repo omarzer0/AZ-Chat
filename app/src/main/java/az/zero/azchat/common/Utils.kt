@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import az.zero.azchat.R
+import az.zero.azchat.di.remote.ApplicationScope
 import com.bumptech.glide.Glide
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
@@ -114,7 +115,7 @@ val <T> T.exhaustive: T
 
 fun uploadImageByUserId(
     contentResolver: ContentResolver,
-    realPath:String,
+    realPath: String,
     storageRef: StorageReference,
     onUploadImageSuccess: (Uri) -> Unit,
     onUploadImageFailed: (String) -> Unit,

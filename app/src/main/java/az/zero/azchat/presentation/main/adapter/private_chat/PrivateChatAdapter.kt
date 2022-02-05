@@ -1,15 +1,20 @@
 package az.zero.azchat.presentation.main.adapter.private_chat
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.R
+import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.databinding.ItemPrivateChatBinding
 
-class PrivateChatAdapter :
+class PrivateChatAdapter(private val uid: String) :
     ListAdapter<PrivateChat, PrivateChatAdapter.PrivateChatViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrivateChatViewHolder {
@@ -32,7 +37,12 @@ class PrivateChatAdapter :
             binding.root.setOnClickListener {
                 onStudentClickListener?.let {
                     val item = getItem(adapterPosition)
-                    it(item.group.gid!!, item.user.name!!, item.user.imageUrl ?: "", item.user.uid!!)
+                    it(
+                        item.group.gid!!,
+                        item.user.name!!,
+                        item.user.imageUrl ?: "",
+                        item.user.uid!!
+                    )
                 }
             }
         }
@@ -41,8 +51,29 @@ class PrivateChatAdapter :
             binding.apply {
                 privateChatNameTv.text = currentItem.user.name ?: ""
                 setImageUsingGlide(privateChatImageIv, currentItem.user.imageUrl ?: "")
-                lastMessageTv.text =
-                    currentItem.group.lastSentMessage?.messageText ?: currentItem.user.bio
+                val lastMessage = currentItem.group.lastSentMessage ?: return
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && lastMessage.sentBy != uid) {
+                    if (lastMessage.seen) {
+                        lastMessageTv.setTextAppearance(R.style.bodyTextStyle)
+                        newMessageIndicator.gone()
+                    } else {
+                        lastMessageTv.setTextAppearance(R.style.headerTextStyleSmall)
+                        newMessageIndicator.show()
+                    }
+                }
+
+                val messageText = when {
+                    !lastMessage.messageText.isNullOrEmpty() -> lastMessage.messageText
+                    lastMessage.imageUrl.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
+                    else -> ""
+                }
+                logMe("$messageText", "messageText")
+                val sentBy = if (lastMessage.sentBy!! == uid) {
+                    lastMessageTv.context.getString(R.string.you)
+                } else ""
+                lastMessageTv.text = "$sentBy$messageText"
             }
         }
     }

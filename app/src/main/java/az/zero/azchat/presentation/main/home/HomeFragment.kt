@@ -18,15 +18,15 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     val viewModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeBinding
-    private val privateChatAdapter = PrivateChatAdapter()
+    private lateinit var privateChatAdapter: PrivateChatAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
-        handleClicks()
-        setHasOptionsMenu(true)
         setUpRVs()
+        setHasOptionsMenu(true)
         observeViewEvents()
+        handleClicks()
     }
 
 
@@ -58,6 +58,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
     private fun setUpRVs() {
+        privateChatAdapter = PrivateChatAdapter(sharedPreferences.uid)
         binding.groupRv.adapter = privateChatAdapter
     }
 

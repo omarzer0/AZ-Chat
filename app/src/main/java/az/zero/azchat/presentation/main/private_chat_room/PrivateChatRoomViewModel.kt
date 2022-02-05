@@ -253,6 +253,14 @@ class PrivateRoomUseCase @Inject constructor(
                     }
                 }
             }
+
+        firestore.collection(GROUPS_ID).document(gid).get().addOnSuccessListener {
+            val group = it.toObject<Group>() ?: return@addOnSuccessListener
+            val message = group.lastSentMessage ?: return@addOnSuccessListener
+            if (message.sentBy == uid)  return@addOnSuccessListener
+            message.seen = true
+            firestore.collection(GROUPS_ID).document(gid).update("lastSentMessage", message)
+        }
     }
 
     fun addGroup(
