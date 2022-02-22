@@ -1,6 +1,6 @@
-package az.zero.azchat.data.models.group
+package az.zero.azchat.domain.models.group
 
-import az.zero.azchat.data.models.message.Message
+import az.zero.azchat.domain.models.message.Message
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 

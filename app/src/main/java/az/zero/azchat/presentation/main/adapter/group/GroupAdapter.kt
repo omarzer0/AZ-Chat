@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
-import az.zero.azchat.data.models.group.Group
+import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.databinding.ItemGroupBinding
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions

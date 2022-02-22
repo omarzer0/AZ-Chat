@@ -49,7 +49,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                             event.username,
                             event.userImage,
                             event.otherUserUID,
-                            false
+                            false,
+                            event.notificationToken
                         )
                     )
                 }
@@ -67,8 +68,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             viewModel.addUserClick()
         }
 
-        privateChatAdapter.setOnStudentClickListener { gid, username, userImage, otherUserUID ->
-            viewModel.privateChatClick(gid, username, userImage, otherUserUID)
+        privateChatAdapter.setOnStudentClickListener { gid, username, userImage, otherUserUID,notificationToken ->
+            viewModel.privateChatClick(gid, username, userImage, otherUserUID,notificationToken)
         }
     }
 

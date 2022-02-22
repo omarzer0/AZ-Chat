@@ -2,11 +2,10 @@ package az.zero.azchat.repository
 
 import android.util.Log
 import az.zero.azchat.common.*
-import az.zero.azchat.data.models.group.Group
-import az.zero.azchat.data.models.message.Message
-import az.zero.azchat.data.models.private_chat.PrivateChat
-import az.zero.azchat.data.models.user.User
 import az.zero.azchat.di.remote.ApplicationScope
+import az.zero.azchat.domain.models.group.Group
+import az.zero.azchat.domain.models.message.Message
+import az.zero.azchat.domain.models.user.User
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
@@ -270,6 +269,10 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
+    fun updateUserToken(newToken: String) {
+        val uid = sharedPreferenceManger.uid
+        firestore.collection(USERS_ID).document(uid).update("notificationToken", newToken)
+    }
 
 //    suspend fun getPrivates(): List<PrivateChat> {
 //        val list = mutableListOf<PrivateChat>()

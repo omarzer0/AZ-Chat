@@ -62,13 +62,15 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
                 val groupGID = if (gid.isEmpty()) viewModel.getGID()
                 else gid
 
-                val action =AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
-                    groupGID,
-                    it.name!!,
-                    it.imageUrl!!,
-                    it.uid!!,
-                    gid.isEmpty()
-                )
+                val action =
+                    AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
+                        groupGID,
+                        it.name!!,
+                        it.imageUrl!!,
+                        it.uid!!,
+                        gid.isEmpty(),
+                        it.notificationToken!!
+                    )
                 navigateToAction(action)
             }
 

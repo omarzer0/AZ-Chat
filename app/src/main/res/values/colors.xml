@@ -10,7 +10,7 @@
 
     <color name="textMainColor">@color/black</color>
     <color name="secondaryTextColor">#B1B1B1</color>
-<!--    <color name="secondaryTextColor">#7C7C7C</color>-->
+    <!--    <color name="secondaryTextColor">#7C7C7C</color>-->
 
     <color name="colorPrimary">#2C7A7D</color>
     <color name="gray">#F2F3F2</color>
@@ -32,4 +32,5 @@
     <color name="sender_messages_bg_color">#A6CECF</color>
     <color name="receiver_messages_bg_color">#6D9CEA</color>
 
+    <color name="blue">#0F42EF</color>
 </resources>

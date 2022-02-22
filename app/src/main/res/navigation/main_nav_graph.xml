@@ -47,5 +47,8 @@
         <argument
             android:name="isNewGroup"
             app:argType="boolean" />
+        <argument
+            android:name="notificationToken"
+            app:argType="string" />
     </fragment>
 </navigation>

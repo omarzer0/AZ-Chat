@@ -1,4 +1,4 @@
-package az.zero.azchat.data.models.status
+package az.zero.azchat.domain.models.status
 
 data class Status(
     var writing: Boolean? = null,

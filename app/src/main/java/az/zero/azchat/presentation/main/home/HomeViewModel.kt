@@ -6,12 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import az.zero.azchat.common.*
 import az.zero.azchat.common.event.Event
-import az.zero.azchat.data.models.group.Group
-import az.zero.azchat.data.models.private_chat.PrivateChat
-import az.zero.azchat.data.models.user.User
+import az.zero.azchat.domain.models.group.Group
+import az.zero.azchat.domain.models.private_chat.PrivateChat
+import az.zero.azchat.domain.models.user.User
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
@@ -47,12 +46,14 @@ class HomeViewModel @Inject constructor(
                         val otherUserID = if (!group.user1!!.path.contains(uid)) group.user1!!.path
                         else group.user2!!.path
 
-                        // TODO 2: The user is not gonna update in the home screen
-                        //  as we are getting it form the cache first
+                        val user = firestore.document(otherUserID).get().await().toObject<User>()
+                            ?: return@forEach
 
-                        val user = firestore.document(otherUserID).get(Source.CACHE)
-                            .await().toObject<User>() ?: firestore.document(otherUserID)
-                            .get(Source.SERVER).await().toObject<User>() ?: return@forEach
+//                        // TODO 2: The user is not gonna update in the home screen as we are getting it form the cache first
+
+//                        val user = firestore.document(otherUserID).get(Source.CACHE)
+//                            .await().toObject<User>() ?: firestore.document(otherUserID)
+//                            .get(Source.SERVER).await().toObject<User>() ?: return@forEach
 
                         if (user.hasNullField()) return@forEach
                         val privateChat = PrivateChat(group, user)
@@ -69,9 +70,19 @@ class HomeViewModel @Inject constructor(
         _event.postValue(Event(HomeFragmentEvent.AddChat))
     }
 
-    fun privateChatClick(gid: String, username: String, userImage: String, otherUserUID: String) {
+    fun privateChatClick(
+        gid: String,
+        username: String,
+        userImage: String,
+        otherUserUID: String,
+        notificationToken: String
+    ) {
         _event.postValue(
-            Event(HomeFragmentEvent.PrivateChatsClick(gid, username, userImage, otherUserUID))
+            Event(
+                HomeFragmentEvent.PrivateChatsClick(
+                    gid, username, userImage, otherUserUID, notificationToken
+                )
+            )
         )
     }
 

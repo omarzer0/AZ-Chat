@@ -8,9 +8,9 @@ import android.net.Uri
 import android.provider.MediaStore.Images.Media.getBitmap
 import android.util.Log
 import az.zero.azchat.common.*
-import az.zero.azchat.data.models.country_code.Countries
-import az.zero.azchat.data.models.country_code.CountryCode
-import az.zero.azchat.data.models.user.User
+import az.zero.azchat.domain.models.country_code.Countries
+import az.zero.azchat.domain.models.country_code.CountryCode
+import az.zero.azchat.domain.models.user.User
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
@@ -241,7 +241,7 @@ class AuthRepositoryImpl @Inject constructor(
             storageRef.downloadUrl
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val downloadUri = task.result
+                val downloadUri = task.result?: return@addOnCompleteListener
                 logMe("success $downloadUri")
                 onUploadImageSuccess(downloadUri)
             } else {
