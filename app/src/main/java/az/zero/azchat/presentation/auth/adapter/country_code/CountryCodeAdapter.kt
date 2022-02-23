@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import az.zero.azchat.data.models.country_code.CountryCode
+import az.zero.azchat.domain.models.country_code.CountryCode
 import az.zero.azchat.databinding.ItemCountryCodeBinding
 
 class CountryCodeAdapter : RecyclerView.Adapter<CountryCodeAdapter.CountryCodeViewHolder>() {

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.common.setImageUsingGlide
-import az.zero.azchat.data.models.user.User
+import az.zero.azchat.domain.models.user.User
 import az.zero.azchat.databinding.ItemUserBinding
 
 class UserAdapter :

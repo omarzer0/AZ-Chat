@@ -5,7 +5,8 @@ sealed class HomeFragmentEvent {
         val gid: String,
         val username: String,
         val userImage: String,
-        val otherUserUID: String
+        val otherUserUID: String,
+        val notificationToken: String
     ) : HomeFragmentEvent()
 
     object AddChat : HomeFragmentEvent()

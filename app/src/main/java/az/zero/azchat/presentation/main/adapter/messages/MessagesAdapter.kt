@@ -10,7 +10,7 @@ import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.setImageUsingGlide
-import az.zero.azchat.data.models.message.Message
+import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.databinding.ItemMessageBinding
 import az.zero.azchat.databinding.ItemMessageMirroredBinding
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter

@@ -1,4 +1,4 @@
-package az.zero.azchat.data.models.country_code
+package az.zero.azchat.domain.models.country_code
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

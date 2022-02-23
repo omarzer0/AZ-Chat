@@ -20,7 +20,6 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
     @Inject
     lateinit var sharedPreferences: SharedPreferenceManger
 
-
     fun pickImage(action: (Uri) -> Unit) {
         TedImagePicker.with(requireContext())
             .title("Choose image")

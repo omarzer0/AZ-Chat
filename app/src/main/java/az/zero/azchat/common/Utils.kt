@@ -6,17 +6,14 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import az.zero.azchat.R
-import az.zero.azchat.di.remote.ApplicationScope
 import com.bumptech.glide.Glide
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
 import com.google.firebase.Timestamp
 import com.google.firebase.storage.StorageReference
 import es.dmoral.toasty.Toasty
-import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
@@ -109,10 +106,6 @@ fun readFile(context: Context, assetFileName: String): String {
     return jsonString
 }
 
-val <T> T.exhaustive: T
-    get() = this
-
-
 fun uploadImageByUserId(
     contentResolver: ContentResolver,
     realPath: String,
@@ -143,7 +136,7 @@ fun uploadImageByUserId(
         storageRef.downloadUrl
     }.addOnCompleteListener { task ->
         if (task.isSuccessful) {
-            val downloadUri = task.result
+            val downloadUri = task.result ?: return@addOnCompleteListener
             logMe("success $downloadUri")
             onUploadImageSuccess(downloadUri)
         } else {
@@ -151,20 +144,6 @@ fun uploadImageByUserId(
             onUploadImageFailed("unknown error")
         }
     }
-}
-
-fun pickImage(view: View, action: (Uri) -> Unit) {
-    TedImagePicker.with(view.context)
-        .title("Choose image")
-        .backButton(R.drawable.ic_arrow_back_black_24dp)
-        .showCameraTile(true)
-        .buttonBackground(R.drawable.btn_done_button)
-        .buttonTextColor(R.color.white)
-        .buttonText("Choose image")
-        .errorListener { throwable -> logMe(throwable.localizedMessage ?: "pickImage") }
-        .start { uri ->
-            action(uri)
-        }
 }
 
 fun convertTimeStampToDate(timestamp: Timestamp): String = try {
@@ -183,7 +162,7 @@ fun tryNow(
     try {
         action()
     } catch (e: Exception) {
-        logMe(e.localizedMessage ?: "Unknown", "tryNow")
+        logMe("error ${e.localizedMessage}" ?: "Unknown", "tryNow")
     }
 }
 
@@ -205,6 +184,22 @@ fun tryAsyncNow(
     }
 }
 
+//val <T> T.exhaustive: T
+//    get() = this
+
+//fun pickImage(view: View, action: (Uri) -> Unit) {
+//    TedImagePicker.with(view.context)
+//        .title("Choose image")
+//        .backButton(R.drawable.ic_arrow_back_black_24dp)
+//        .showCameraTile(true)
+//        .buttonBackground(R.drawable.btn_done_button)
+//        .buttonTextColor(R.color.white)
+//        .buttonText("Choose image")
+//        .errorListener { throwable -> logMe(throwable.localizedMessage ?: "pickImage") }
+//        .start { uri ->
+//            action(uri)
+//        }
+//}
 
 //inline fun <reified T> DocumentSnapshot.toValidObject(): T? {
 //    return try {

@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import az.zero.azchat.common.event.Event
 import az.zero.azchat.common.logMe
-import az.zero.azchat.data.models.country_code.CountryCode
+import az.zero.azchat.domain.models.country_code.CountryCode
 import az.zero.azchat.repository.AuthRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -31,7 +31,9 @@ class LoginViewModel @Inject constructor(
         logMe(code)
         if (!verifyIfInputsOk(code, number)) return
         _event.postValue(Event(LoginEvent.LoginBtnClick))
-        repository.login("+$code$number", activity,
+        val numberWithoutZero = if (number.startsWith('0')) number.removeRange(0..0)
+        else number
+        repository.login("+$code$numberWithoutZero", activity,
             onCodeSentListener = {
                 logMe("sent")
                 _event.postValue(Event(LoginEvent.CodeSent))

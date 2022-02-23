@@ -14,7 +14,7 @@ import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
-import az.zero.azchat.data.models.message.Message
+import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.databinding.FragmentPrivateChatRoomBinding
 import az.zero.azchat.databinding.SendEditTextBinding
 import az.zero.azchat.presentation.main.adapter.messages.MessagesAdapter
@@ -137,10 +137,6 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         actionWhenClick: (() -> Unit)? = null
     ) {
         sendEditText.apply {
-//            writeMessageEd.doOnTextChanged { text, _, _, _ ->
-//                sendIv.isEnabled = !text.isNullOrBlank()
-//            }
-
             sendIv.setOnClickListener {
                 actionWhenSend(writeMessageEd.text.toString().trim())
                 viewModel.onMessageImageSelected(null)

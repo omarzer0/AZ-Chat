@@ -35,10 +35,6 @@ object Firebase {
     @Provides
     fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
 
-//    @Singleton
-//    @Provides
-//    fun providesGson(): Gson = Gson()
-
     @ApplicationScope
     @Provides
     @Singleton

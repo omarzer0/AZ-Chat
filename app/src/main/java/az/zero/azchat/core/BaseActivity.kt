@@ -22,10 +22,14 @@ open class BaseActivity : AppCompatActivity() {
 
     fun loginOutFromActivity() {
         startActivity(Intent(this, AuthActivity::class.java))
-        sharedPreferences.hasLoggedIn = false
-        sharedPreferences.authToken = ""
-        sharedPreferences.phoneNumber = ""
-        sharedPreferences.uid = ""
+        sharedPreferences.apply {
+            hasLoggedIn = false
+            authToken = ""
+            phoneNumber = ""
+            uid = ""
+            userName = ""
+            openedTheAppBefore = false
+        }
         finish()
     }
 }

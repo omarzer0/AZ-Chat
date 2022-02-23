@@ -9,3 +9,7 @@ const val TEST_USER = "EHx0FzfOtLQXda4vTyuZUxzoAS62"
 const val TEST_GROUP = "F0rLNHDqXZdZz6sqIeJj"
 const val TEST_VERIFICATION_CODE = "123456"
 const val IS_DEBUG = true
+
+const val BASE_URL = "https://fcm.googleapis.com"
+const val CONTENT_TYPE = "application/json"
+const val timeOut = 35L

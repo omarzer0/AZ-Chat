@@ -100,6 +100,8 @@ class MainActivity : BaseActivity() {
         viewModel.user.observe(this) {
             userNameTV.text = it.name
             userPhoneNumberTV.text = it.phoneNumber
+            it.phoneNumber?.let { number -> sharedPreferences.phoneNumber = number }
+            it.name?.let { name -> sharedPreferences.userName = name }
             setImageUsingGlide(userImageIV, it.imageUrl)
         }
     }

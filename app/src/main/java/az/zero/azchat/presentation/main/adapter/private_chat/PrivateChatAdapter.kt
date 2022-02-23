@@ -11,8 +11,8 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
-import az.zero.azchat.data.models.private_chat.PrivateChat
 import az.zero.azchat.databinding.ItemPrivateChatBinding
+import az.zero.azchat.domain.models.private_chat.PrivateChat
 
 class PrivateChatAdapter(private val uid: String) :
     ListAdapter<PrivateChat, PrivateChatAdapter.PrivateChatViewHolder>(DiffCallback()) {
@@ -41,7 +41,8 @@ class PrivateChatAdapter(private val uid: String) :
                         item.group.gid!!,
                         item.user.name!!,
                         item.user.imageUrl ?: "",
-                        item.user.uid!!
+                        item.user.uid!!,
+                        item.user.notificationToken!!
                     )
                 }
             }
@@ -85,8 +86,8 @@ class PrivateChatAdapter(private val uid: String) :
     }
 
 
-    private var onStudentClickListener: ((String, String, String, String) -> Unit)? = null
-    fun setOnStudentClickListener(listener: (String, String, String, String) -> Unit) {
+    private var onStudentClickListener: ((String, String, String, String, String) -> Unit)? = null
+    fun setOnStudentClickListener(listener: (String, String, String, String, String) -> Unit) {
         onStudentClickListener = listener
     }
 

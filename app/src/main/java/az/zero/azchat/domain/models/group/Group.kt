@@ -1,6 +1,6 @@
-package az.zero.azchat.data.models.group
+package az.zero.azchat.domain.models.group
 
-import az.zero.azchat.data.models.message.Message
+import az.zero.azchat.domain.models.message.Message
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 
@@ -13,7 +13,6 @@ data class Group(
     var modifiedAt: Timestamp? = null,
     var createdBy: String? = null,
     var image: String? = null,
-//    var imageMap: Map<String, String>? = null,
     var lastSentMessage: Message? = null,
     var user1: DocumentReference? = null,
     var user2: DocumentReference? = null
@@ -28,10 +27,8 @@ data class Group(
             modifiedAt,
             createdBy,
             image,
-//            imageMap,
             user1,
             user2
-        )
-            .any { it == null }
+        ).any { it == null }
 
 }

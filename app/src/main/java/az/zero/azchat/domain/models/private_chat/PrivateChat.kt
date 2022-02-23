@@ -1,7 +1,7 @@
-package az.zero.azchat.data.models.private_chat
+package az.zero.azchat.domain.models.private_chat
 
-import az.zero.azchat.data.models.group.Group
-import az.zero.azchat.data.models.user.User
+import az.zero.azchat.domain.models.group.Group
+import az.zero.azchat.domain.models.user.User
 import java.util.*
 import kotlin.math.abs
 

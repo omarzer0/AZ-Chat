@@ -1,4 +1,4 @@
-package az.zero.azchat.data.models.message
+package az.zero.azchat.domain.models.message
 
 import android.os.Parcelable
 import com.google.firebase.Timestamp

@@ -35,6 +35,15 @@ class SharedPreferenceManger @Inject constructor(
         get() = getBooleanValue(OPENED_THE_APP_BEFORE)
         set(value) = setValue(OPENED_THE_APP_BEFORE, value)
 
+//    var notificationToken: String
+//        get() = getStringValue(NOTIFICATION_TOKEN) ?: ""
+//        set(value) = setValue(NOTIFICATION_TOKEN, value)
+
+    var userName: String
+        get() = getStringValue(USER_NAME) ?: ""
+        set(value) = setValue(USER_NAME, value)
+
+
     fun setValue(key: String, value: String) {
         editor.putString(key, value)
         editor.apply()
@@ -84,5 +93,7 @@ class SharedPreferenceManger @Inject constructor(
         const val LOGGED_IN = "logged_in"
         const val OPENED_THE_APP_BEFORE = "opened the app before"
         const val PHONE_NUMBER = "phone number"
+        const val NOTIFICATION_TOKEN = "Notification token"
+        const val USER_NAME = "current username"
     }
 }
