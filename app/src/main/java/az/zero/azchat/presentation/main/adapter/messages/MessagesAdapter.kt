@@ -88,8 +88,8 @@ class MessagesAdapter(
                 lovedImgIv.isVisible = currentItem.loved!!
                 binding.messageTextTv.isVisible = currentItem.messageText!!.isNotEmpty()
 
-                if (currentItem.imageUrl != "") {
-                    setImageUsingGlide(messageImageIv, currentItem.imageUrl)
+                if (currentItem.imageUri != "") {
+                    setImageUsingGlide(messageImageIv, currentItem.imageUri)
                     mirroredCl.background =
                         getDrawable(mirroredCl.context, R.drawable.four_corner_mirrored_background)
                     messageImageContainerCv.show()
@@ -135,8 +135,8 @@ class MessagesAdapter(
                 lovedImgIv.isVisible = currentItem.loved!!
                 binding.messageTextTv.isVisible = currentItem.messageText!!.isNotEmpty()
 
-                if (currentItem.imageUrl != "") {
-                    setImageUsingGlide(messageImageIv, currentItem.imageUrl)
+                if (currentItem.imageUri != "") {
+                    setImageUsingGlide(messageImageIv, currentItem.imageUri)
                     normalCl.background =
                         getDrawable(normalCl.context, R.drawable.four_corner_normal_background)
                     messageImageContainerCv.show()

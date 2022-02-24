@@ -1,32 +1,38 @@
 package az.zero.azchat.presentation.main.private_chat_room
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.media.MediaRecorder
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import az.zero.azchat.R
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
+import az.zero.azchat.common.tryNow
 import az.zero.azchat.core.BaseFragment
-import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.databinding.FragmentPrivateChatRoomBinding
 import az.zero.azchat.databinding.SendEditTextBinding
+import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.presentation.main.adapter.messages.MessagesAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room) {
+class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_private_chat_room) {
 
     val viewModel: PrivateChatRoomViewModel by viewModels()
     private lateinit var binding: FragmentPrivateChatRoomBinding
     private lateinit var messageAdapter: MessagesAdapter
+    private var mRecorder: MediaRecorder? = null
+    private var mLocalFilePath = ""
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,21 +45,24 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         observeData()
         setUpSearchView(binding.sendAtTextEd, actionWhenSend = {
             logMe(it)
-            viewModel.postAction(PrivateChatActions.SendMessage(it))
+            viewModel.postAction(PrivateChatActions.SendMessage(it, MessageType.TEXT))
         }, writing = {
             viewModel.postAction(PrivateChatActions.Writing(it))
         })
+
+        mLocalFilePath =
+            "${requireActivity().externalCacheDir?.absolutePath}/out${System.currentTimeMillis()}.3gp"
     }
 
     private fun observeData() {
-        viewModel.messageImage.observe(viewLifecycleOwner) {
-            if (it == null) {
-                binding.sendMessageContainerFl.gone()
-                return@observe
-            }
-            binding.sendMessageContainerFl.show()
-            setImageUsingGlide(binding.sendMessageImageIv, it.toString())
-        }
+//        viewModel.messageImage.observe(viewLifecycleOwner) {
+//            if (it == null) {
+//                binding.sendMessageContainerFl.gone()
+//                return@observe
+//            }
+//            binding.sendMessageContainerFl.show()
+//            setImageUsingGlide(binding.sendMessageImageIv, it.toString())
+//        }
     }
 
 
@@ -64,11 +73,11 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
                     binding.appBar.userStateTv.text = when (event.otherUserStatus) {
                         UserStatus.ONLINE -> {
                             binding.appBar.userStateTv.show()
-                            getString(R.string.online)
+                            getString(az.zero.azchat.R.string.online)
                         }
                         UserStatus.WRITING -> {
                             binding.appBar.userStateTv.show()
-                            getString(R.string.writing)
+                            getString(az.zero.azchat.R.string.writing)
                         }
                         UserStatus.OFFLINE -> {
                             binding.appBar.userStateTv.gone()
@@ -130,6 +139,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setUpSearchView(
         sendEditText: SendEditTextBinding,
         actionWhenSend: (sendMessage: String) -> Unit,
@@ -138,8 +148,9 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
     ) {
         sendEditText.apply {
             sendIv.setOnClickListener {
+                if (writeMessageEd.text.toString().trim().isEmpty()) return@setOnClickListener
                 actionWhenSend(writeMessageEd.text.toString().trim())
-                viewModel.onMessageImageSelected(null)
+//                viewModel.onMessageImageSelected(null, MessageType.IMAGE)
                 writeMessageEd.setText("")
             }
 
@@ -154,6 +165,61 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
 
             galleryIv.setOnClickListener {
                 checkMyPermissions()
+            }
+
+            recordIv.setOnTouchListener { _, motionEvent ->
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        startRecording()
+                        true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        stopRecording()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+        }
+    }
+
+    private fun startRecording() {
+        mRecorder = MediaRecorder()
+        mRecorder?.apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setOutputFile(mLocalFilePath)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            try {
+                prepare()
+                start()
+                logMe("started")
+            } catch (e: Exception) {
+                Log.e("TAG", "failed: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    private fun stopRecording() {
+        mRecorder?.apply {
+            tryNow {
+                stop()
+                release()
+                mRecorder = null
+                logMe("stopped")
+                viewModel.uploadAudioFile(mLocalFilePath, System.currentTimeMillis()) {
+//                    val mediaPlayer = MediaPlayer()
+//                    mediaPlayer.apply {
+//                        tryNow {
+//                            setDataSource(requireContext(), it)
+//                            prepare()
+//                            logMe("playing....")
+//                            setVolume(1.0f, 1.0f)
+//                            start()
+//                        }
+//                    }
+                }
             }
         }
     }
@@ -171,7 +237,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val failedToGrant = permissions.entries.any { it.value == false }
             if (failedToGrant) {
-                toastMy(getString(R.string.not_granted))
+                toastMy(getString(az.zero.azchat.R.string.not_granted))
                 return@registerForActivityResult
             }
 

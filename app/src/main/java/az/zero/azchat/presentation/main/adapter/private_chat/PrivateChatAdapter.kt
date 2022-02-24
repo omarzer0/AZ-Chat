@@ -67,7 +67,7 @@ class PrivateChatAdapter(private val uid: String) :
 
                 val messageText = when {
                     !lastMessage.messageText.isNullOrEmpty() -> lastMessage.messageText
-                    lastMessage.imageUrl.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
+                    lastMessage.imageUri.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
                     else -> ""
                 }
                 logMe("$messageText", "messageText")
