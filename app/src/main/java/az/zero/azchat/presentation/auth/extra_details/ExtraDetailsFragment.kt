@@ -123,7 +123,7 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val failedToGrant = permissions.entries.any { it.value == false }
             if (failedToGrant) {
-                toastMy(getString(R.string.not_granted))
+                toastMy(getString(R.string.camera_not_granted))
                 return@registerForActivityResult
             }
             pickImage { imageUrl ->

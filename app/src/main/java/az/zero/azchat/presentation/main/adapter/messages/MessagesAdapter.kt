@@ -10,9 +10,9 @@ import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.setImageUsingGlide
-import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.databinding.ItemMessageBinding
 import az.zero.azchat.databinding.ItemMessageMirroredBinding
+import az.zero.azchat.domain.models.message.Message
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
@@ -22,7 +22,9 @@ class MessagesAdapter(
     private val options: FirestoreRecyclerOptions<Message>,
     val onMessageLongClick: (Message) -> Unit,
     val onDataChange: () -> Unit,
+    val audioHandler: AudioHandler
 ) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options) {
+
 
     private var lastedClickedMessage = -1
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -125,7 +127,12 @@ class MessagesAdapter(
                 getItem(adapterPosition).clicked = !getItem(adapterPosition).clicked
                 lastedClickedMessage = adapterPosition
                 notifyItemChanged(adapterPosition)
+            }
 
+            binding.voicePlayerView.playPauseBtn.setOnClickListener {
+                val message = getItem(adapterPosition)
+                if (message.audioUri.isEmpty()) return@setOnClickListener
+                audioHandler.playAudio(message.audioUri)
             }
         }
 
@@ -135,15 +142,27 @@ class MessagesAdapter(
                 lovedImgIv.isVisible = currentItem.loved!!
                 binding.messageTextTv.isVisible = currentItem.messageText!!.isNotEmpty()
 
-                if (currentItem.imageUri != "") {
-                    setImageUsingGlide(messageImageIv, currentItem.imageUri)
-                    normalCl.background =
-                        getDrawable(normalCl.context, R.drawable.four_corner_normal_background)
-                    messageImageContainerCv.show()
-                } else {
-                    messageImageContainerCv.gone()
-                    normalCl.background =
-                        getDrawable(normalCl.context, R.drawable.three_corner_normal_background)
+                when {
+                    currentItem.imageUri != "" -> {
+                        setImageUsingGlide(messageImageIv, currentItem.imageUri)
+                        normalCl.background =
+                            getDrawable(normalCl.context, R.drawable.four_corner_normal_background)
+                        messageImageContainerCv.show()
+                    }
+                    currentItem.audioUri != "" -> {
+//                        normalCl.gone()
+//                        voicePlayerView.voiceChatRoot.show()
+//                        voicePlayerView.audioTimeTv.text = try {
+//                            "${audioHandler.getTotalTimeForAudio(currentItem.audioUri)}"
+//                        } catch (e: Exception) {
+//                            ""
+//                        }
+                    }
+                    else -> {
+                        messageImageContainerCv.gone()
+                        normalCl.background =
+                            getDrawable(normalCl.context, R.drawable.three_corner_normal_background)
+                    }
                 }
 
                 messageTextTv.text = currentItem.messageText
@@ -151,6 +170,11 @@ class MessagesAdapter(
                 sendAtTextTv.isVisible = currentItem.clicked
                 msgSeenIv.isVisible = currentItem.seen
                 msgSentIv.isVisible = !currentItem.seen
+
+//                voicePlayerView.playPauseBtn.setImageResource(R.drawable.ic_pause)
+//                if (currentItem.audioUri.isNotEmpty())
+//                    audioHandler.playAudio(Uri.parse())
+
             }
         }
     }

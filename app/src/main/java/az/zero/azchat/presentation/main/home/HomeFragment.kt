@@ -32,6 +32,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     private fun observeViewEvents() {
         viewModel.privateChats.observe(viewLifecycleOwner) {
+            it.forEach {chat->
+                logMe("$chat\n\n\n","Home observeViewEvents")
+            }
             privateChatAdapter.submitList(it)
         }
 
