@@ -51,7 +51,8 @@ class SendMessageHelper @Inject constructor(
                     gid,
                     sharedPreferenceManger.userName,
                     notificationToken,
-                    false
+                    hasImage = false,
+                    hasVoice = false
                 )
             }
             AUDIO -> {
@@ -62,7 +63,8 @@ class SendMessageHelper @Inject constructor(
                     gid,
                     sharedPreferenceManger.userName,
                     notificationToken,
-                    false
+                    hasImage = false,
+                    hasVoice = true
                 )
             }
             IMAGE -> {
@@ -79,7 +81,8 @@ class SendMessageHelper @Inject constructor(
                             gid,
                             sharedPreferenceManger.userName,
                             notificationToken,
-                            true
+                            hasImage = true,
+                            hasVoice = false
                         )
                     },
                     onUploadImageFailed = {
@@ -105,7 +108,8 @@ class SendMessageHelper @Inject constructor(
         gid: String,
         senderName: String,
         senderDeviceToken: String,
-        hasImage: Boolean
+        hasImage: Boolean,
+        hasVoice:Boolean
     ) {
         val randomId = firestore.collection(GROUPS_ID).document().id
         val message = Message(
@@ -132,7 +136,7 @@ class SendMessageHelper @Inject constructor(
         scope.launch {
             try {
                 val notification = PushNotification(
-                    NotificationData(senderName, messageText, hasImage),
+                    NotificationData(senderName, messageText, hasImage,hasVoice),
                     senderDeviceToken
                 )
                 val response = api.sendNotification(notification)

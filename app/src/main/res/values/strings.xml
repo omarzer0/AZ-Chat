@@ -24,6 +24,8 @@
     <string name="online">Online</string>
     <string name="writing">writing...</string>
     <string name="updated">Updated</string>
-    <string name="sent_an_image">Sent image</string>
+    <string name="sent_an_image">Sent an image</string>
+    <string name="sent_an_audio">Sent an audio</string>
     <string name="you">You :</string>
+    <string name="recording_">Recording...</string>
 </resources>

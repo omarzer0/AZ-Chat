@@ -25,7 +25,7 @@ import com.google.android.material.imageview.ShapeableImageView
 class MainActivity : BaseActivity() {
 
     private lateinit var navController: NavController
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     private lateinit var appBarrConfiguration: AppBarConfiguration
     val viewModel: MainViewModel by viewModels()
 
@@ -72,11 +72,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showMainAppBar() {
-        binding.toolbar.show()
+        binding.chatCl.gone()
     }
 
     private fun hideMainAppBar() {
-        binding.toolbar.gone()
+        binding.chatCl.show()
     }
 
     private fun observeData() {

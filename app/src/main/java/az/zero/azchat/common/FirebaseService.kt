@@ -47,8 +47,10 @@ class FirebaseService : FirebaseMessagingService() {
 
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_UPDATE_CURRENT)
         val contentText = if (message.data["hasImage"] == "true")
-            "${message.data["message"]}\nSent an Image"
-        else
+            "${message.data["message"]}\nSent an image"
+        else if (message.data["hasVoice"] == "true"){
+            "Sent an audio"
+        } else
             "${message.data["message"]}"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

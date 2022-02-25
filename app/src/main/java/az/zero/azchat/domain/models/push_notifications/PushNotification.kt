@@ -8,5 +8,6 @@ data class PushNotification(
 data class NotificationData(
     val title: String,
     val message: String,
-    val hasImage: Boolean
+    val hasImage: Boolean,
+    val hasVoice: Boolean
 )

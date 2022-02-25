@@ -7,7 +7,6 @@
     android:paddingEnd="@dimen/_8sdp"
     android:paddingBottom="@dimen/_4sdp">
 
-
     <EditText
         android:id="@+id/write_message_ed"
         android:layout_width="0dp"
@@ -23,11 +22,11 @@
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gallery_iv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/gallery_iv"
+        style="@style/imageButtonEffect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_8sdp"
@@ -41,6 +40,7 @@
 
     <ImageView
         android:id="@+id/send_iv"
+        style="@style/imageButtonEffect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_8sdp"
@@ -54,13 +54,67 @@
 
     <ImageView
         android:id="@+id/record_iv"
+        style="@style/imageButtonEffect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/_4sdp"
         android:src="@drawable/ic_mic"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/gallery_iv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gallery_iv"
         app:tint="@color/mainColor" />
+
+    <!--    <FrameLayout-->
+    <!--        android:id="@+id/record_big_container_fl"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:background="@android:color/transparent"-->
+    <!--        android:visibility="invisible"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/record_iv"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/record_iv"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/record_iv"-->
+    <!--        tools:visibility="visible">-->
+
+    <!--        <ImageView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginBottom="@dimen/_8sdp"-->
+    <!--            android:background="@drawable/circular_background"-->
+    <!--            android:backgroundTint="@color/mainColor"-->
+    <!--            android:padding="@dimen/_12sdp"-->
+    <!--            android:src="@drawable/ic_mic"-->
+    <!--            app:tint="@color/white" />-->
+    <!--    </FrameLayout>-->
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/recoding_tv"-->
+    <!--        style="@style/headerTextStyle"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:layout_marginStart="@dimen/_12sdp"-->
+    <!--        android:gravity="start|center"-->
+    <!--        android:text="@string/recording_"-->
+    <!--        android:textColor="@color/mainColor"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/write_message_ed"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/send_iv"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/write_message_ed"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/write_message_ed" />-->
+
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/normal_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="write_message_ed,gallery_iv,record_iv,send_iv" />
+
+    <!--    <androidx.constraintlayout.widget.Group-->
+    <!--        android:id="@+id/record_group"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:visibility="invisible"-->
+    <!--        app:constraint_referenced_ids="record_big_container_fl,recoding_tv" />-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -68,7 +68,7 @@ class PrivateChatAdapter(private val uid: String) :
                 val messageText = when {
                     !lastMessage.messageText.isNullOrEmpty() -> lastMessage.messageText
                     lastMessage.imageUri.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
-                    else -> ""
+                    else -> lastMessageTv.context.getString(R.string.sent_an_audio)
                 }
                 logMe("$messageText", "messageText")
                 val sentBy = if (lastMessage.sentBy!! == uid) {
@@ -91,12 +91,10 @@ class PrivateChatAdapter(private val uid: String) :
 
     class DiffCallback : DiffUtil.ItemCallback<PrivateChat>() {
         override fun areItemsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean {
-            logMe("areItemsTheSame:${oldItem.user.name} ${oldItem == newItem}")
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: PrivateChat, newItem: PrivateChat): Boolean {
-            logMe("areContentsTheSame:${oldItem.user.name} ${oldItem == newItem}")
             return oldItem == newItem
         }
     }

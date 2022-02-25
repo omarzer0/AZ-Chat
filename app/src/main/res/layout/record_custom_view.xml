@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <ImageView
+        android:id="@+id/record_big_container_fl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:background="@drawable/circular_background"
+        android:backgroundTint="@color/mainColor"
+        android:padding="@dimen/_12sdp"
+        android:src="@drawable/ic_mic"
+        app:layout_constraintBottom_toTopOf="@+id/recoding_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <TextView
+        android:id="@+id/recoding_tv"
+        style="@style/headerTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:gravity="start|center"
+        android:padding="@dimen/_8sdp"
+        android:text="@string/recording_"
+        android:textColor="@color/mainColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/record_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="record_big_container_fl,recoding_tv" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
