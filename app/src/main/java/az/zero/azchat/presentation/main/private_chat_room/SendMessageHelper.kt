@@ -41,7 +41,10 @@ class SendMessageHelper @Inject constructor(
     ) {
         val realPath = imageUri?.let { RealPathUtil.getRealPath(application, it) } ?: ""
         val userId = sharedPreferenceManger.uid
+        val userName = sharedPreferenceManger.userName
+        val userImage = sharedPreferenceManger.userImage
         val timeInMill = System.currentTimeMillis()
+
         when (messageType) {
             TEXT -> {
                 sendMessage(
@@ -52,7 +55,10 @@ class SendMessageHelper @Inject constructor(
                     sharedPreferenceManger.userName,
                     notificationToken,
                     hasImage = false,
-                    hasVoice = false
+                    hasVoice = false,
+                    userName,
+                    userImage,
+                    userId
                 )
             }
             AUDIO -> {
@@ -64,7 +70,10 @@ class SendMessageHelper @Inject constructor(
                     sharedPreferenceManger.userName,
                     notificationToken,
                     hasImage = false,
-                    hasVoice = true
+                    hasVoice = true,
+                    userName,
+                    userImage,
+                    userId
                 )
             }
             IMAGE -> {
@@ -82,7 +91,10 @@ class SendMessageHelper @Inject constructor(
                             sharedPreferenceManger.userName,
                             notificationToken,
                             hasImage = true,
-                            hasVoice = false
+                            hasVoice = false,
+                            userName,
+                            userImage,
+                            userId
                         )
                     },
                     onUploadImageFailed = {
@@ -109,7 +121,10 @@ class SendMessageHelper @Inject constructor(
         senderName: String,
         senderDeviceToken: String,
         hasImage: Boolean,
-        hasVoice:Boolean
+        hasVoice: Boolean,
+        otherUserName: String,
+        otherUserImage: String,
+        otherUserUID: String
     ) {
         val randomId = firestore.collection(GROUPS_ID).document().id
         val message = Message(
@@ -136,7 +151,17 @@ class SendMessageHelper @Inject constructor(
         scope.launch {
             try {
                 val notification = PushNotification(
-                    NotificationData(senderName, messageText, hasImage,hasVoice),
+                    NotificationData(
+                        senderName,
+                        messageText,
+                        hasImage,
+                        hasVoice,
+                        gid,
+                        otherUserName,
+                        otherUserImage,
+                        senderDeviceToken,
+                        otherUserUID
+                    ),
                     senderDeviceToken
                 )
                 val response = api.sendNotification(notification)

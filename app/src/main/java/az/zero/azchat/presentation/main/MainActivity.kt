@@ -102,6 +102,7 @@ class MainActivity : BaseActivity() {
             userPhoneNumberTV.text = it.phoneNumber
             it.phoneNumber?.let { number -> sharedPreferences.phoneNumber = number }
             it.name?.let { name -> sharedPreferences.userName = name }
+            it.imageUrl?.let { image -> sharedPreferences.userImage = image }
             setImageUsingGlide(userImageIV, it.imageUrl)
         }
     }

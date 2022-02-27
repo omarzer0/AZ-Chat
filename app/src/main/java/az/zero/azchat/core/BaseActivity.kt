@@ -28,6 +28,7 @@ open class BaseActivity : AppCompatActivity() {
             phoneNumber = ""
             uid = ""
             userName = ""
+            userImage = ""
             openedTheAppBefore = false
         }
         finish()

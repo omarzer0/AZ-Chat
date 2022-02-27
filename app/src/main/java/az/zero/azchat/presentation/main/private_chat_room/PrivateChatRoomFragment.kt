@@ -48,7 +48,7 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
         setUpRVs()
         observeEvents()
         observeData()
-        AudioRecorderHelper(requireActivity(), this, binding.sendAtTextEd.recordIv, this)
+        AudioRecorderHelper(this, binding.sendAtTextEd.recordIv, this)
         setUpSearchView(binding.sendAtTextEd, actionWhenSend = {
             logMe(it)
             viewModel.postAction(PrivateChatActions.SendMessage(it, MessageType.TEXT))

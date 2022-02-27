@@ -17,7 +17,6 @@ import javax.inject.Singleton
 
 @Singleton
 class AudioRecorderHelper(
-    private val context: Activity,
     private val fragment: Fragment,
     private val viewToListenAt: View,
     private val listener: AudioRecordListener

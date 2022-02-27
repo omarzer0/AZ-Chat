@@ -43,6 +43,10 @@ class SharedPreferenceManger @Inject constructor(
         get() = getStringValue(USER_NAME) ?: ""
         set(value) = setValue(USER_NAME, value)
 
+    var userImage: String
+        get() = getStringValue(USER_IMAGE) ?: ""
+        set(value) = setValue(USER_IMAGE, value)
+
 
     fun setValue(key: String, value: String) {
         editor.putString(key, value)
@@ -95,5 +99,6 @@ class SharedPreferenceManger @Inject constructor(
         const val PHONE_NUMBER = "phone number"
         const val NOTIFICATION_TOKEN = "Notification token"
         const val USER_NAME = "current username"
+        const val USER_IMAGE = "UserImage"
     }
 }
