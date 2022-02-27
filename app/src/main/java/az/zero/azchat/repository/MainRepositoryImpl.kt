@@ -271,6 +271,7 @@ class MainRepositoryImpl @Inject constructor(
 
     fun updateUserToken(newToken: String) {
         val uid = sharedPreferenceManger.uid
+        sharedPreferenceManger.notificationToken = newToken
         firestore.collection(USERS_ID).document(uid).update("notificationToken", newToken)
     }
 

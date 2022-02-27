@@ -141,7 +141,8 @@ class MessagesAdapter(
                     messageImageContainerCv,
                     voicePlayerView,
                     messageTextTv,
-                    messageImageIv
+                    messageImageIv,
+                    false
                 )
             }
         }
@@ -200,7 +201,8 @@ class MessagesAdapter(
                     messageImageContainerCv,
                     voicePlayerView,
                     messageTextTv,
-                    messageImageIv
+                    messageImageIv,
+                    true
                 )
 
             }
@@ -227,7 +229,8 @@ class MessagesAdapter(
         messageImageContainerCv: CardView,
         voicePlayerView: VoiceMessageBinding,
         messageTextTv: TextView,
-        messageImageIv: ImageView
+        messageImageIv: ImageView,
+        isSender: Boolean
     ) {
 
         when (messageType) {
@@ -236,8 +239,11 @@ class MessagesAdapter(
                 messageImageContainerCv.gone()
                 voicePlayerView.root.gone()
 
+                val bg = if (isSender) R.drawable.three_corner_normal_background
+                else R.drawable.three_corner_mirrored_background
+
                 imageAndTextBgCl.background =
-                    getDrawable(imageAndTextBgCl.context, R.drawable.three_corner_normal_background)
+                    getDrawable(imageAndTextBgCl.context, bg)
                 messageTextTv.text = currentItem.messageText
 
             }

@@ -12,9 +12,11 @@ import az.zero.azchat.presentation.main.MainActivity
 import az.zero.azchat.repository.MainRepositoryImpl
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.scopes.ServiceScoped
 import javax.inject.Inject
 import kotlin.random.Random
 
+@ServiceScoped
 class FirebaseService : FirebaseMessagingService() {
 
     @Inject
@@ -22,7 +24,10 @@ class FirebaseService : FirebaseMessagingService() {
 
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
-        tryNow { repositoryImpl.updateUserToken(newToken) }
+        tryNow(tag = "updateUserToken") {
+            logMe("updateUserToken", "updateUserToken")
+            repositoryImpl.updateUserToken(newToken)
+        }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

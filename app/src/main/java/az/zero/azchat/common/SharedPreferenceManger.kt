@@ -35,9 +35,9 @@ class SharedPreferenceManger @Inject constructor(
         get() = getBooleanValue(OPENED_THE_APP_BEFORE)
         set(value) = setValue(OPENED_THE_APP_BEFORE, value)
 
-//    var notificationToken: String
-//        get() = getStringValue(NOTIFICATION_TOKEN) ?: ""
-//        set(value) = setValue(NOTIFICATION_TOKEN, value)
+    var notificationToken: String
+        get() = getStringValue(NOTIFICATION_TOKEN) ?: ""
+        set(value) = setValue(NOTIFICATION_TOKEN, value)
 
     var userName: String
         get() = getStringValue(USER_NAME) ?: ""
@@ -87,6 +87,10 @@ class SharedPreferenceManger @Inject constructor(
     fun remove(key: String) {
         editor.remove(key)
         editor.apply()
+    }
+
+    fun nuke() {
+        sharedPreferences.edit().clear().apply()
     }
 
     companion object {

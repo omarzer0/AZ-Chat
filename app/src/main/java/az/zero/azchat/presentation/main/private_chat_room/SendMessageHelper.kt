@@ -43,6 +43,7 @@ class SendMessageHelper @Inject constructor(
         val userId = sharedPreferenceManger.uid
         val userName = sharedPreferenceManger.userName
         val userImage = sharedPreferenceManger.userImage
+        val otherUserNotificationToken = sharedPreferenceManger.notificationToken
         val timeInMill = System.currentTimeMillis()
 
         when (messageType) {
@@ -58,7 +59,8 @@ class SendMessageHelper @Inject constructor(
                     hasVoice = false,
                     userName,
                     userImage,
-                    userId
+                    userId,
+                    otherUserNotificationToken
                 )
             }
             AUDIO -> {
@@ -73,7 +75,8 @@ class SendMessageHelper @Inject constructor(
                     hasVoice = true,
                     userName,
                     userImage,
-                    userId
+                    userId,
+                    otherUserNotificationToken
                 )
             }
             IMAGE -> {
@@ -94,7 +97,8 @@ class SendMessageHelper @Inject constructor(
                             hasVoice = false,
                             userName,
                             userImage,
-                            userId
+                            userId,
+                            otherUserNotificationToken
                         )
                     },
                     onUploadImageFailed = {
@@ -102,15 +106,6 @@ class SendMessageHelper @Inject constructor(
                     })
             }
         }
-//        if () {
-//
-//
-//        } else if (messageAudio != null) {
-//
-//        } else {
-//
-//        }
-
     }
 
     private fun sendMessage(
@@ -124,7 +119,8 @@ class SendMessageHelper @Inject constructor(
         hasVoice: Boolean,
         otherUserName: String,
         otherUserImage: String,
-        otherUserUID: String
+        otherUserUID: String,
+        otherUserNotificationToken: String
     ) {
         val randomId = firestore.collection(GROUPS_ID).document().id
         val message = Message(
@@ -159,7 +155,7 @@ class SendMessageHelper @Inject constructor(
                         gid,
                         otherUserName,
                         otherUserImage,
-                        senderDeviceToken,
+                        otherUserNotificationToken,
                         otherUserUID
                     ),
                     senderDeviceToken
