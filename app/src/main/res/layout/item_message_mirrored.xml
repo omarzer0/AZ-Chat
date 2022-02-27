@@ -8,6 +8,16 @@
     android:layout_marginTop="@dimen/_8sdp"
     android:layout_marginEnd="@dimen/_12sdp">
 
+    <include
+        android:id="@+id/voicePlayerView"
+        layout="@layout/voice_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_46sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mirrored_cl"
@@ -17,19 +27,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/voicePlayerView">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/message_image_container_cv"
             android:layout_width="@dimen/_140sdp"
             android:layout_height="@dimen/_140sdp"
-            app:cardCornerRadius="@dimen/_12sdp"
             android:visibility="gone"
-            tools:visibility="visible"
+            app:cardCornerRadius="@dimen/_12sdp"
             app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
 
             <ImageView
                 android:id="@+id/message_image_iv"
@@ -112,7 +122,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/msg_seen_iv"
@@ -127,13 +138,14 @@
 
     <ImageView
         android:id="@+id/loved_img_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:layout_height="14dp"
+        android:layout_marginEnd="@dimen/_4sdp"
         android:src="@drawable/ic_love"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/mirrored_cl"
-        app:layout_constraintEnd_toStartOf="@+id/mirrored_cl"
-        app:layout_constraintStart_toStartOf="@+id/mirrored_cl"
+        app:layout_constraintBottom_toBottomOf="@+id/send_at_text_tv"
+        app:layout_constraintEnd_toStartOf="@+id/send_at_text_tv"
+        app:layout_constraintTop_toTopOf="@+id/send_at_text_tv"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

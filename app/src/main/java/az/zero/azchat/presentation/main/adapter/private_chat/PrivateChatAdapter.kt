@@ -67,8 +67,8 @@ class PrivateChatAdapter(private val uid: String) :
 
                 val messageText = when {
                     !lastMessage.messageText.isNullOrEmpty() -> lastMessage.messageText
-                    lastMessage.imageUrl.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
-                    else -> ""
+                    lastMessage.imageUri.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
+                    else -> lastMessageTv.context.getString(R.string.sent_an_audio)
                 }
                 logMe("$messageText", "messageText")
                 val sentBy = if (lastMessage.sentBy!! == uid) {
@@ -81,8 +81,6 @@ class PrivateChatAdapter(private val uid: String) :
 
     override fun submitList(list: MutableList<PrivateChat>?) {
         super.submitList(list)
-        // Forced to notify as the recycler view updates silently when the same list ref is passed :(
-//        notifyDataSetChanged()
     }
 
 

@@ -35,13 +35,17 @@ class SharedPreferenceManger @Inject constructor(
         get() = getBooleanValue(OPENED_THE_APP_BEFORE)
         set(value) = setValue(OPENED_THE_APP_BEFORE, value)
 
-//    var notificationToken: String
-//        get() = getStringValue(NOTIFICATION_TOKEN) ?: ""
-//        set(value) = setValue(NOTIFICATION_TOKEN, value)
+    var notificationToken: String
+        get() = getStringValue(NOTIFICATION_TOKEN) ?: ""
+        set(value) = setValue(NOTIFICATION_TOKEN, value)
 
     var userName: String
         get() = getStringValue(USER_NAME) ?: ""
         set(value) = setValue(USER_NAME, value)
+
+    var userImage: String
+        get() = getStringValue(USER_IMAGE) ?: ""
+        set(value) = setValue(USER_IMAGE, value)
 
 
     fun setValue(key: String, value: String) {
@@ -85,6 +89,10 @@ class SharedPreferenceManger @Inject constructor(
         editor.apply()
     }
 
+    fun nuke() {
+        sharedPreferences.edit().clear().apply()
+    }
+
     companion object {
         const val SHARED_PREFERENCES_NAME = "login shared pref"
         const val EMPTY = ""
@@ -95,5 +103,6 @@ class SharedPreferenceManger @Inject constructor(
         const val PHONE_NUMBER = "phone number"
         const val NOTIFICATION_TOKEN = "Notification token"
         const val USER_NAME = "current username"
+        const val USER_IMAGE = "UserImage"
     }
 }
