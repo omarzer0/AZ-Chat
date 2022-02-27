@@ -32,8 +32,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     private fun observeViewEvents() {
         viewModel.privateChats.observe(viewLifecycleOwner) {
-            it.forEach {chat->
-                logMe("$chat\n\n\n","Home observeViewEvents")
+            it.forEach { chat ->
+                logMe("$chat\n\n\n", "Home observeViewEvents")
             }
             privateChatAdapter.submitList(it)
         }
@@ -71,8 +71,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             viewModel.addUserClick()
         }
 
-        privateChatAdapter.setOnStudentClickListener { gid, username, userImage, otherUserUID,notificationToken ->
-            viewModel.privateChatClick(gid, username, userImage, otherUserUID,notificationToken)
+        privateChatAdapter.setOnStudentClickListener { gid, username, userImage, otherUserUID, notificationToken ->
+            viewModel.privateChatClick(gid, username, userImage, otherUserUID, notificationToken)
         }
     }
 

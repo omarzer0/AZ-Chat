@@ -3,12 +3,15 @@ package az.zero.azchat.common.audio.record
 import android.Manifest
 import android.app.Activity
 import android.media.MediaRecorder
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import az.zero.azchat.common.IS_DEBUG
+import az.zero.azchat.common.tryNow
 import java.util.*
 import javax.inject.Singleton
 
@@ -23,40 +26,52 @@ class AudioRecorderHelper(
     private var mRecorder: MediaRecorder? = null
     private val tag = "AudioRecorder"
     private var mLocalFilePath = ""
+
     private val defaultPath = "${fragment.activity?.externalCacheDir?.absolutePath}"
+
+    //        private val defaultPath =
+//        fragment.activity?.getExternalFilesDir(Environment.DIRECTORY_MUSIC)?.absolutePath + "/recording.3gp"
     private var relativePath = "out"
     private var fileExtension = "3gp"
     private var startTimerCount = -1L
     private var endTimerCount = -1L
 
+
+
     private fun startRecording() {
-        mRecorder = MediaRecorder()
-        mLocalFilePath =
-            "$defaultPath/$relativePath${System.currentTimeMillis()}.$fileExtension"
-        mRecorder?.apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            setOutputFile(mLocalFilePath)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            prepare()
-            start()
-            startCount()
-            logMe("started", tag)
+        tryNow {
+            mRecorder = MediaRecorder()
+            mLocalFilePath =
+                "$defaultPath/$relativePath${System.currentTimeMillis()}.$fileExtension"
+            mRecorder?.apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+                setOutputFile(mLocalFilePath)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                prepare()
+                start()
+                startCount()
+                logMe("started", tag)
+            }
         }
     }
 
     private fun stopRecording(
         onRecorderSuccess: (audioFilePath: String) -> Unit,
     ) {
-
-        mRecorder?.apply {
-            stop()
-            release()
-            mRecorder = null
-            endCount()
-            if (mLocalFilePath.isEmpty()) return@apply
-            onRecorderSuccess(mLocalFilePath)
-            logMe("success", tag)
+        try {
+            mRecorder?.apply {
+                stop()
+                release()
+                mRecorder = null
+                endCount()
+                if (mLocalFilePath.isEmpty()) return@apply
+                onRecorderSuccess(mLocalFilePath)
+                logMe("success", tag)
+            }
+        } catch (e: Exception) {
+            logMe("stopRecording ${e.localizedMessage ?: "unknown error"}")
+            onRecorderSuccess("")
         }
     }
 

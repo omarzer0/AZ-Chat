@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.common.audio.media_player.AudioHandler
 import az.zero.azchat.common.audio.record.AudioRecordListener
 import az.zero.azchat.common.audio.record.AudioRecorderHelper
 import az.zero.azchat.common.extension.gone
@@ -21,7 +22,6 @@ import az.zero.azchat.databinding.FragmentPrivateChatRoomBinding
 import az.zero.azchat.databinding.SendEditTextBinding
 import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.presentation.main.MainActivity
-import az.zero.azchat.presentation.main.adapter.messages.AudioHandler
 import az.zero.azchat.presentation.main.adapter.messages.MessagesAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +39,6 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
     @Inject
     lateinit var audioHandler: AudioHandler
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentPrivateChatRoomBinding.bind(view)
@@ -56,20 +55,10 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
         }, writing = {
             viewModel.postAction(PrivateChatActions.Writing(it))
         })
-
-//        mLocalFilePath =
-//            "${requireActivity().externalCacheDir?.absolutePath}/out${System.currentTimeMillis()}.3gp"
     }
 
     private fun observeData() {
-//        viewModel.messageImage.observe(viewLifecycleOwner) {
-//            if (it == null) {
-//                binding.sendMessageContainerFl.gone()
-//                return@observe
-//            }
-//            binding.sendMessageContainerFl.show()
-//            setImageUsingGlide(binding.sendMessageImageIv, it.toString())
-//        }
+
     }
 
 
@@ -172,15 +161,18 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
             }
 
             writeMessageEd.addTextChangedListener {
+//                TransitionManager.beginDelayedTransition(root)
                 val text = it?.toString()?.trim()
                 if (text.isNullOrEmpty()) {
                     writing?.invoke(false)
                     galleryIv.show()
                     recordIv.show()
+                    sendIv.gone()
                 } else {
                     writing?.invoke(true)
                     galleryIv.gone()
                     recordIv.gone()
+                    sendIv.show()
                 }
             }
             writeMessageEd.setOnClickListener {
@@ -211,6 +203,7 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
             }
 
             pickImage { uri ->
+                toastMy("Uploading the image...", true)
                 viewModel.onMessageImageSelected(uri)
             }
         }
@@ -218,6 +211,7 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
     override fun onDestroyView() {
         super.onDestroyView()
         messageAdapter.stopListening()
+        messageAdapter.clearAllAudio()
     }
 
     override fun onResume() {
@@ -231,6 +225,8 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
     }
 
     override fun onRecordSuccess(filePath: String) {
+        if (filePath.isNotEmpty()) toastMy("Uploading the record...", true)
+
         viewModel.uploadAudioFile(filePath, System.currentTimeMillis())
     }
 

@@ -2,15 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/voice_chat_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/voice_chat_root"
-    android:visibility="gone"
-    tools:visibility="visible"
     android:layout_margin="@dimen/_12sdp"
     android:background="@drawable/four_corner_normal_background"
     android:backgroundTint="@color/gray"
-    android:padding="@dimen/_8sdp">
+    android:padding="@dimen/_8sdp"
+    android:visibility="gone"
+    tools:visibility="visible">
 
     <ImageView
         android:id="@+id/play_pause_btn"
@@ -40,13 +40,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
         android:textColor="@color/secondaryTextColor"
         android:textSize="@dimen/_8ssp"
         android:textStyle="bold"
-        android:layout_marginEnd="@dimen/_12sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/audio_seek_bar_sb"
         app:layout_constraintTop_toBottomOf="@+id/audio_seek_bar_sb"
         tools:text="12:00" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/seek_bar_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="audio_time_tv,audio_seek_bar_sb,play_pause_btn" />
+
+    <ProgressBar
+        android:id="@+id/audio_pb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

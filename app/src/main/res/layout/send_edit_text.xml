@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_8sdp"
         android:padding="@dimen/_4sdp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/write_message_ed"
         app:layout_constraintEnd_toStartOf="@+id/record_iv"
         app:layout_constraintTop_toTopOf="@+id/write_message_ed"
@@ -107,7 +107,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="write_message_ed,gallery_iv,record_iv,send_iv" />
+        app:constraint_referenced_ids="write_message_ed,gallery_iv,record_iv" />
 
     <!--    <androidx.constraintlayout.widget.Group-->
     <!--        android:id="@+id/record_group"-->

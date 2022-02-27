@@ -8,20 +8,11 @@
     android:layout_marginTop="@dimen/_8sdp"
     android:layout_marginEnd="@dimen/_12sdp">
 
-
-    <!--    <ImageView-->
-    <!--        android:id="@+id/imageView2"-->
-    <!--        android:layout_width="@dimen/_140sdp"-->
-    <!--        android:layout_height="@dimen/_140sdp"-->
-    <!--        android:src="@drawable/ic_love"-->
-    <!--        android:scaleType="fitXY"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent" />-->
-
     <include
         android:id="@+id/voicePlayerView"
         layout="@layout/voice_message"
         android:layout_width="match_parent"
+        android:layout_marginEnd="@dimen/_46sdp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -152,7 +143,7 @@
         android:layout_marginStart="@dimen/_4sdp"
         android:src="@drawable/ic_love"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/send_at_text_tv"
         app:layout_constraintStart_toEndOf="@+id/send_at_text_tv"
         app:layout_constraintTop_toTopOf="@+id/send_at_text_tv"
         tools:visibility="visible" />

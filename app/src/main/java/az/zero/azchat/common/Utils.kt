@@ -3,6 +3,7 @@ package az.zero.azchat.common
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -156,18 +157,20 @@ fun convertTimeStampToDate(timestamp: Timestamp): String = try {
 }
 
 fun tryNow(
+    tag: String = "",
     error: ((Exception) -> Unit)? = null,
     action: () -> Unit
 ) {
     try {
         action()
     } catch (e: Exception) {
-        logMe("error ${e.localizedMessage}" ?: "Unknown", "tryNow")
+        logMe("error $tag ${e.localizedMessage ?: "Unknown"}", "tryNow")
     }
 }
 
 fun tryAsyncNow(
     scope: CoroutineScope,
+    tag: String = "",
     error: (suspend (Exception) -> Unit)? = null,
     finally: (() -> Unit)? = null,
     action: suspend () -> Unit
@@ -177,7 +180,7 @@ fun tryAsyncNow(
             action()
         } catch (e: Exception) {
             error?.invoke(e)
-            logMe(e.localizedMessage ?: "Unknown", "tryAsyncNow")
+            logMe("$tag: ${e.localizedMessage ?: "Unknown error"}", "tryAsyncNow")
         } finally {
             finally?.invoke()
         }
