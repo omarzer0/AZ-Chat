@@ -1,12 +1,14 @@
 package az.zero.azchat.presentation.main.private_chat_room
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.R
 import az.zero.azchat.common.audio.media_player.AudioHandler
 import az.zero.azchat.common.audio.record.AudioRecordListener
 import az.zero.azchat.common.audio.record.AudioRecorderHelper
@@ -22,6 +24,7 @@ import az.zero.azchat.databinding.FragmentPrivateChatRoomBinding
 import az.zero.azchat.databinding.SendEditTextBinding
 import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.presentation.main.MainActivity
+import az.zero.azchat.presentation.main.adapter.messages.MessageLongClickAction.*
 import az.zero.azchat.presentation.main.adapter.messages.MessagesAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +38,8 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
     val viewModel: PrivateChatRoomViewModel by viewModels()
     private lateinit var binding: FragmentPrivateChatRoomBinding
     private lateinit var messageAdapter: MessagesAdapter
+    private var progressDialog: ProgressDialog? = null
+
 
     @Inject
     lateinit var audioHandler: AudioHandler
@@ -44,7 +49,6 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
         binding = FragmentPrivateChatRoomBinding.bind(view)
         initAdapter()
         setDataToViews()
-        handleClicks()
         setUpRVs()
         observeEvents()
         observeData()
@@ -71,11 +75,11 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
                             userStateTv.text = when (event.otherUserStatus) {
                                 UserStatus.ONLINE -> {
                                     userStateTv.show()
-                                    getString(az.zero.azchat.R.string.online)
+                                    getString(R.string.online)
                                 }
                                 UserStatus.WRITING -> {
                                     userStateTv.show()
-                                    getString(az.zero.azchat.R.string.writing)
+                                    getString(R.string.writing)
                                 }
                                 UserStatus.OFFLINE -> {
                                     userStateTv.gone()
@@ -84,6 +88,15 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
                             }
                         }
                     }
+                }
+                PrivateChatEvents.ShowDeleteDialog -> {
+                    progressDialog = ProgressDialog.show(
+                        requireContext(), "Delete message", "Deleting the message", true
+                    )
+                }
+                is PrivateChatEvents.HideDeleteDialog -> {
+                    if (!event.success) toastMy("Couldn't delete the message")
+                    progressDialog?.dismiss()
                 }
             }
         }
@@ -99,8 +112,11 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
         messageAdapter = MessagesAdapter(
             uid,
             options,
-            onMessageLongClick = {
-                viewModel.postAction(PrivateChatActions.MessageLongClick(it))
+            onReceivedMessageLongClick = {
+                viewModel.postAction(PrivateChatActions.ReceiverMessageLongClick(it))
+            },
+            onSenderMessageLongClick = { message, action ->
+                viewModel.postAction(PrivateChatActions.SenderMessageLongClick(message, action))
             },
             onDataChange = {
                 viewModel.postAction(PrivateChatActions.DataChanged)
@@ -121,10 +137,6 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
         binding.chatsRv.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom < oldBottom) binding.chatsRv.smoothScrollToPosition(bottom)
         }
-    }
-
-    private fun handleClicks() {
-
     }
 
     private fun setDataToViews() {
@@ -227,7 +239,7 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
     override fun onRecordSuccess(filePath: String, duration: Long) {
 //        if (filePath.isNotEmpty()) toastMy("Uploading the record...", true)
 
-        viewModel.uploadAudioFile(filePath,duration)
+        viewModel.uploadAudioFile(filePath, duration)
     }
 
     override fun onRecordFailure(error: String) {

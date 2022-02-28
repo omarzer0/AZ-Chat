@@ -67,6 +67,7 @@ class PrivateChatAdapter(private val uid: String) :
                 }
 
                 val messageText = when {
+                    lastMessage.deleted!! -> lastMessageTv.context.getString(R.string.deleted_message)
                     !lastMessage.messageText.isNullOrEmpty() -> lastMessage.messageText
                     lastMessage.imageUri.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
                     else -> lastMessageTv.context.getString(R.string.sent_an_audio)

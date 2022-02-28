@@ -5,10 +5,12 @@ import androidx.lifecycle.*
 import az.zero.azchat.common.*
 import az.zero.azchat.common.event.Event
 import az.zero.azchat.domain.models.message.Message
+import az.zero.azchat.presentation.main.adapter.messages.MessageLongClickAction
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.tasks.await
 import java.io.File
 import javax.inject.Inject
 
@@ -46,23 +48,35 @@ class PrivateChatRoomViewModel @Inject constructor(
             .orderBy("sentAt", Query.Direction.ASCENDING)
     }
 
+    private fun updateMessageField(
+        documentId: String,
+        field: String,
+        value: Any,
+        onSuccess: (() -> Unit)? = null,
+        onFail: ((String) -> Unit)? = null,
+        onFinish: (() -> Unit)? = null
+    ) {
+        tryAsyncNow(viewModelScope, action = {
+            firestore.collection(MESSAGES_ID).document(gid)
+                .collection(PRIVATE_MESSAGES_ID)
+                .document(documentId)
+                .update(field, value).await()
+
+            onSuccess?.invoke()
+        }, error = {
+            onFail?.invoke(it.localizedMessage ?: "updateMessageField unknown error")
+        }, finally = {
+            onFinish?.invoke()
+        })
+    }
+
 
     fun postAction(action: PrivateChatActions) {
         when (action) {
-            is PrivateChatActions.MessageLongClick -> {
+            is PrivateChatActions.ReceiverMessageLongClick -> {
                 logMe("Tabbed ${action.message.messageText}")
-                tryAsyncNow(viewModelScope) {
-                    firestore.collection(MESSAGES_ID).document(gid)
-                        .collection(PRIVATE_MESSAGES_ID)
-                        .document(action.message.id!!)
-                        .update("loved", !action.message.loved!!).addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                logMe("update love done!")
-                            } else {
-                                logMe("update love failed! ${it.exception}")
-                            }
-                        }
-                }
+                val message = action.message
+                updateMessageField(message.id!!, "loved", !message.loved!!)
             }
             is PrivateChatActions.SendMessage -> {
                 if (action.messageText.isEmpty() && messageImage == null && messageAudio == null) return
@@ -124,6 +138,9 @@ class PrivateChatRoomViewModel @Inject constructor(
             PrivateChatActions.DataChanged -> {
                 sendMessageHelper.setAllMessagesAsSeen(gid)
             }
+            is PrivateChatActions.SenderMessageLongClick -> {
+                handleMessageMenuClick(action.message, action.clickAction)
+            }
         }
     }
 
@@ -158,12 +175,45 @@ class PrivateChatRoomViewModel @Inject constructor(
             )
         }
     }
+
+    private fun handleMessageMenuClick(message: Message, clickAction: MessageLongClickAction) {
+        when (clickAction) {
+            MessageLongClickAction.EDIT -> {
+
+            }
+            MessageLongClickAction.DELETE -> {
+                _event.postValue(Event(PrivateChatEvents.ShowDeleteDialog))
+                var success = false
+                updateHomeMessage(message)
+                updateMessageField(message.id!!, "deleted", true, onFail = {
+                    success = false
+                }, onSuccess = {
+                    success = true
+                }, onFinish = {
+                    _event.postValue(Event(PrivateChatEvents.HideDeleteDialog(success)))
+                })
+            }
+        }
+    }
+
+    private fun updateHomeMessage(message: Message) {
+        tryAsyncNow(viewModelScope) {
+            firestore.collection(GROUPS_ID).document(gid)
+                .update("lastSentMessage", message.copy(deleted = true)).await()
+        }
+    }
 }
 
 sealed class PrivateChatActions {
-    data class MessageLongClick(val message: Message) : PrivateChatActions()
+    data class ReceiverMessageLongClick(val message: Message) : PrivateChatActions()
     data class SendMessage(val messageText: String, val messageType: MessageType) :
         PrivateChatActions()
+
+    data class SenderMessageLongClick(
+        val message: Message,
+        val clickAction: MessageLongClickAction
+    ) : PrivateChatActions()
+
 
     data class Writing(val isWriting: Boolean) : PrivateChatActions()
     object DataChanged : PrivateChatActions()
@@ -176,6 +226,8 @@ sealed class PrivateChatActions {
 
 sealed class PrivateChatEvents {
     data class OtherUserState(val otherUserStatus: UserStatus) : PrivateChatEvents()
+    object ShowDeleteDialog : PrivateChatEvents()
+    data class HideDeleteDialog(val success: Boolean) : PrivateChatEvents()
 }
 
 enum class UserStatus {

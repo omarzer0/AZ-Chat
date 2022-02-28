@@ -2,6 +2,7 @@ package az.zero.azchat.domain.models.message
 
 import android.os.Parcelable
 import com.google.firebase.Timestamp
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -21,7 +22,6 @@ data class Message(
     fun hasNullField() =
         listOf(id, messageText, sentAt, sentBy, deleted, updated, loved).any { it == null }
 
+    @IgnoredOnParcel
     var clicked: Boolean = false
-    var audioMin: Long = -1L
-    var audioSec: Long = -1L
 }
