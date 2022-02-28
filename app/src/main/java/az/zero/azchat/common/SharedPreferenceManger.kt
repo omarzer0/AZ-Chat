@@ -47,6 +47,10 @@ class SharedPreferenceManger @Inject constructor(
         get() = getStringValue(USER_IMAGE) ?: ""
         set(value) = setValue(USER_IMAGE, value)
 
+    var isNotificationsEnabled: Boolean
+        get() = getBooleanValue(IS_NOTIFICATIONS_ENABLED, true)
+        set(value) = setValue(IS_NOTIFICATIONS_ENABLED, value)
+
 
     fun setValue(key: String, value: String) {
         editor.putString(key, value)
@@ -80,8 +84,8 @@ class SharedPreferenceManger @Inject constructor(
         return sharedPreferences.getFloat(key, 0F)
     }
 
-    fun getBooleanValue(key: String): Boolean {
-        return sharedPreferences.getBoolean(key, false)
+    fun getBooleanValue(key: String, default: Boolean = false): Boolean {
+        return sharedPreferences.getBoolean(key, default)
     }
 
     fun remove(key: String) {
@@ -104,5 +108,6 @@ class SharedPreferenceManger @Inject constructor(
         const val NOTIFICATION_TOKEN = "Notification token"
         const val USER_NAME = "current username"
         const val USER_IMAGE = "UserImage"
+        const val IS_NOTIFICATIONS_ENABLED = "is notifications enabled"
     }
 }

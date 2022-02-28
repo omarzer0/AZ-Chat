@@ -3,11 +3,14 @@ package az.zero.azchat.common
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.navigation.NavDeepLinkBuilder
 import az.zero.azchat.R
+import az.zero.azchat.common.SharedPreferenceManger.Companion.IS_NOTIFICATIONS_ENABLED
+import az.zero.azchat.common.SharedPreferenceManger.Companion.SHARED_PREFERENCES_NAME
 import az.zero.azchat.presentation.main.MainActivity
 import az.zero.azchat.repository.MainRepositoryImpl
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -22,6 +25,8 @@ class FirebaseService : FirebaseMessagingService() {
     @Inject
     lateinit var repositoryImpl: MainRepositoryImpl
 
+    private var sharedPreference: SharedPreferences? = null
+
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
         tryNow(tag = "updateUserToken") {
@@ -34,10 +39,18 @@ class FirebaseService : FirebaseMessagingService() {
     // To be able to inject override onCreate
     override fun onCreate() {
         super.onCreate()
+        logMe("FirebaseService onCreate")
+        sharedPreference = this.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        var isNotificationsEnabled = false
+        if (sharedPreference != null) {
+            isNotificationsEnabled = sharedPreference!!.getBoolean(IS_NOTIFICATIONS_ENABLED, true)
+        }
+        if (!isNotificationsEnabled) return
+
 
         logMe("onMessageReceived: ${message.data}")
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
