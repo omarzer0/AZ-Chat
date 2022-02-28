@@ -37,7 +37,8 @@ class SendMessageHelper @Inject constructor(
         imageUri: Uri?,
         messageAudio: Uri?,
         gid: String,
-        notificationToken: String
+        notificationToken: String,
+        audioDuration: Long = -1
     ) {
         val realPath = imageUri?.let { RealPathUtil.getRealPath(application, it) } ?: ""
         val userId = sharedPreferenceManger.uid
@@ -60,7 +61,8 @@ class SendMessageHelper @Inject constructor(
                     userName,
                     userImage,
                     userId,
-                    otherUserNotificationToken
+                    otherUserNotificationToken,
+                    audioDuration
                 )
             }
             AUDIO -> {
@@ -76,7 +78,8 @@ class SendMessageHelper @Inject constructor(
                     userName,
                     userImage,
                     userId,
-                    otherUserNotificationToken
+                    otherUserNotificationToken,
+                    audioDuration
                 )
             }
             IMAGE -> {
@@ -98,7 +101,8 @@ class SendMessageHelper @Inject constructor(
                             userName,
                             userImage,
                             userId,
-                            otherUserNotificationToken
+                            otherUserNotificationToken,
+                            audioDuration
                         )
                     },
                     onUploadImageFailed = {
@@ -120,7 +124,8 @@ class SendMessageHelper @Inject constructor(
         otherUserName: String,
         otherUserImage: String,
         otherUserUID: String,
-        otherUserNotificationToken: String
+        otherUserNotificationToken: String,
+        audioDuration: Long
     ) {
         val randomId = firestore.collection(GROUPS_ID).document().id
         val message = Message(
@@ -133,7 +138,8 @@ class SendMessageHelper @Inject constructor(
             loved = false,
             seen = false,
             imageUri = imageUri,
-            audioUri = audioUri
+            audioUri = audioUri,
+            audioDuration = audioDuration
         )
 
         logMe("repo\n$message")
@@ -247,7 +253,8 @@ class SendMessageHelper @Inject constructor(
         messageAudio: Uri?,
         messageType: MessageType,
         notificationToken: String,
-        onSuccess: (Boolean) -> Unit
+        onSuccess: (Boolean) -> Unit,
+        audioDuration: Long = -1
     ) {
         val uID = sharedPreferenceManger.uid
         // get random id
@@ -262,7 +269,8 @@ class SendMessageHelper @Inject constructor(
             loved = false,
             seen = false,
             imageUri = messageImage?.toString() ?: "",
-            audioUri = messageAudio?.toString() ?: ""
+            audioUri = messageAudio?.toString() ?: "",
+            audioDuration
         )
 
         checkIfGroupExists(uID, otherUserID, onSuccess = { exists ->

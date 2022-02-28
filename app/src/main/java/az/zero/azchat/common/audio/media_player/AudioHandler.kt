@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.SeekBar
+import android.widget.TextView
 import az.zero.azchat.common.IS_DEBUG
 import az.zero.azchat.common.tryAsyncNow
 import az.zero.azchat.common.tryNow
@@ -37,7 +38,7 @@ class AudioHandler @Inject constructor(
         listener = audioPlaybackListener
     }
 
-    fun playAudio(audioPath: String, seekBar: SeekBar) {
+    fun playAudio(audioPath: String, seekBar: SeekBar, textTvToUpdate: TextView) {
         tryNow(tag = "playNewAudio") {
             val audioUri = Uri.parse(audioPath)
             logMe("audioUri == nowPlayingAudio-> ${audioUri == nowPlayingAudio}")
@@ -47,12 +48,12 @@ class AudioHandler @Inject constructor(
                 else resumeAudio()
             } else {
                 nowPlayingAudio = audioUri
-                playNewAudio(audioUri, seekBar)
+                playNewAudio(audioUri, seekBar, textTvToUpdate)
             }
         }
     }
 
-    private fun playNewAudio(audioUri: Uri, seekBar: SeekBar) {
+    private fun playNewAudio(audioUri: Uri, seekBar: SeekBar, textTvToUpdate: TextView) {
         logMe("playNewAudio uri: $audioUri")
         releaseMediaPlayer()
         mediaPlayer = MediaPlayer()
@@ -62,8 +63,12 @@ class AudioHandler @Inject constructor(
             setDataSource(applicationContext, audioUri)
             prepare()
             setVolume(1.0f, 1.0f)
-            prepareAndListenToPositionSeekBarChanges(seekBar, mediaPlayer?.duration ?: return@apply)
-            updateSeekBar(seekBar)
+            prepareAndListenToPositionSeekBarChanges(
+                seekBar,
+                mediaPlayer?.duration ?: return@apply,
+                textTvToUpdate
+            )
+            updateSeekBar(seekBar, textTvToUpdate)
             start()
             logMe("${mediaPlayer?.duration}", "duration")
 
@@ -71,7 +76,11 @@ class AudioHandler @Inject constructor(
         } ?: logMe("mp null")
     }
 
-    private fun prepareAndListenToPositionSeekBarChanges(seekBar: SeekBar, totalTime: Int) {
+    private fun prepareAndListenToPositionSeekBarChanges(
+        seekBar: SeekBar,
+        totalTime: Int,
+        textTvToUpdate: TextView
+    ) {
         seekBar.apply {
             max = totalTime
             progress = 0
@@ -83,6 +92,7 @@ class AudioHandler @Inject constructor(
                     seekBar.progress = progress
                     logMe("progress: $progress", "progress")
                     mediaPlayer?.seekTo(progress)
+                    textTvToUpdate.text = createTimeLabel(progress)
                 }
             }
 
@@ -93,11 +103,14 @@ class AudioHandler @Inject constructor(
         })
     }
 
-    private fun updateSeekBar(seekBar: SeekBar) {
+    private fun updateSeekBar(
+        seekBar: SeekBar, textTvToUpdate: TextView
+    ) {
         mSeekBar = seekBar
         mSeekBarUpdateHandler = Handler(Looper.getMainLooper())
         mUpdateSeekBar = Runnable {
             val currentPosition = mediaPlayer?.currentPosition ?: return@Runnable
+            textTvToUpdate.text = createTimeLabel(currentPosition)
             mSeekBar?.progress = currentPosition
             mSeekBarUpdateHandler?.postDelayed(mUpdateSeekBar ?: return@Runnable, 50)
                 ?: return@Runnable
@@ -105,11 +118,11 @@ class AudioHandler @Inject constructor(
         mSeekBarUpdateHandler?.postDelayed(mUpdateSeekBar!!, 0)
     }
 
-    private fun createTimeLabel(time: Int): String {
+    fun createTimeLabel(time: Int): String {
         val min = time / 1000 / 60
         val sec = time / 1000 % 60
-        return if (sec < 10) "$min:00"
-        else "$min:$sec"
+        logMe("time: min:$min sec:$sec", "createTimeLabel")
+        return "$min:$sec"
     }
 
     private fun resumeAudio() {
@@ -144,25 +157,25 @@ class AudioHandler @Inject constructor(
         }
     }
 
-    fun getTotalTimeForAudio(audioPath: String, onSuccess: (min: Long, sec: Long) -> Unit) {
-        tryAsyncNow(scope, action = {
-            val retriever = MediaMetadataRetriever()
-            retriever.setDataSource(audioPath)
-            val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            val timeInMilliSec = time!!.toLong()
-            val duration = timeInMilliSec / 1000
-            val hours = duration / 3600
-            val minutes = (duration - hours * 3600) / 60
-            val seconds = duration - (hours * 3600 + minutes * 60)
-            withContext(Dispatchers.Main) {
-                onSuccess(minutes, seconds)
-            }
-        }, error = {
-            withContext(Dispatchers.Main) {
-                onSuccess(-1, -1)
-            }
-        })
-    }
+//    fun getTotalTimeForAudio(audioPath: String, onSuccess: (min: Long, sec: Long) -> Unit) {
+//        tryAsyncNow(scope, action = {
+//            val retriever = MediaMetadataRetriever()
+//            retriever.setDataSource(audioPath)
+//            val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+//            val timeInMilliSec = time!!.toLong()
+//            val duration = timeInMilliSec / 1000
+//            val hours = duration / 3600
+//            val minutes = (duration - hours * 3600) / 60
+//            val seconds = duration - (hours * 3600 + minutes * 60)
+//            withContext(Dispatchers.Main) {
+//                onSuccess(minutes, seconds)
+//            }
+//        }, error = {
+//            withContext(Dispatchers.Main) {
+//                onSuccess(-1, -1)
+//            }
+//        })
+//    }
 
     fun clearAll() {
         mediaPlayer?.stop()

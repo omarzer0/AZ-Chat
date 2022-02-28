@@ -15,7 +15,6 @@ import az.zero.azchat.common.audio.media_player.AudioHandler
 import az.zero.azchat.common.audio.media_player.AudioPlaybackListener
 import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
-import az.zero.azchat.common.extension.hide
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
@@ -108,7 +107,8 @@ class MessagesAdapter(
                 handleAudioPlay(
                     getItem(adapterPosition),
                     binding.voicePlayerView.audioSeekBarSb,
-                    binding.voicePlayerView.playPauseBtn
+                    binding.voicePlayerView.playPauseBtn,
+                    binding.voicePlayerView.audioPlayedTimeTv
                 )
             }
         }
@@ -116,17 +116,6 @@ class MessagesAdapter(
         fun bind(currentItem: Message) {
             binding.apply {
                 if (currentItem.deleted!!) return
-                lovedImgIv.isVisible = currentItem.loved!!
-                binding.messageTextTv.isVisible = currentItem.messageText!!.isNotEmpty()
-
-                if (currentItem.deleted!!) return
-                val messageType = if (currentItem.imageUri.isNotEmpty()) {
-                    IMAGE
-                } else if (currentItem.audioUri.isNotEmpty()) {
-                    AUDIO
-                } else {
-                    TEXT
-                }
 
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 sendAtTextTv.isVisible = currentItem.clicked
@@ -135,7 +124,7 @@ class MessagesAdapter(
                 lovedImgIv.isVisible = currentItem.loved!!
 
                 handleBinding(
-                    messageType,
+                    getMessageType(currentItem),
                     currentItem,
                     mirroredCl,
                     messageImageContainerCv,
@@ -172,7 +161,8 @@ class MessagesAdapter(
                 handleAudioPlay(
                     getItem(adapterPosition),
                     binding.voicePlayerView.audioSeekBarSb,
-                    binding.voicePlayerView.playPauseBtn
+                    binding.voicePlayerView.playPauseBtn,
+                    binding.voicePlayerView.audioPlayedTimeTv
                 )
             }
         }
@@ -180,13 +170,7 @@ class MessagesAdapter(
         fun bind(currentItem: Message) {
             binding.apply {
                 if (currentItem.deleted!!) return
-                val messageType = if (currentItem.imageUri.isNotEmpty()) {
-                    IMAGE
-                } else if (currentItem.audioUri.isNotEmpty()) {
-                    AUDIO
-                } else {
-                    TEXT
-                }
+
 
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 sendAtTextTv.isVisible = currentItem.clicked
@@ -195,7 +179,7 @@ class MessagesAdapter(
                 lovedImgIv.isVisible = currentItem.loved!!
 
                 handleBinding(
-                    messageType,
+                    getMessageType(currentItem),
                     currentItem,
                     normalCl,
                     messageImageContainerCv,
@@ -209,11 +193,29 @@ class MessagesAdapter(
         }
     }
 
-    private fun handleAudioPlay(message: Message, seekBar: SeekBar, playPauseImage: ImageView) {
+    fun getMessageType(message: Message) = when {
+        message.imageUri.isNotEmpty() -> {
+            IMAGE
+        }
+        message.audioUri.isNotEmpty() -> {
+            AUDIO
+        }
+        else -> {
+            TEXT
+        }
+    }
+
+    private fun handleAudioPlay(
+        message: Message,
+        seekBar: SeekBar,
+        playPauseImage: ImageView,
+        textTvToUpdate: TextView
+    ) {
         if (message.audioUri.isEmpty()) return
         audioHandler.playAudio(
             message.audioUri,
-            seekBar
+            seekBar,
+            textTvToUpdate
         )
         if (playingAudioView != null && message.id!! != playingId) {
             playingAudioView?.setImageResource(R.drawable.ic_play)
@@ -253,27 +255,9 @@ class MessagesAdapter(
                 voicePlayerView.root.show()
 
                 voicePlayerView.apply {
-                    seekBarGroup.hide()
-                    audioPb.show()
-                }
-
-                if (currentItem.audioMin == -1L || currentItem.audioSec == -1L) {
-                    audioHandler.getTotalTimeForAudio(currentItem.audioUri) { min, sec ->
-                        currentItem.audioMin = min
-                        currentItem.audioSec = sec
-                        voicePlayerView.apply {
-                            audioTimeTv.text = "$min:$sec"
-                            seekBarGroup.show()
-                            audioPb.hide()
-                        }
-                    }
-                } else {
-                    voicePlayerView.apply {
-                        audioTimeTv.text =
-                            "${currentItem.audioMin}:${currentItem.audioSec}"
-                        seekBarGroup.show()
-                        audioPb.hide()
-                    }
+                    audioTimeTv.text =
+                        audioHandler.createTimeLabel(currentItem.audioDuration.toInt())
+                    audioTimeTv.isVisible = currentItem.audioDuration != -1L
                 }
             }
             IMAGE -> {

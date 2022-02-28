@@ -49,17 +49,46 @@
         app:layout_constraintTop_toBottomOf="@+id/audio_seek_bar_sb"
         tools:text="12:00" />
 
+    <TextView
+        android:id="@+id/slash__"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:text="@string/slash__"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="@dimen/_8ssp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/audio_time_tv"
+        app:layout_constraintTop_toBottomOf="@+id/audio_seek_bar_sb" />
+
+    <TextView
+        android:id="@+id/audio_played_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:text="0:0"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="@dimen/_8ssp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/slash__"
+        app:layout_constraintTop_toBottomOf="@+id/audio_seek_bar_sb" />
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/seek_bar_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="visible"
         app:constraint_referenced_ids="audio_time_tv,audio_seek_bar_sb,play_pause_btn" />
 
     <ProgressBar
         android:id="@+id/audio_pb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

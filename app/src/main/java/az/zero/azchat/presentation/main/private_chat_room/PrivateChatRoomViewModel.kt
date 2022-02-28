@@ -132,23 +132,29 @@ class PrivateChatRoomViewModel @Inject constructor(
         postAction(PrivateChatActions.SendMessage("", MessageType.IMAGE))
     }
 
-    fun uploadAudioFile(mLocalFilePath: String, currentTimeMillis: Long) {
+    fun uploadAudioFile(mLocalFilePath: String, duration: Long) {
+        val currentTimeMillis = System.currentTimeMillis()
         val audioFilePath = "${currentTimeMillis}.3gp"
         val ref = storage.reference.child("audio/${getUID()}/${audioFilePath}")
         val localUri = Uri.fromFile(File(mLocalFilePath))
         ref.putFile(localUri).addOnSuccessListener {
             logMe("uploadAudioFile: success")
-            getDownloadableUrl(audioFilePath)
+            getDownloadableUrl(audioFilePath, duration)
         }.addOnFailureListener {
             logMe("uploadAudioFile: ${it.localizedMessage ?: "Unknown"}")
         }
     }
 
-    private fun getDownloadableUrl(audioFilePath: String) {
+    private fun getDownloadableUrl(audioFilePath: String, audioDuration: Long) {
         storage.reference.child("audio/${getUID()}/${audioFilePath}").downloadUrl.addOnSuccessListener {
             sendMessageHelper.checkForImageOrAudioAndSend(
                 MessageType.AUDIO,
-                "", null, it, gid, notificationToken
+                "",
+                null,
+                it,
+                gid,
+                notificationToken,
+                audioDuration
             )
         }
     }

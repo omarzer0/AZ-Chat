@@ -35,6 +35,7 @@ class PrivateChatAdapter(private val uid: String) :
 
         init {
             binding.root.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
                 onStudentClickListener?.let {
                     val item = getItem(adapterPosition)
                     it(

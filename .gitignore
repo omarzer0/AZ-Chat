@@ -15,3 +15,4 @@
 local.properties
 /.idea/*
 apikey.properties
+/app/google-services.json

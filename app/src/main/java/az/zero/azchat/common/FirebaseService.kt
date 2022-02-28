@@ -25,9 +25,15 @@ class FirebaseService : FirebaseMessagingService() {
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
         tryNow(tag = "updateUserToken") {
-            logMe("updateUserToken", "updateUserToken")
+            logMe("service updateUserToken", "updateUserToken")
             repositoryImpl.updateUserToken(newToken)
         }
+
+    }
+
+    // To be able to inject override onCreate
+    override fun onCreate() {
+        super.onCreate()
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

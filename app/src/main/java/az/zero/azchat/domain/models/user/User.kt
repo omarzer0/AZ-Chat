@@ -14,6 +14,16 @@ data class User(
     var phoneNumber: String? = null,
     var notificationToken: String? = null,
 ) : Parcelable {
-    fun hasNullField() =
-        listOf(uid, name, imageUrl, bio, groups, phoneNumber,notificationToken).any { it == null }
+    fun hasNullField(): Boolean {
+        if (notificationToken == null) notificationToken = ""
+        return listOf(
+            uid,
+            name,
+            imageUrl,
+            bio,
+            groups,
+            phoneNumber,
+            notificationToken
+        ).any { it == null }
+    }
 }

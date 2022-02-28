@@ -203,7 +203,7 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
             }
 
             pickImage { uri ->
-                toastMy("Uploading the image...", true)
+//                toastMy("Uploading the image...", true)
                 viewModel.onMessageImageSelected(uri)
             }
         }
@@ -224,10 +224,10 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
         viewModel.postAction(PrivateChatActions.ViewPaused)
     }
 
-    override fun onRecordSuccess(filePath: String) {
-        if (filePath.isNotEmpty()) toastMy("Uploading the record...", true)
+    override fun onRecordSuccess(filePath: String, duration: Long) {
+//        if (filePath.isNotEmpty()) toastMy("Uploading the record...", true)
 
-        viewModel.uploadAudioFile(filePath, System.currentTimeMillis())
+        viewModel.uploadAudioFile(filePath,duration)
     }
 
     override fun onRecordFailure(error: String) {

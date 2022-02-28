@@ -1,10 +1,7 @@
 package az.zero.azchat.common.audio.record
 
 import android.Manifest
-import android.app.Activity
 import android.media.MediaRecorder
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -36,7 +33,6 @@ class AudioRecorderHelper(
     private var endTimerCount = -1L
 
 
-
     private fun startRecording() {
         tryNow {
             mRecorder = MediaRecorder()
@@ -56,7 +52,7 @@ class AudioRecorderHelper(
     }
 
     private fun stopRecording(
-        onRecorderSuccess: (audioFilePath: String) -> Unit,
+        onRecorderSuccess: (audioFilePath: String, duration: Long) -> Unit,
     ) {
         try {
             mRecorder?.apply {
@@ -65,12 +61,12 @@ class AudioRecorderHelper(
                 mRecorder = null
                 endCount()
                 if (mLocalFilePath.isEmpty()) return@apply
-                onRecorderSuccess(mLocalFilePath)
+                onRecorderSuccess(mLocalFilePath, (endTimerCount - startTimerCount))
                 logMe("success", tag)
             }
         } catch (e: Exception) {
             logMe("stopRecording ${e.localizedMessage ?: "unknown error"}")
-            onRecorderSuccess("")
+            listener.onRecordFailure(e.localizedMessage ?: "Unknown in AudioRecordHelper")
         }
     }
 
@@ -86,8 +82,8 @@ class AudioRecorderHelper(
                     MotionEvent.ACTION_UP -> {
                         v.performClick()
                         listener.onTouchUp()
-                        stopRecording {
-                            listener.onRecordSuccess(it)
+                        stopRecording { audioPath, duration ->
+                            listener.onRecordSuccess(audioPath, duration)
                         }
                         true
                     }
@@ -139,7 +135,7 @@ class AudioRecorderHelper(
 }
 
 interface AudioRecordListener {
-    fun onRecordSuccess(filePath: String)
+    fun onRecordSuccess(filePath: String, duration: Long)
     fun onRecordFailure(error: String)
     fun onTouchDown()
     fun onTouchUp()

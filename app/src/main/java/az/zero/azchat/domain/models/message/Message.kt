@@ -16,11 +16,12 @@ data class Message(
     var seen: Boolean = false,
     var imageUri: String = "",
     var audioUri: String = "",
-    var audioMin: Long = -1L,
-    var audioSec: Long = -1L
+    var audioDuration: Long = -1
 ) : Parcelable {
     fun hasNullField() =
         listOf(id, messageText, sentAt, sentBy, deleted, updated, loved).any { it == null }
 
     var clicked: Boolean = false
+    var audioMin: Long = -1L
+    var audioSec: Long = -1L
 }
