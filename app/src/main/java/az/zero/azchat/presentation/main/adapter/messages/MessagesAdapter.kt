@@ -129,6 +129,7 @@ class MessagesAdapter(
                 msgSeenIv.isVisible = currentItem.seen
                 msgSentIv.isVisible = !currentItem.seen
                 lovedImgIv.isVisible = currentItem.loved!! && !currentItem.deleted!!
+                updatedTextTv.isVisible = currentItem.updated!!
 
                 if (currentItem.deleted!!) {
                     showDeletedLayout(
@@ -191,6 +192,7 @@ class MessagesAdapter(
                 msgSeenIv.isVisible = currentItem.seen
                 msgSentIv.isVisible = !currentItem.seen
                 lovedImgIv.isVisible = currentItem.loved!! && !currentItem.deleted!!
+                updatedTextTv.isVisible = currentItem.updated!!
 
                 if (currentItem.deleted!!) {
                     showDeletedLayout(
@@ -234,21 +236,20 @@ class MessagesAdapter(
 
 
     private fun initMenuListener(message: Message): PopupMenu.OnMenuItemClickListener {
-        if (menuListener == null)
-            menuListener = PopupMenu.OnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.delete_action -> {
-                        onSenderMessageLongClick(message, MessageLongClickAction.DELETE)
-                        true
-                    }
-                    R.id.edit_action -> {
-                        onSenderMessageLongClick(message, MessageLongClickAction.EDIT)
-                        true
-                    }
-                    else -> false
+        menuListener = null
+        menuListener = PopupMenu.OnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.delete_action -> {
+                    onSenderMessageLongClick(message, MessageLongClickAction.DELETE)
+                    true
                 }
+                R.id.edit_action -> {
+                    onSenderMessageLongClick(message, MessageLongClickAction.EDIT)
+                    true
+                }
+                else -> false
             }
-
+        }
         return menuListener!!
     }
 

@@ -1,11 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="@dimen/_8sdp"
     android:paddingEnd="@dimen/_8sdp"
     android:paddingBottom="@dimen/_4sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/edit_message_container_cv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/record_iv"
+        app:layout_constraintStart_toStartOf="@+id/write_message_ed"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/edit_message_icon__"
+            style="@style/imageButtonEffect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_4sdp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_edit"
+            app:tint="@color/mainColor" />
+
+        <TextView
+            android:id="@+id/edit_message_title__"
+            style="@style/bodyTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:text="@string/update_message"
+            android:textColor="@color/mainColor"
+            app:layout_constraintEnd_toStartOf="@+id/edit_message_cancel"
+            app:layout_constraintStart_toEndOf="@+id/edit_message_icon__"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/edit_message_tv"
+            style="@style/bodyTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:maxLines="3"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:textColor="@color/mainColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/edit_message_cancel"
+            app:layout_constraintStart_toEndOf="@+id/edit_message_icon__"
+            app:layout_constraintTop_toBottomOf="@+id/edit_message_title__"
+            tools:text="This is a message" />
+
+        <ImageView
+            android:id="@+id/edit_message_cancel"
+            style="@style/imageButtonEffect"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="@dimen/_4sdp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_message_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edit_message_title__"
+            app:srcCompat="@drawable/ic_cancel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <EditText
         android:id="@+id/write_message_ed"
@@ -19,10 +85,13 @@
         android:paddingEnd="@dimen/_6sdp"
         android:paddingBottom="@dimen/_12sdp"
         android:singleLine="false"
+        android:visibility="visible"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gallery_iv"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_message_container_cv"
+        app:layout_goneMarginEnd="@dimen/_34sdp" />
 
     <ImageView
         android:id="@+id/gallery_iv"
@@ -33,7 +102,7 @@
         android:padding="@dimen/_4sdp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/write_message_ed"
-        app:layout_constraintEnd_toStartOf="@+id/send_iv"
+        app:layout_constraintEnd_toStartOf="@+id/record_iv"
         app:layout_constraintTop_toTopOf="@+id/write_message_ed"
         app:srcCompat="@drawable/ic_gallery"
         app:tint="@color/mainColor" />
@@ -43,13 +112,25 @@
         style="@style/imageButtonEffect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_8sdp"
         android:padding="@dimen/_4sdp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/write_message_ed"
-        app:layout_constraintEnd_toStartOf="@+id/record_iv"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/write_message_ed"
         app:srcCompat="@drawable/ic_send"
+        app:tint="@color/mainColor" />
+
+    <ImageView
+        android:id="@+id/submit_edit_message_tv"
+        style="@style/imageButtonEffect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_4sdp"
+        android:src="@drawable/ic_check"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/gallery_iv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gallery_iv"
         app:tint="@color/mainColor" />
 
     <ImageView
@@ -65,56 +146,47 @@
         app:layout_constraintTop_toTopOf="@+id/gallery_iv"
         app:tint="@color/mainColor" />
 
-    <!--    <FrameLayout-->
-    <!--        android:id="@+id/record_big_container_fl"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:background="@android:color/transparent"-->
-    <!--        android:visibility="invisible"-->
-    <!--        app:layout_constraintBottom_toTopOf="@+id/record_iv"-->
-    <!--        app:layout_constraintEnd_toEndOf="@+id/record_iv"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/record_iv"-->
-    <!--        tools:visibility="visible">-->
+<!--    <androidx.constraintlayout.widget.Group-->
+<!--        android:id="@+id/normal_group"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:visibility="visible"-->
+<!--        app:constraint_referenced_ids="write_message_ed,gallery_iv,record_iv" />-->
 
-    <!--        <ImageView-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_marginBottom="@dimen/_8sdp"-->
-    <!--            android:background="@drawable/circular_background"-->
-    <!--            android:backgroundTint="@color/mainColor"-->
-    <!--            android:padding="@dimen/_12sdp"-->
-    <!--            android:src="@drawable/ic_mic"-->
-    <!--            app:tint="@color/white" />-->
-    <!--    </FrameLayout>-->
+<!--    <androidx.constraintlayout.widget.Group-->
+<!--        android:id="@+id/edit_group_gone"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:visibility="visible"-->
+<!--        app:constraint_referenced_ids="gallery_iv,record_iv" />-->
 
-    <!--    <TextView-->
-    <!--        android:id="@+id/recoding_tv"-->
-    <!--        style="@style/headerTextStyle"-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        android:layout_marginStart="@dimen/_12sdp"-->
-    <!--        android:gravity="start|center"-->
-    <!--        android:text="@string/recording_"-->
-    <!--        android:textColor="@color/mainColor"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@+id/write_message_ed"-->
-    <!--        app:layout_constraintEnd_toEndOf="@+id/send_iv"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/write_message_ed"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/write_message_ed" />-->
+<!--    <androidx.constraintlayout.widget.Group-->
+<!--        android:id="@+id/edit_group_show"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:visibility="gone"-->
+<!--        app:constraint_referenced_ids="edit_message_container_cv,submit_edit_message_tv" />-->
 
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/writing_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="send_iv" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/normal_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="write_message_ed,gallery_iv,record_iv" />
+        app:constraint_referenced_ids="gallery_iv,record_iv" />
 
-    <!--    <androidx.constraintlayout.widget.Group-->
-    <!--        android:id="@+id/record_group"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:visibility="invisible"-->
-    <!--        app:constraint_referenced_ids="record_big_container_fl,recoding_tv" />-->
-
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/edit_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="edit_message_container_cv,submit_edit_message_tv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,10 +1,11 @@
 package az.zero.azchat.presentation.main.private_chat_room
 
 import android.Manifest
-import android.app.ProgressDialog
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -32,14 +33,12 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_private_chat_room),
+class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room),
     AudioRecordListener {
 
     val viewModel: PrivateChatRoomViewModel by viewModels()
     private lateinit var binding: FragmentPrivateChatRoomBinding
     private lateinit var messageAdapter: MessagesAdapter
-    private var progressDialog: ProgressDialog? = null
-
 
     @Inject
     lateinit var audioHandler: AudioHandler
@@ -89,15 +88,21 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
                         }
                     }
                 }
-                PrivateChatEvents.ShowDeleteDialog -> {
-                    progressDialog = ProgressDialog.show(
-                        requireContext(), "Delete message", "Deleting the message", true
-                    )
-                }
-                is PrivateChatEvents.HideDeleteDialog -> {
-                    if (!event.success) toastMy("Couldn't delete the message")
-                    progressDialog?.dismiss()
-                }
+            }
+        }
+
+        viewModel.editAreaState.observe(viewLifecycleOwner) {
+            logMe("editAreaState $it", "editAreaState")
+            // it.first => shouldShow
+            binding.sendAtTextEd.apply {
+                editGroup.isVisible = it.first
+                normalGroup.isVisible = !it.first
+                sendIv.gone()
+                writeMessageEd.setText("${it.second}")
+                editMessageTv.text = "${it.second}"
+                editMessageContainerCv.isVisible = it.first
+                submitEditMessageTv.isVisible = it.first
+
             }
         }
     }
@@ -143,8 +148,8 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
         tryNow {
             (activity as MainActivity).binding.apply {
                 usernameTv.text = viewModel.username
-                setImageUsingGlide(userImageIv, viewModel.userImage)
                 userStateTv.gone()
+                setImageUsingGlide(userImageIv, viewModel.userImage)
             }
         }
 
@@ -175,16 +180,20 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
             writeMessageEd.addTextChangedListener {
 //                TransitionManager.beginDelayedTransition(root)
                 val text = it?.toString()?.trim()
+                if (viewModel.isEditMode()) {
+                    return@addTextChangedListener
+                }
+                logMe("vm editAreaState ${viewModel.isEditMode()}", "editAreaState")
                 if (text.isNullOrEmpty()) {
                     writing?.invoke(false)
-                    galleryIv.show()
-                    recordIv.show()
-                    sendIv.gone()
+                    normalGroup.show()
+                    editGroup.gone()
+                    writingGroup.gone()
                 } else {
                     writing?.invoke(true)
-                    galleryIv.gone()
-                    recordIv.gone()
-                    sendIv.show()
+                    normalGroup.gone()
+                    editGroup.gone()
+                    writingGroup.show()
                 }
             }
             writeMessageEd.setOnClickListener {
@@ -194,6 +203,19 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
             galleryIv.setOnClickListener {
                 checkMyPermissions()
             }
+
+            editMessageCancel.setOnClickListener {
+                viewModel.postAction(PrivateChatActions.CancelEditClick)
+            }
+
+            submitEditMessageTv.setOnClickListener {
+                val text = writeMessageEd.text.toString().trim()
+                if (text.isEmpty()) return@setOnClickListener
+                writeMessageEd.setText("")
+                viewModel.postAction(PrivateChatActions.SendEditedMessage(text))
+                viewModel.postAction(PrivateChatActions.CancelEditClick)
+            }
+
         }
     }
 
@@ -215,7 +237,6 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
             }
 
             pickImage { uri ->
-//                toastMy("Uploading the image...", true)
                 viewModel.onMessageImageSelected(uri)
             }
         }
@@ -229,16 +250,16 @@ class PrivateChatRoomFragment : BaseFragment(az.zero.azchat.R.layout.fragment_pr
     override fun onResume() {
         super.onResume()
         viewModel.postAction(PrivateChatActions.ViewResumed)
+        sharedPreferences.currentGid = viewModel.getGID()
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.postAction(PrivateChatActions.ViewPaused)
+        sharedPreferences.currentGid = ""
     }
 
     override fun onRecordSuccess(filePath: String, duration: Long) {
-//        if (filePath.isNotEmpty()) toastMy("Uploading the record...", true)
-
         viewModel.uploadAudioFile(filePath, duration)
     }
 

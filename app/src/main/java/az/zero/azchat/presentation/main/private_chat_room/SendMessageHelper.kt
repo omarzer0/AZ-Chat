@@ -18,6 +18,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
@@ -38,7 +39,8 @@ class SendMessageHelper @Inject constructor(
         messageAudio: Uri?,
         gid: String,
         notificationToken: String,
-        audioDuration: Long = -1
+        audioDuration: Long = -1,
+        messageId: String? = null
     ) {
         val realPath = imageUri?.let { RealPathUtil.getRealPath(application, it) } ?: ""
         val userId = sharedPreferenceManger.uid
@@ -62,7 +64,8 @@ class SendMessageHelper @Inject constructor(
                     userImage,
                     userId,
                     otherUserNotificationToken,
-                    audioDuration
+                    audioDuration,
+                    messageId
                 )
             }
             AUDIO -> {
@@ -79,7 +82,8 @@ class SendMessageHelper @Inject constructor(
                     userImage,
                     userId,
                     otherUserNotificationToken,
-                    audioDuration
+                    audioDuration,
+                    messageId
                 )
             }
             IMAGE -> {
@@ -102,7 +106,8 @@ class SendMessageHelper @Inject constructor(
                             userImage,
                             userId,
                             otherUserNotificationToken,
-                            audioDuration
+                            audioDuration,
+                            messageId
                         )
                     },
                     onUploadImageFailed = {
@@ -125,9 +130,10 @@ class SendMessageHelper @Inject constructor(
         otherUserImage: String,
         otherUserUID: String,
         otherUserNotificationToken: String,
-        audioDuration: Long
+        audioDuration: Long,
+        messageId: String? = null
     ) {
-        val randomId = firestore.collection(GROUPS_ID).document().id
+        val randomId = messageId ?: firestore.collection(GROUPS_ID).document().id
         val message = Message(
             randomId,
             messageText,

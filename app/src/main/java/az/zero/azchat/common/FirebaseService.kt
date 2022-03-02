@@ -9,7 +9,7 @@ import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.navigation.NavDeepLinkBuilder
 import az.zero.azchat.R
-import az.zero.azchat.common.SharedPreferenceManger.Companion.IS_NOTIFICATIONS_ENABLED
+import az.zero.azchat.common.SharedPreferenceManger.Companion.CURRENT_GID
 import az.zero.azchat.common.SharedPreferenceManger.Companion.SHARED_PREFERENCES_NAME
 import az.zero.azchat.presentation.main.MainActivity
 import az.zero.azchat.repository.MainRepositoryImpl
@@ -45,11 +45,14 @@ class FirebaseService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        var isNotificationsEnabled = false
-        if (sharedPreference != null) {
-            isNotificationsEnabled = sharedPreference!!.getBoolean(IS_NOTIFICATIONS_ENABLED, true)
-        }
-        if (!isNotificationsEnabled) return
+
+        var isNotificationsDisabled = false
+        if (sharedPreference != null)
+            isNotificationsDisabled =
+                message.data["gid"] == sharedPreference!!.getString(CURRENT_GID, "")
+
+        if (isNotificationsDisabled) return
+
 
 
         logMe("onMessageReceived: ${message.data}")

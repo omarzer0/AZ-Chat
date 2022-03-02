@@ -124,14 +124,4 @@ class MainActivity : BaseActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarrConfiguration) || super.onSupportNavigateUp()
     }
-
-    override fun onStart() {
-        super.onStart()
-        sharedPreferences.isNotificationsEnabled = false
-    }
-
-    override fun onStop() {
-        super.onStop()
-        sharedPreferences.isNotificationsEnabled = true
-    }
 }
