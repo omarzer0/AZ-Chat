@@ -4,5 +4,4 @@ import az.zero.azchat.domain.models.user.User
 
 sealed class AddChatEvent {
     class GetUsersToChatDone(val users: List<User>) : AddChatEvent()
-//    class GetUsersToChatFailed(val error: String) : AddChatEvent()
 }

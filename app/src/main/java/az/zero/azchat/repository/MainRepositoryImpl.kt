@@ -19,80 +19,86 @@ import javax.inject.Singleton
 @Singleton
 class MainRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage,
     private val sharedPreferenceManger: SharedPreferenceManger,
-    @ApplicationScope private val applicationScope: CoroutineScope
 ) {
-    private val TAG = "tag"
-    private var privateChatsListener: ListenerRegistration? = null
 
-    fun getRandomFirebaseGID() = firestore.collection(GROUPS_ID).document().id
-    fun removePrivateChatsListener() {
-        privateChatsListener?.remove()
-    }
-
-    fun getAllUsers(
-        onGetUsersDone: (List<User>) -> Unit,
-    ) {
+    fun updateUserToken(newToken: String) {
+        logMe("main updateUserToken", "updateUserToken")
         val uid = sharedPreferenceManger.uid
-        logMe("uid ===> $uid")
-        val users = ArrayList<User>()
-        firestore.collection(USERS_ID).get().addOnSuccessListener { documents ->
-            documents.forEach { document ->
-                val user = document.toObject<User>()
-                if (!user.hasNullField() && user.uid != uid) {
-                    logMe("${user.uid} != $uid")
-                    users.add(user)
-                } else {
-                    Log.e(TAG, "HAS NULL : => $user")
-                }
-            }
-            onGetUsersDone(users)
-
-        }.addOnFailureListener {
-            logMe("getAllUsersByPhoneNumber ${it.localizedMessage}")
-            onGetUsersDone(emptyList())
-        }
+        sharedPreferenceManger.notificationToken = newToken
+        firestore.collection(USERS_ID).document(uid).update("notificationToken", newToken)
     }
 
-    fun checkIfGroupExists(
-        uID: String,
-        otherUserID: String,
-        onSuccess: (String) -> Unit
-    ) {
-        firestore.collection(GROUPS_ID)
-            .whereArrayContains("members", uID)
-            .get().addOnSuccessListener {
-                val group = it.find { document ->
-                    val group = document.toObject<Group>()
-                    if (group.hasNullField()) return@addOnSuccessListener
-                    group.members!!.contains(otherUserID)
-                }
-                group?.let { document ->
-                    val existGroup = document.toObject<Group>()
-                    if (existGroup.hasNullField()) return@addOnSuccessListener
-                    onSuccess(existGroup.gid!!)
-                } ?: onSuccess("")
-            }
-    }
+//    private val TAG = "tag"
+//    private var privateChatsListener: ListenerRegistration? = null
 
-    fun addFakeUser() {
+//    fun getRandomFirebaseGID() = firestore.collection(GROUPS_ID).document().id
+//    fun removePrivateChatsListener() {
+//        privateChatsListener?.remove()
+//    }
+//
+//    fun getAllUsers(
+//        onGetUsersDone: (List<User>) -> Unit,
+//    ) {
+//        val uid = sharedPreferenceManger.uid
+//        logMe("uid ===> $uid")
+//        val users = ArrayList<User>()
+//        firestore.collection(USERS_ID).get().addOnSuccessListener { documents ->
+//            documents.forEach { document ->
+//                val user = document.toObject<User>()
+//                if (!user.hasNullField() && user.uid != uid) {
+//                    logMe("${user.uid} != $uid")
+//                    users.add(user)
+//                } else {
+//                    Log.e(TAG, "HAS NULL : => $user")
+//                }
+//            }
+//            onGetUsersDone(users)
+//
+//        }.addOnFailureListener {
+//            logMe("getAllUsersByPhoneNumber ${it.localizedMessage}")
+//            onGetUsersDone(emptyList())
+//        }
+//    }
+//
+//    fun checkIfGroupExists(
+//        uID: String,
+//        otherUserID: String,
+//        onSuccess: (String) -> Unit
+//    ) {
+//        firestore.collection(GROUPS_ID)
+//            .whereArrayContains("members", uID)
+//            .get().addOnSuccessListener {
+//                val group = it.find { document ->
+//                    val group = document.toObject<Group>()
+//                    if (group.hasNullField()) return@addOnSuccessListener
+//                    group.members!!.contains(otherUserID)
+//                }
+//                group?.let { document ->
+//                    val existGroup = document.toObject<Group>()
+//                    if (existGroup.hasNullField()) return@addOnSuccessListener
+//                    onSuccess(existGroup.gid!!)
+//                } ?: onSuccess("")
+//            }
+//    }
 
-        val fakeUser = User(
-            "uid1234",
-            "fakeUser",
-            "",
-            "bio1234",
-            emptyList(),
-            "+201010101010"
-        )
-        firestore.collection(USERS_ID).document("uid1234").set(fakeUser)
-            .addOnSuccessListener {
-                logMe("Add fake user success")
-            }.addOnFailureListener {
-                logMe(it.localizedMessage ?: "addUser error")
-            }
-    }
+//    fun addFakeUser() {
+//
+//        val fakeUser = User(
+//            "uid1234",
+//            "fakeUser",
+//            "",
+//            "bio1234",
+//            emptyList(),
+//            "+201010101010"
+//        )
+//        firestore.collection(USERS_ID).document("uid1234").set(fakeUser)
+//            .addOnSuccessListener {
+//                logMe("Add fake user success")
+//            }.addOnFailureListener {
+//                logMe(it.localizedMessage ?: "addUser error")
+//            }
+//    }
 
 //    fun getPrivateChatsForUser(
 //        onSuccess: (PrivateChat) -> Unit
@@ -141,88 +147,88 @@ class MainRepositoryImpl @Inject constructor(
 //        }
 //    }
 
-    private fun getImageByUID(uid: String, onSuccess: (String) -> Unit) {
-        val imageRef = storage.reference.child("profileImages/$uid.jpg")
-        imageRef.downloadUrl.addOnSuccessListener {
-            logMe(it.toString())
-            onSuccess(it.toString())
-        }
-    }
-
-
-    fun getMessagesQuery(gid: String): Query {
-        return firestore.collection(MESSAGES_ID)
-            .document(gid)
-            .collection(PRIVATE_MESSAGES_ID)
-            .orderBy("sentAt", Query.Direction.ASCENDING)
-    }
-
-    fun getUID() = sharedPreferenceManger.uid
-
-    fun getMessagesByGroupId(
-        gid: String,
-        onSuccess: (List<Message>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        firestore.collection(MESSAGES_ID)
-            .document(gid)
-            .collection(PRIVATE_MESSAGES_ID)
-            .orderBy("sentAt")
-            .get()
-            .addOnSuccessListener { docs ->
-                val messages = ArrayList<Message>()
-                docs.forEach { doc ->
-                    val message = doc.toObject<Message>()
-                    if (!message.hasNullField()) {
-                        messages.add(message)
-                    }
-                }
-                onSuccess(messages)
-            }
-            .addOnFailureListener {
-                onFailure(it)
-                Log.e(TAG, "getMessagesByGroupId: ${it.localizedMessage}")
-            }
-    }
-
-    fun updateGroupLastMessage() {
-        val uid = sharedPreferenceManger.uid
-        val groupId = "F0rLNHDqXZdZz6sqIeJj"
-        firestore.collection(GROUPS_ID).document(groupId)
-            .update(
-                "lastSentMessage", Message(
-                    "123123123",
-                    "new msg sent",
-                    Timestamp(Date()),
-                    "Uhp7yfvA8HW4HIS49sQBoe7wovQ2",
-                    deleted = false,
-                    updated = false,
-                    loved = false
-                )
-            )
-    }
-
-    fun addGroup() {
-        // get random id
-        val gid = firestore.collection(GROUPS_ID).document().id
-        Log.e(TAG, "addGroup: $gid")
-
-        val newGroup = Group(
-            gid,
-            "new g1",
-            false,
-            emptyList(),
-            Timestamp(Date()),
-            Timestamp(Date()),
-            TEST_USER,
-            "",
-//            emptyMap(),
-            Message()
-        )
-        firestore.collection(GROUPS_ID)
-            .document(gid)
-            .set(newGroup)
-    }
+//    private fun getImageByUID(uid: String, onSuccess: (String) -> Unit) {
+//        val imageRef = storage.reference.child("profileImages/$uid.jpg")
+//        imageRef.downloadUrl.addOnSuccessListener {
+//            logMe(it.toString())
+//            onSuccess(it.toString())
+//        }
+//    }
+//
+//
+//    fun getMessagesQuery(gid: String): Query {
+//        return firestore.collection(MESSAGES_ID)
+//            .document(gid)
+//            .collection(PRIVATE_MESSAGES_ID)
+//            .orderBy("sentAt", Query.Direction.ASCENDING)
+//    }
+//
+//    fun getUID() = sharedPreferenceManger.uid
+//
+//    fun getMessagesByGroupId(
+//        gid: String,
+//        onSuccess: (List<Message>) -> Unit,
+//        onFailure: (Exception) -> Unit
+//    ) {
+//        firestore.collection(MESSAGES_ID)
+//            .document(gid)
+//            .collection(PRIVATE_MESSAGES_ID)
+//            .orderBy("sentAt")
+//            .get()
+//            .addOnSuccessListener { docs ->
+//                val messages = ArrayList<Message>()
+//                docs.forEach { doc ->
+//                    val message = doc.toObject<Message>()
+//                    if (!message.hasNullField()) {
+//                        messages.add(message)
+//                    }
+//                }
+//                onSuccess(messages)
+//            }
+//            .addOnFailureListener {
+//                onFailure(it)
+//                Log.e(TAG, "getMessagesByGroupId: ${it.localizedMessage}")
+//            }
+//    }
+//
+//    fun updateGroupLastMessage() {
+//        val uid = sharedPreferenceManger.uid
+//        val groupId = "F0rLNHDqXZdZz6sqIeJj"
+//        firestore.collection(GROUPS_ID).document(groupId)
+//            .update(
+//                "lastSentMessage", Message(
+//                    "123123123",
+//                    "new msg sent",
+//                    Timestamp(Date()),
+//                    "Uhp7yfvA8HW4HIS49sQBoe7wovQ2",
+//                    deleted = false,
+//                    updated = false,
+//                    loved = false
+//                )
+//            )
+//    }
+//
+//    fun addGroup() {
+//        // get random id
+//        val gid = firestore.collection(GROUPS_ID).document().id
+//        Log.e(TAG, "addGroup: $gid")
+//
+//        val newGroup = Group(
+//            gid,
+//            "new g1",
+//            false,
+//            emptyList(),
+//            Timestamp(Date()),
+//            Timestamp(Date()),
+//            TEST_USER,
+//            "",
+////            emptyMap(),
+//            Message()
+//        )
+//        firestore.collection(GROUPS_ID)
+//            .document(gid)
+//            .set(newGroup)
+//    }
 
 //    fun sendMessage(messageText: String, gid: String) {
 //        val randomId = abs(Random().nextLong())
@@ -245,36 +251,31 @@ class MainRepositoryImpl @Inject constructor(
 //            .update("lastSentMessage", message)
 //    }
 
-    fun getCollectionReference(): CollectionReference {
-        return firestore.collection(GROUPS_ID)
-    }
+//    fun getCollectionReference(): CollectionReference {
+//        return firestore.collection(GROUPS_ID)
+//    }
+//
+//    suspend fun getUserInfo(onSuccess: (User) -> Unit) {
+//        val uid = sharedPreferenceManger.uid
+//        tryAsyncNow(applicationScope) {
+//            val user = firestore.collection(USERS_ID)
+//                .document(uid).get().await().toObject<User>() ?: return@tryAsyncNow
+//            if (user.hasNullField()) return@tryAsyncNow
+//            onSuccess(user)
+//        }
+//
+//        firestore.collection(USERS_ID).document(uid).addSnapshotListener { value, error ->
+//            if (error != null) {
+//                logMe("getUserInfo $error")
+//                return@addSnapshotListener
+//            }
+//            if (value == null) return@addSnapshotListener
+//            val user = value.toObject<User>() ?: return@addSnapshotListener
+//            onSuccess(user)
+//        }
+//    }
 
-    suspend fun getUserInfo(onSuccess: (User) -> Unit) {
-        val uid = sharedPreferenceManger.uid
-        tryAsyncNow(applicationScope) {
-            val user = firestore.collection(USERS_ID)
-                .document(uid).get().await().toObject<User>() ?: return@tryAsyncNow
-            if (user.hasNullField()) return@tryAsyncNow
-            onSuccess(user)
-        }
 
-        firestore.collection(USERS_ID).document(uid).addSnapshotListener { value, error ->
-            if (error != null) {
-                logMe("getUserInfo $error")
-                return@addSnapshotListener
-            }
-            if (value == null) return@addSnapshotListener
-            val user = value.toObject<User>() ?: return@addSnapshotListener
-            onSuccess(user)
-        }
-    }
-
-    fun updateUserToken(newToken: String) {
-        logMe("main updateUserToken", "updateUserToken")
-        val uid = sharedPreferenceManger.uid
-        sharedPreferenceManger.notificationToken = newToken
-        firestore.collection(USERS_ID).document(uid).update("notificationToken", newToken)
-    }
 
 //    suspend fun getPrivates(): List<PrivateChat> {
 //        val list = mutableListOf<PrivateChat>()
