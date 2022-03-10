@@ -11,7 +11,6 @@ import az.zero.azchat.common.event.Event
 import az.zero.azchat.common.logMe
 import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.user.User
-import az.zero.azchat.repository.MainRepositoryImpl
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +18,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddChatViewModel @Inject constructor(
-    private val repositoryImpl: MainRepositoryImpl,
     private val state: SavedStateHandle,
     private val sharedPreferenceManger: SharedPreferenceManger,
     private val firestore: FirebaseFirestore

@@ -12,7 +12,6 @@ import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger.Companion.CURRENT_GID
 import az.zero.azchat.common.SharedPreferenceManger.Companion.SHARED_PREFERENCES_NAME
 import az.zero.azchat.presentation.main.MainActivity
-import az.zero.azchat.repository.MainRepositoryImpl
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.scopes.ServiceScoped
@@ -23,7 +22,7 @@ import kotlin.random.Random
 class FirebaseService : FirebaseMessagingService() {
 
     @Inject
-    lateinit var repositoryImpl: MainRepositoryImpl
+    lateinit var repositoryImpl: NotificationTokenHelper
 
     private var sharedPreference: SharedPreferences? = null
 

@@ -8,7 +8,7 @@ import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.USERS_ID
 import az.zero.azchat.common.logMe
 import az.zero.azchat.domain.models.user.User
-import az.zero.azchat.repository.MainRepositoryImpl
+import az.zero.azchat.common.NotificationTokenHelper
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.messaging.FirebaseMessaging
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repositoryImpl: MainRepositoryImpl,
+    private val repositoryImpl: NotificationTokenHelper,
     private val firestore: FirebaseFirestore,
     private val sharedPreferenceManger: SharedPreferenceManger
 ) : ViewModel() {
