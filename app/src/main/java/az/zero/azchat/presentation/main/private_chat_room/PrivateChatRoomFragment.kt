@@ -1,7 +1,6 @@
 package az.zero.azchat.presentation.main.private_chat_room
 
 import android.Manifest
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -116,6 +115,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
             .build()
         messageAdapter = MessagesAdapter(
             uid,
+            viewModel.isGroup,
             options,
             onReceivedMessageLongClick = {
                 viewModel.postAction(PrivateChatActions.ReceiverMessageLongClick(it))
@@ -145,11 +145,22 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
     }
 
     private fun setDataToViews() {
+        val roomName: String
+        val roomImage: String
+
+        if (viewModel.isGroup) {
+            roomName = viewModel.groupName
+            roomImage = viewModel.groupImage
+        } else {
+            roomName = viewModel.username
+            roomImage = viewModel.userImage
+        }
+
         tryNow {
             (activity as MainActivity).binding.apply {
-                usernameTv.text = viewModel.username
+                usernameTv.text = roomName
                 userStateTv.gone()
-                setImageUsingGlide(userImageIv, viewModel.userImage)
+                setImageUsingGlide(userImageIv, roomImage)
             }
         }
 

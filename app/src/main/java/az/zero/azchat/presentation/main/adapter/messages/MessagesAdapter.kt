@@ -32,6 +32,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
 class MessagesAdapter(
     private val uid: String,
+    private val isGroup:Boolean,
     options: FirestoreRecyclerOptions<Message>,
     val onReceivedMessageLongClick: (Message) -> Unit,
     val onSenderMessageLongClick: (message: Message, clickAction: MessageLongClickAction) -> Unit,

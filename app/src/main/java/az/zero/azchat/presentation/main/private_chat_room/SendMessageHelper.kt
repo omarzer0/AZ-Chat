@@ -18,7 +18,6 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
@@ -40,7 +39,10 @@ class SendMessageHelper @Inject constructor(
         gid: String,
         notificationToken: String,
         audioDuration: Long = -1,
-        messageId: String? = null
+        messageId: String? = null,
+        isGroup: Boolean,
+        groupName: String,
+        groupImage: String
     ) {
         val realPath = imageUri?.let { RealPathUtil.getRealPath(application, it) } ?: ""
         val userId = sharedPreferenceManger.uid
@@ -65,7 +67,10 @@ class SendMessageHelper @Inject constructor(
                     userId,
                     otherUserNotificationToken,
                     audioDuration,
-                    messageId
+                    messageId,
+                    isGroup,
+                    groupName,
+                    groupImage
                 )
             }
             AUDIO -> {
@@ -83,7 +88,10 @@ class SendMessageHelper @Inject constructor(
                     userId,
                     otherUserNotificationToken,
                     audioDuration,
-                    messageId
+                    messageId,
+                    isGroup,
+                    groupName,
+                    groupImage
                 )
             }
             IMAGE -> {
@@ -107,7 +115,10 @@ class SendMessageHelper @Inject constructor(
                             userId,
                             otherUserNotificationToken,
                             audioDuration,
-                            messageId
+                            messageId,
+                            isGroup,
+                            groupName,
+                            groupImage
                         )
                     },
                     onUploadImageFailed = {
@@ -131,7 +142,10 @@ class SendMessageHelper @Inject constructor(
         otherUserUID: String,
         otherUserNotificationToken: String,
         audioDuration: Long,
-        messageId: String? = null
+        messageId: String? = null,
+        isGroup: Boolean,
+        groupName: String,
+        groupImage: String
     ) {
         val randomId = messageId ?: firestore.collection(GROUPS_ID).document().id
         val message = Message(
@@ -145,7 +159,8 @@ class SendMessageHelper @Inject constructor(
             seen = false,
             imageUri = imageUri,
             audioUri = audioUri,
-            audioDuration = audioDuration
+            audioDuration = audioDuration,
+            senderName = senderName
         )
 
         logMe("repo\n$message")
@@ -168,7 +183,10 @@ class SendMessageHelper @Inject constructor(
                         otherUserName,
                         otherUserImage,
                         otherUserNotificationToken,
-                        otherUserUID
+                        otherUserUID,
+                        isGroup,
+                        groupName,
+                        groupImage
                     ),
                     senderDeviceToken
                 )
@@ -260,7 +278,10 @@ class SendMessageHelper @Inject constructor(
         messageType: MessageType,
         notificationToken: String,
         onSuccess: (Boolean) -> Unit,
-        audioDuration: Long = -1
+        audioDuration: Long = -1,
+        isGroup: Boolean,
+        groupName: String,
+        groupImage: String
     ) {
         val uID = sharedPreferenceManger.uid
         // get random id
@@ -310,7 +331,10 @@ class SendMessageHelper @Inject constructor(
                 messageImage,
                 messageAudio,
                 gid,
-                notificationToken
+                notificationToken,
+                isGroup = isGroup,
+                groupName = groupName,
+                groupImage = groupImage
             )
         })
 

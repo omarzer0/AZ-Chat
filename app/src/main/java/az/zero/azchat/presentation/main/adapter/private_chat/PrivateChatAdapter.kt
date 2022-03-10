@@ -36,23 +36,25 @@ class PrivateChatAdapter(private val uid: String) :
         init {
             binding.root.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
-                onStudentClickListener?.let {
-                    val item = getItem(adapterPosition)
-                    it(
-                        item.group.gid!!,
-                        item.user.name!!,
-                        item.user.imageUrl ?: "",
-                        item.user.uid!!,
-                        item.user.notificationToken!!
-                    )
-                }
+                onStudentClickListener?.let { it(getItem(adapterPosition)) }
             }
         }
 
         fun bind(currentItem: PrivateChat) {
             binding.apply {
-                privateChatNameTv.text = currentItem.user.name ?: ""
-                setImageUsingGlide(privateChatImageIv, currentItem.user.imageUrl ?: "")
+                val roomName: String
+                val roomImage: String
+
+                if (currentItem.group.ofTypeGroup!!) {
+                    roomName = currentItem.group.name!!
+                    roomImage = currentItem.group.image!!
+                } else {
+                    roomName = currentItem.user.name!!
+                    roomImage = currentItem.user.imageUrl!!
+                }
+
+                privateChatNameTv.text = roomName
+                setImageUsingGlide(privateChatImageIv, roomImage)
                 val lastMessage = currentItem.group.lastSentMessage ?: return
 
 
@@ -86,8 +88,8 @@ class PrivateChatAdapter(private val uid: String) :
     }
 
 
-    private var onStudentClickListener: ((String, String, String, String, String) -> Unit)? = null
-    fun setOnStudentClickListener(listener: (String, String, String, String, String) -> Unit) {
+    private var onStudentClickListener: ((PrivateChat) -> Unit)? = null
+    fun setOnStudentClickListener(listener: (PrivateChat) -> Unit) {
         onStudentClickListener = listener
     }
 

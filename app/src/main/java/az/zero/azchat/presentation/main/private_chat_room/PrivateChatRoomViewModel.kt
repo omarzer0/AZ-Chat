@@ -7,10 +7,12 @@ import az.zero.azchat.common.event.Event
 import az.zero.azchat.di.remote.ApplicationScope
 import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.message.Message
+import az.zero.azchat.domain.models.private_chat.PrivateChat
 import az.zero.azchat.presentation.main.adapter.messages.MessageLongClickAction
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -25,15 +27,35 @@ class PrivateChatRoomViewModel @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val sharedPreferenceManger: SharedPreferenceManger,
     private val storage: FirebaseStorage,
+    private val firebaseMessaging: FirebaseMessaging,
     @ApplicationScope private val applicationScope: CoroutineScope
 ) : ViewModel() {
 
-    private val gid = stateHandler.get<String>("gid") ?: ""
-    val username = stateHandler.get<String>("username") ?: ""
-    val userImage = stateHandler.get<String>("userImage") ?: ""
-    private val notificationToken = stateHandler.get<String>("notificationToken") ?: ""
-    private val otherUserUID = stateHandler.get<String>("otherUserUID") ?: ""
+    private val privateChat = stateHandler.get<PrivateChat>("privateChat")!!
+
+    //    private val gid = stateHandler.get<String>("gid") ?: ""
+    //    val username = stateHandler.get<String>("username") ?: ""
+    //    val userImage = stateHandler.get<String>("userImage") ?: ""
+    //    private val notificationToken = stateHandler.get<String>("notificationToken") ?: ""
+    //    private val otherUserUID = stateHandler.get<String>("otherUserUID") ?: ""
+    //    private var newGroupChat = stateHandler.get<Boolean>("isNewGroup") ?: false
+
+    val isGroup = privateChat.group.ofTypeGroup ?: false
+    private val gid = privateChat.id
+
+    val username = privateChat.user.name ?: ""
+    val userImage = privateChat.user.imageUrl ?: ""
+
+    val groupName = privateChat.group.name ?: ""
+    val groupImage = privateChat.group.image ?: ""
+
+    private val privateChatNotificationToken = privateChat.user.notificationToken ?: ""
+    private val groupNotificationTopic = privateChat.group.groupNotificationTopic ?: ""
+
+    private val otherUserUID = if (isGroup) "" else privateChat.user.uid ?: ""
     private var newGroupChat = stateHandler.get<Boolean>("isNewGroup") ?: false
+
+
     private val valueMap = HashMap<String, Any>()
 
     private var messageToEdit: Message? = null
@@ -70,6 +92,8 @@ class PrivateChatRoomViewModel @Inject constructor(
             is PrivateChatActions.SendMessage -> {
                 if (action.messageText.isEmpty() && messageImage == null && messageAudio == null) return
 
+                val notificationToken = if (isGroup) groupNotificationTopic
+                else privateChatNotificationToken
                 if (newGroupChat) {
                     sendMessageHelper.addGroup(
                         gid,
@@ -79,7 +103,10 @@ class PrivateChatRoomViewModel @Inject constructor(
                         messageAudio,
                         action.messageType,
                         onSuccess = { newGroupChat = it },
-                        notificationToken = notificationToken
+                        notificationToken = notificationToken,
+                        isGroup = isGroup,
+                        groupName = groupName,
+                        groupImage = groupImage
                     )
 
                 } else {
@@ -89,11 +116,15 @@ class PrivateChatRoomViewModel @Inject constructor(
                         messageImage,
                         messageAudio,
                         gid,
-                        notificationToken
+                        notificationToken,
+                        isGroup = isGroup,
+                        groupName = groupName,
+                        groupImage = groupImage
                     )
                 }
             }
             PrivateChatActions.ViewPaused -> {
+                if (isGroup) return
                 logMe("ViewPaused")
                 sendMessageHelper.updateCurrentUserStatus(
                     gid,
@@ -103,6 +134,7 @@ class PrivateChatRoomViewModel @Inject constructor(
                 sendMessageHelper.clearOtherUserStatusListener()
             }
             PrivateChatActions.ViewResumed -> {
+                if (isGroup) return
                 logMe("ViewResumed")
                 sendMessageHelper.updateCurrentUserStatus(
                     gid,
@@ -114,6 +146,7 @@ class PrivateChatRoomViewModel @Inject constructor(
                 })
             }
             is PrivateChatActions.Writing -> {
+                if (isGroup) return
                 if (action.isWriting) sendMessageHelper.updateCurrentUserStatus(
                     gid,
                     UserStatus.WRITING
@@ -174,6 +207,8 @@ class PrivateChatRoomViewModel @Inject constructor(
     }
 
     private fun getDownloadableUrl(audioFilePath: String, audioDuration: Long) {
+        val notificationToken = if (isGroup) groupNotificationTopic
+        else privateChatNotificationToken
         storage.reference.child("audio/${getUID()}/${audioFilePath}").downloadUrl.addOnSuccessListener {
             sendMessageHelper.checkForImageOrAudioAndSend(
                 MessageType.AUDIO,
@@ -182,7 +217,10 @@ class PrivateChatRoomViewModel @Inject constructor(
                 it,
                 gid,
                 notificationToken,
-                audioDuration
+                audioDuration,
+                isGroup = isGroup,
+                groupName = groupName,
+                groupImage = groupImage
             )
         }
     }
@@ -244,6 +282,9 @@ class PrivateChatRoomViewModel @Inject constructor(
 
     fun isEditMode(): Boolean = _editAreaState.value?.first ?: false
 
+    init {
+        if (isGroup) firebaseMessaging.subscribeToTopic(groupNotificationTopic)
+    }
 }
 
 sealed class PrivateChatActions {
@@ -271,9 +312,6 @@ sealed class PrivateChatActions {
 
 sealed class PrivateChatEvents {
     data class OtherUserState(val otherUserStatus: UserStatus) : PrivateChatEvents()
-//    data class EditAreaState(val shouldShow: Boolean) : PrivateChatEvents()
-//    object ShowDeleteDialog : PrivateChatEvents()
-//    data class HideDeleteDialog(val success: Boolean) : PrivateChatEvents()
 }
 
 enum class UserStatus {

@@ -13,6 +13,8 @@ import az.zero.azchat.common.extension.onQueryTextChanged
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentAddChatBinding
+import az.zero.azchat.domain.models.group.Group
+import az.zero.azchat.domain.models.private_chat.PrivateChat
 import az.zero.azchat.presentation.main.adapter.user.UserAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -57,12 +59,14 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
 
                 val action =
                     AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
-                        groupGID,
-                        it.name!!,
-                        it.imageUrl!!,
-                        it.uid!!,
-                        gid.isEmpty(),
-                        it.notificationToken!!
+//                        groupGID,
+//                        it.name!!,
+//                        it.imageUrl!!,
+//                        it.uid!!,
+//                        gid.isEmpty(),
+//                        it.notificationToken!!
+                        PrivateChat(Group(groupGID), it, groupGID),
+                        gid.isEmpty()
                     )
                 navigateToAction(action)
             }

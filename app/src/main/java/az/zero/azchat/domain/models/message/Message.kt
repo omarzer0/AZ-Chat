@@ -17,7 +17,8 @@ data class Message(
     var seen: Boolean = false,
     var imageUri: String = "",
     var audioUri: String = "",
-    var audioDuration: Long = -1
+    var audioDuration: Long = -1,
+    var senderName:String? = ""
 ) : Parcelable {
     fun hasNullField() =
         listOf(id, messageText, sentAt, sentBy, deleted, updated, loved).any { it == null }

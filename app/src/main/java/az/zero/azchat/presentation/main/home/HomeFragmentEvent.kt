@@ -1,12 +1,10 @@
 package az.zero.azchat.presentation.main.home
 
+import az.zero.azchat.domain.models.private_chat.PrivateChat
+
 sealed class HomeFragmentEvent {
-    class PrivateChatsClick(
-        val gid: String,
-        val username: String,
-        val userImage: String,
-        val otherUserUID: String,
-        val notificationToken: String
+    data class PrivateChatsClick(
+        val privateChat: PrivateChat
     ) : HomeFragmentEvent()
 
     object AddChat : HomeFragmentEvent()

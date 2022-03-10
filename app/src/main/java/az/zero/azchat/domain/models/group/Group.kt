@@ -1,9 +1,13 @@
 package az.zero.azchat.domain.models.group
 
+import android.os.Parcelable
 import az.zero.azchat.domain.models.message.Message
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
+@Parcelize
 data class Group(
     var gid: String? = null,
     var name: String? = null,
@@ -14,9 +18,14 @@ data class Group(
     var createdBy: String? = null,
     var image: String? = null,
     var lastSentMessage: Message? = null,
-    var user1: DocumentReference? = null,
-    var user2: DocumentReference? = null
-) {
+    var user1: @RawValue DocumentReference? = null,
+    var user2: @RawValue DocumentReference? = null,
+    var groupNotificationTopic: String? = null
+) : Parcelable {
+    init {
+        if (groupNotificationTopic == null) groupNotificationTopic = ""
+    }
+
     fun hasNullField() =
         listOf(
             gid,
@@ -30,5 +39,4 @@ data class Group(
             user1,
             user2
         ).any { it == null }
-
 }

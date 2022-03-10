@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun getPrivateChats(query: QuerySnapshot, uid: String, from: Source) {
         query.forEach { document ->
             val group = document.toObject<Group>()
-            if (group.ofTypeGroup == true) return@forEach
+//            if (group.ofTypeGroup == true) return@forEach
             if (group.hasNullField()) return@forEach
             val otherUserID = if (!group.user1!!.path.contains(uid)) group.user1!!.path
             else group.user2!!.path
@@ -70,20 +70,8 @@ class HomeViewModel @Inject constructor(
         _event.postValue(Event(HomeFragmentEvent.AddChat))
     }
 
-    fun privateChatClick(
-        gid: String,
-        username: String,
-        userImage: String,
-        otherUserUID: String,
-        notificationToken: String
-    ) {
-        _event.postValue(
-            Event(
-                HomeFragmentEvent.PrivateChatsClick(
-                    gid, username, userImage, otherUserUID, notificationToken
-                )
-            )
-        )
+    fun privateChatClick(privateChat: PrivateChat) {
+        _event.postValue(Event(HomeFragmentEvent.PrivateChatsClick(privateChat)))
     }
 
     fun viewDestroyed() {

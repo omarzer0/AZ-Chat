@@ -30,25 +30,12 @@
     <fragment
         android:id="@+id/privateChatRoomFragment"
         android:name="az.zero.azchat.presentation.main.private_chat_room.PrivateChatRoomFragment"
-        android:label="{username}"
         tools:layout="@layout/fragment_private_chat_room">
         <argument
-            android:name="gid"
-            app:argType="string" />
-        <argument
-            android:name="username"
-            app:argType="string" />
-        <argument
-            android:name="userImage"
-            app:argType="string" />
-        <argument
-            android:name="otherUserUID"
-            app:argType="string" />
+            android:name="privateChat"
+            app:argType="az.zero.azchat.domain.models.private_chat.PrivateChat" />
         <argument
             android:name="isNewGroup"
             app:argType="boolean" />
-        <argument
-            android:name="notificationToken"
-            app:argType="string" />
     </fragment>
 </navigation>

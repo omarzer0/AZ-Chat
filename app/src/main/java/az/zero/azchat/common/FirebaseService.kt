@@ -11,6 +11,9 @@ import androidx.navigation.NavDeepLinkBuilder
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger.Companion.CURRENT_GID
 import az.zero.azchat.common.SharedPreferenceManger.Companion.SHARED_PREFERENCES_NAME
+import az.zero.azchat.domain.models.group.Group
+import az.zero.azchat.domain.models.private_chat.PrivateChat
+import az.zero.azchat.domain.models.user.User
 import az.zero.azchat.presentation.main.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -74,8 +77,11 @@ class FirebaseService : FirebaseMessagingService() {
             else -> "${message.data["message"]}"
         }
 
+        val isGroup = message.data["isGroup"] ?: ""
+        val title = if (isGroup == "true") message.data["groupName"] ?: ""
+        else message.data["username"] ?: ""
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(message.data["title"])
+            .setContentTitle(title)
             .setContentText(contentText)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setAutoCancel(true)
@@ -88,11 +94,60 @@ class FirebaseService : FirebaseMessagingService() {
 
     private fun getArgsData(message: RemoteMessage): Bundle {
         return Bundle().apply {
-            putString("gid", message.data["gid"])
-            putString("username", message.data["username"])
-            putString("userImage", message.data["userImage"])
-            putString("notificationToken", message.data["notificationToken"])
-            putString("otherUserUID", message.data["otherUserUID"])
+            val gid = message.data["gid"] ?: ""
+            val username = message.data["username"] ?: ""
+            val userImage = message.data["userImage"] ?: ""
+
+            val groupName = message.data["groupName"] ?: ""
+            val groupImage = message.data["groupImage"] ?: ""
+
+            val notificationToken = message.data["notificationToken"] ?: ""
+//            val otherUserUID = message.data["otherUserUID"] ?: ""
+
+//            val user: User
+//            val group: Group
+//
+//            if (isGroup == "true") {
+//                logMe(isGroup,"getArgsData")
+//                group = Group(
+//                    gid = gid,
+//                    name = username,
+//                    image = userImage,
+//                    groupNotificationTopic = notificationToken,
+//                    ofTypeGroup = true
+//                )
+//                user = User(name = "", imageUrl = "", notificationToken = "")
+//
+//            } else {
+//                group = Group(
+//                    gid = gid,
+//                    name = "",
+//                    image = "",
+//                    groupNotificationTopic = "",
+//                    ofTypeGroup = false
+//                )
+//                user = User(
+//                    name = username,
+//                    imageUrl = userImage,
+//                    notificationToken = notificationToken,
+//                )
+//            }
+//            putParcelable("privateChat", PrivateChat(group, user, gid))
+            putParcelable(
+                "privateChat", PrivateChat(
+                    Group(
+                        gid = gid,
+                        name = groupName,
+                        image = groupImage,
+                        groupNotificationTopic = notificationToken,
+                        ofTypeGroup = true
+                    ), User(
+                        name = username,
+                        imageUrl = userImage,
+                        notificationToken = notificationToken,
+                    ), gid
+                )
+            )
         }
 
     }
