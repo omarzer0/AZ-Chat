@@ -29,4 +29,8 @@
     <string name="you">You :</string>
     <string name="recording_">Recording...</string>
     <string name="slash__">/</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="deleted_message">Deleted message</string>
+    <string name="update_message">Update message</string>
 </resources>

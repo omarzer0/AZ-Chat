@@ -156,6 +156,8 @@ fun convertTimeStampToDate(timestamp: Timestamp): String = try {
     ""
 }
 
+//fun convertTimeStampToTime
+
 fun tryNow(
     tag: String = "",
     error: ((Exception) -> Unit)? = null,

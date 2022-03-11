@@ -15,5 +15,9 @@ data class NotificationData(
     val username: String,
     val userImage: String,
     val notificationToken: String,
-    val otherUserUID: String
+    val otherUserUID: String,
+    val isGroup: Boolean,
+
+    val groupName: String,
+    val groupImage: String
 )

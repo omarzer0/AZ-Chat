@@ -4,23 +4,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import az.zero.azchat.common.GROUPS_ID
+import az.zero.azchat.common.SharedPreferenceManger
+import az.zero.azchat.common.USERS_ID
 import az.zero.azchat.common.event.Event
+import az.zero.azchat.common.logMe
+import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.user.User
-import az.zero.azchat.repository.MainRepositoryImpl
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class AddChatViewModel @Inject constructor(
-    private val repositoryImpl: MainRepositoryImpl,
-    state: SavedStateHandle
+    private val state: SavedStateHandle,
+    private val sharedPreferenceManger: SharedPreferenceManger,
+    private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
     private val _event = MutableLiveData<Event<AddChatEvent>>()
     val event: LiveData<Event<AddChatEvent>> = _event
 
     private val _users = MutableLiveData<List<User>>()
-    val user: LiveData<List<User>> = _users
 
     private val _searchQuery: MutableLiveData<String> = state.getLiveData(
         SEARCH_QUERY,
@@ -33,18 +39,44 @@ class AddChatViewModel @Inject constructor(
     }
 
     private fun getAllUsers() {
-        repositoryImpl.getAllUsers(
-            onGetUsersDone = {
-                _users.postValue(it)
-                _event.postValue(Event(AddChatEvent.GetUsersToChatDone(it)))
-            })
+        val uid = sharedPreferenceManger.uid
+        val users = ArrayList<User>()
+        firestore.collection(USERS_ID).get().addOnSuccessListener { documents ->
+            documents.forEach { document ->
+                val user = document.toObject<User>()
+                if (!user.hasNullField() && user.uid != uid) {
+                    users.add(user)
+                } else {
+                    logMe("Has null: $user")
+                }
+            }
+            _users.postValue(users)
+            _event.postValue(Event(AddChatEvent.GetUsersToChatDone(users)))
+
+        }.addOnFailureListener {
+            logMe("getAllUsersByPhoneNumber ${it.localizedMessage}")
+        }
+
     }
 
-    fun getGID() = repositoryImpl.getRandomFirebaseGID()
-    fun getUID() = repositoryImpl.getUID()
+    fun getGID() = firestore.collection(GROUPS_ID).document().id
+    fun getUID() = sharedPreferenceManger.uid
 
     fun checkIfGroupExists(uID: String, otherUID: String, onSuccess: (String) -> Unit) {
-        repositoryImpl.checkIfGroupExists(uID, otherUID, onSuccess)
+        firestore.collection(GROUPS_ID).whereArrayContains("members", uID)
+            .get()
+            .addOnSuccessListener {
+                val group = it.find { document ->
+                    val group = document.toObject<Group>()
+                    if (group.hasNullField()) return@addOnSuccessListener
+                    group.members!!.contains(otherUID) && !group.ofTypeGroup!!
+                }
+                group?.let { document ->
+                    val existGroup = document.toObject<Group>()
+                    if (existGroup.hasNullField()) return@addOnSuccessListener
+                    onSuccess(existGroup.gid!!)
+                } ?: onSuccess("")
+            }
     }
 
     fun searchUserByNameOrPhone(query: String) {
@@ -57,8 +89,8 @@ class AddChatViewModel @Inject constructor(
         }
     }
 
-    fun setSearchQueryValue(country: String) {
-        _searchQuery.postValue(country)
+    fun setSearchQueryValue(searchQuery: String) {
+        _searchQuery.postValue(searchQuery)
     }
 
     companion object {

@@ -1,11 +1,13 @@
 package az.zero.azchat.presentation.main.adapter.messages
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.appcompat.widget.PopupMenu
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -30,15 +32,19 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
 class MessagesAdapter(
     private val uid: String,
-    private val options: FirestoreRecyclerOptions<Message>,
-    val onMessageLongClick: (Message) -> Unit,
+    private val isGroup: Boolean,
+    options: FirestoreRecyclerOptions<Message>,
+    val onReceivedMessageLongClick: (Message) -> Unit,
+    val onSenderMessageLongClick: (message: Message, clickAction: MessageLongClickAction) -> Unit,
     val onDataChange: () -> Unit,
-    val audioHandler: AudioHandler
-) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options), AudioPlaybackListener {
+    private val audioHandler: AudioHandler
+) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options),
+    AudioPlaybackListener {
 
     private var lastedClickedMessage = -1
     private var playingAudioView: ImageView? = null
     private var playingId = ""
+    private var menuListener: PopupMenu.OnMenuItemClickListener? = null
 
     init {
         audioHandler.initListener(this)
@@ -88,7 +94,10 @@ class MessagesAdapter(
 
         init {
             binding.root.setOnLongClickListener {
-                onMessageLongClick(getItem(adapterPosition))
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    val message = getItem(adapterPosition)
+                    if (!message.deleted!!) onReceivedMessageLongClick(message)
+                }
                 true
             }
 
@@ -115,13 +124,33 @@ class MessagesAdapter(
 
         fun bind(currentItem: Message) {
             binding.apply {
-                if (currentItem.deleted!!) return
 
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 sendAtTextTv.isVisible = currentItem.clicked
-                msgSeenIv.isVisible = currentItem.seen
-                msgSentIv.isVisible = !currentItem.seen
-                lovedImgIv.isVisible = currentItem.loved!!
+                lovedImgIv.isVisible = currentItem.loved!! && !currentItem.deleted!!
+                updatedTextTv.isVisible = currentItem.updated!!
+
+                if (isGroup) {
+                    tvUsername.text = currentItem.senderName
+                    tvUsername.show()
+                } else {
+                    tvUsername.gone()
+                }
+
+                if (!isGroup) {
+                    msgSeenIv.isVisible = currentItem.seen
+                    msgSentIv.isVisible = !currentItem.seen
+                }
+
+                if (currentItem.deleted!!) {
+                    showDeletedLayout(
+                        messageTextTv,
+                        mirroredCl,
+                        voicePlayerView.root,
+                        messageImageContainerCv,
+                    )
+                    return
+                }
 
                 handleBinding(
                     getMessageType(currentItem),
@@ -142,7 +171,7 @@ class MessagesAdapter(
 
         init {
             binding.root.setOnLongClickListener {
-                onMessageLongClick(getItem(adapterPosition))
+                showMenu(it, getItem(adapterPosition))
                 true
             }
 
@@ -169,14 +198,26 @@ class MessagesAdapter(
 
         fun bind(currentItem: Message) {
             binding.apply {
-                if (currentItem.deleted!!) return
-
-
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 sendAtTextTv.isVisible = currentItem.clicked
-                msgSeenIv.isVisible = currentItem.seen
-                msgSentIv.isVisible = !currentItem.seen
-                lovedImgIv.isVisible = currentItem.loved!!
+
+                lovedImgIv.isVisible = currentItem.loved!! && !currentItem.deleted!!
+                updatedTextTv.isVisible = currentItem.updated!!
+
+                if (!isGroup) {
+                    msgSeenIv.isVisible = currentItem.seen
+                    msgSentIv.isVisible = !currentItem.seen
+                }
+
+                if (currentItem.deleted!!) {
+                    showDeletedLayout(
+                        messageTextTv,
+                        normalCl,
+                        voicePlayerView.root,
+                        messageImageContainerCv,
+                    )
+                    return
+                }
 
                 handleBinding(
                     getMessageType(currentItem),
@@ -193,7 +234,41 @@ class MessagesAdapter(
         }
     }
 
-    fun getMessageType(message: Message) = when {
+
+    fun showMenu(view: View, message: Message) {
+        if (message.deleted!!) return
+        val inflateMenu = if (getMessageType(message) == TEXT) {
+            R.menu.message_action_menu
+        } else {
+            R.menu.audio_image_action_menu
+        }
+        val popup = PopupMenu(view.context, view)
+        popup.setOnMenuItemClickListener(initMenuListener(message))
+        popup.inflate(inflateMenu)
+        popup.setForceShowIcon(true)
+        popup.show()
+    }
+
+
+    private fun initMenuListener(message: Message): PopupMenu.OnMenuItemClickListener {
+        menuListener = null
+        menuListener = PopupMenu.OnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.delete_action -> {
+                    onSenderMessageLongClick(message, MessageLongClickAction.DELETE)
+                    true
+                }
+                R.id.edit_action -> {
+                    onSenderMessageLongClick(message, MessageLongClickAction.EDIT)
+                    true
+                }
+                else -> false
+            }
+        }
+        return menuListener!!
+    }
+
+    private fun getMessageType(message: Message) = when {
         message.imageUri.isNotEmpty() -> {
             IMAGE
         }
@@ -203,6 +278,20 @@ class MessagesAdapter(
         else -> {
             TEXT
         }
+    }
+
+    private fun showDeletedLayout(
+        textTv: TextView,
+        root: View,
+        voicePlayerView: View,
+        imageContainerView: View
+    ) {
+        voicePlayerView.gone()
+        imageContainerView.gone()
+        textTv.text = root.context.getString(R.string.deleted_message)
+        textTv.show()
+        root.background = getDrawable(root.context, R.drawable.four_corner_deleted_background)
+        return
     }
 
     private fun handleAudioPlay(
@@ -266,7 +355,10 @@ class MessagesAdapter(
                 voicePlayerView.root.gone()
                 setImageUsingGlide(messageImageIv, currentItem.imageUri)
                 imageAndTextBgCl.background =
-                    getDrawable(imageAndTextBgCl.context, R.drawable.four_corner_normal_background)
+                    getDrawable(
+                        imageAndTextBgCl.context,
+                        R.drawable.four_corner_normal_background
+                    )
             }
         }
     }
@@ -286,21 +378,21 @@ class MessagesAdapter(
 
     override fun onCompletion() {
         logMe("onCompletion", "playingAudioView")
-        playingAudioView?.setImageResource(R.drawable.ic_play)
+        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_play)
     }
 
     override fun onPause() {
         logMe("onPause", "playingAudioView")
-        playingAudioView?.setImageResource(R.drawable.ic_play)
+        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_play)
     }
 
     override fun onStart() {
         logMe("onStart $playingAudioView", "playingAudioView")
-        playingAudioView?.setImageResource(R.drawable.ic_pause)
+        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_pause)
     }
 
     override fun onResume() {
         logMe("onResume $playingAudioView", "playingAudioView222")
-        playingAudioView!!.setImageResource(R.drawable.ic_pause)
+        playingAudioView!!.setImageResource(az.zero.azchat.R.drawable.ic_pause)
     }
 }

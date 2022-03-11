@@ -4,11 +4,19 @@ import android.net.Uri
 import androidx.lifecycle.*
 import az.zero.azchat.common.*
 import az.zero.azchat.common.event.Event
+import az.zero.azchat.di.remote.ApplicationScope
+import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.message.Message
+import az.zero.azchat.domain.models.private_chat.PrivateChat
+import az.zero.azchat.presentation.main.adapter.messages.MessageLongClickAction
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.tasks.await
 import java.io.File
 import javax.inject.Inject
 
@@ -18,25 +26,54 @@ class PrivateChatRoomViewModel @Inject constructor(
     private val sendMessageHelper: SendMessageHelper,
     private val firestore: FirebaseFirestore,
     private val sharedPreferenceManger: SharedPreferenceManger,
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
+    private val firebaseMessaging: FirebaseMessaging,
+    @ApplicationScope private val applicationScope: CoroutineScope
 ) : ViewModel() {
 
-    private val gid = stateHandler.get<String>("gid") ?: ""
-    val username = stateHandler.get<String>("username") ?: ""
-    val userImage = stateHandler.get<String>("userImage") ?: ""
-    private val notificationToken = stateHandler.get<String>("notificationToken") ?: ""
-    private val otherUserUID = stateHandler.get<String>("otherUserUID") ?: ""
+    private val privateChat = stateHandler.get<PrivateChat>("privateChat")!!
+
+    //    private val gid = stateHandler.get<String>("gid") ?: ""
+    //    val username = stateHandler.get<String>("username") ?: ""
+    //    val userImage = stateHandler.get<String>("userImage") ?: ""
+    //    private val notificationToken = stateHandler.get<String>("notificationToken") ?: ""
+    //    private val otherUserUID = stateHandler.get<String>("otherUserUID") ?: ""
+    //    private var newGroupChat = stateHandler.get<Boolean>("isNewGroup") ?: false
+
+    val isGroup = privateChat.group.ofTypeGroup ?: false
+    private val gid = privateChat.id
+
+    val username = privateChat.user.name ?: ""
+    val userImage = privateChat.user.imageUrl ?: ""
+
+    val groupName = privateChat.group.name ?: ""
+    val groupImage = privateChat.group.image ?: ""
+
+    private val privateChatNotificationToken = privateChat.user.notificationToken ?: ""
+    private val groupNotificationTopic = privateChat.group.groupNotificationTopic ?: ""
+
+    private val notificationToken = if (isGroup) groupNotificationTopic
+    else privateChatNotificationToken
+
+    private val otherUserUID = if (isGroup) "" else privateChat.user.uid ?: ""
     private var newGroupChat = stateHandler.get<Boolean>("isNewGroup") ?: false
 
 
+    private val valueMap = HashMap<String, Any>()
+
+    private var messageToEdit: Message? = null
+    private val _editAreaState = MutableLiveData<Pair<Boolean, String>>()
+    val editAreaState: LiveData<Pair<Boolean, String>> = _editAreaState
+
     private var messageImage: Uri? = null
     private var messageAudio: Uri? = null
-//    val messageImage: LiveData<Uri?> = _messageImage
 
     private val _event = MutableLiveData<Event<PrivateChatEvents>>()
     val event: LiveData<Event<PrivateChatEvents>> = _event
 
     fun getUID() = sharedPreferenceManger.uid
+
+    fun getGID() = gid
 
 
     fun getMessagesQuery(): Query {
@@ -46,26 +83,19 @@ class PrivateChatRoomViewModel @Inject constructor(
             .orderBy("sentAt", Query.Direction.ASCENDING)
     }
 
-
     fun postAction(action: PrivateChatActions) {
         when (action) {
-            is PrivateChatActions.MessageLongClick -> {
+            is PrivateChatActions.ReceiverMessageLongClick -> {
                 logMe("Tabbed ${action.message.messageText}")
-                tryAsyncNow(viewModelScope) {
-                    firestore.collection(MESSAGES_ID).document(gid)
-                        .collection(PRIVATE_MESSAGES_ID)
-                        .document(action.message.id!!)
-                        .update("loved", !action.message.loved!!).addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                logMe("update love done!")
-                            } else {
-                                logMe("update love failed! ${it.exception}")
-                            }
-                        }
-                }
+                val message = action.message
+                updateMessageField(message.id!!, getValueMap().apply {
+                    set("loved", !message.loved!!)
+                })
             }
             is PrivateChatActions.SendMessage -> {
                 if (action.messageText.isEmpty() && messageImage == null && messageAudio == null) return
+                logMe(notificationToken, "sendMessage")
+                logMe("checkIfGroupExists new = $newGroupChat","checkIfGroupExists")
 
                 if (newGroupChat) {
                     sendMessageHelper.addGroup(
@@ -76,7 +106,10 @@ class PrivateChatRoomViewModel @Inject constructor(
                         messageAudio,
                         action.messageType,
                         onSuccess = { newGroupChat = it },
-                        notificationToken = notificationToken
+                        notificationToken = notificationToken,
+                        isGroup = isGroup,
+                        groupName = groupName,
+                        groupImage = groupImage
                     )
 
                 } else {
@@ -86,11 +119,15 @@ class PrivateChatRoomViewModel @Inject constructor(
                         messageImage,
                         messageAudio,
                         gid,
-                        notificationToken
+                        notificationToken,
+                        isGroup = isGroup,
+                        groupName = groupName,
+                        groupImage = groupImage
                     )
                 }
             }
             PrivateChatActions.ViewPaused -> {
+                if (isGroup) return
                 logMe("ViewPaused")
                 sendMessageHelper.updateCurrentUserStatus(
                     gid,
@@ -100,6 +137,7 @@ class PrivateChatRoomViewModel @Inject constructor(
                 sendMessageHelper.clearOtherUserStatusListener()
             }
             PrivateChatActions.ViewResumed -> {
+                if (isGroup) return
                 logMe("ViewResumed")
                 sendMessageHelper.updateCurrentUserStatus(
                     gid,
@@ -111,6 +149,7 @@ class PrivateChatRoomViewModel @Inject constructor(
                 })
             }
             is PrivateChatActions.Writing -> {
+                if (isGroup) return
                 if (action.isWriting) sendMessageHelper.updateCurrentUserStatus(
                     gid,
                     UserStatus.WRITING
@@ -122,7 +161,33 @@ class PrivateChatRoomViewModel @Inject constructor(
                 }
             }
             PrivateChatActions.DataChanged -> {
+                if (isGroup) return
                 sendMessageHelper.setAllMessagesAsSeen(gid)
+            }
+            is PrivateChatActions.SenderMessageLongClick -> {
+                handleMessageMenuClick(action.message, action.clickAction)
+            }
+            PrivateChatActions.CancelEditClick -> {
+                _editAreaState.value = Pair(false, "")
+                messageToEdit = null
+            }
+            is PrivateChatActions.SendEditedMessage -> {
+                if (messageToEdit == null) return
+                if (messageToEdit!!.messageText == action.text) return
+
+                val text = action.text
+                updateMessageField(messageToEdit!!.id!!, getValueMap().apply {
+                    set("updated", true)
+                    set("messageText", text)
+                })
+
+                updateHomeMessage(messageToEdit!!, getValueMap().apply {
+                    set("lastSentMessage", messageToEdit!!.copy(updated = true))
+                    set(
+                        "lastSentMessage",
+                        messageToEdit!!.copy(messageText = text)
+                    )
+                })
             }
         }
     }
@@ -154,18 +219,92 @@ class PrivateChatRoomViewModel @Inject constructor(
                 it,
                 gid,
                 notificationToken,
-                audioDuration
+                audioDuration,
+                isGroup = isGroup,
+                groupName = groupName,
+                groupImage = groupImage
             )
         }
+    }
+
+    private fun handleMessageMenuClick(message: Message, clickAction: MessageLongClickAction) {
+        when (clickAction) {
+            MessageLongClickAction.EDIT -> {
+                _editAreaState.value = Pair(true, message.messageText!!)
+                messageToEdit = message
+            }
+            MessageLongClickAction.DELETE -> {
+                updateMessageField(message.id!!, getValueMap().apply {
+                    set("deleted", true)
+                })
+
+                updateHomeMessage(message, getValueMap().apply {
+                    set("lastSentMessage", message.copy(updated = true))
+                })
+            }
+        }
+    }
+
+    private fun getValueMap() = valueMap.apply {
+        clear()
+    }
+
+    private fun updateMessageField(
+        documentId: String,
+        hashMap: HashMap<String, Any>,
+        onSuccess: (() -> Unit)? = null,
+        onFail: ((String) -> Unit)? = null,
+        onFinish: (() -> Unit)? = null
+    ) {
+        tryAsyncNow(viewModelScope, action = {
+            firestore.collection(MESSAGES_ID).document(gid)
+                .collection(PRIVATE_MESSAGES_ID)
+                .document(documentId)
+                .update(hashMap).await()
+            onSuccess?.invoke()
+        }, error = {
+            onFail?.invoke(it.localizedMessage ?: "updateMessageField unknown error")
+        }, finally = {
+            onFinish?.invoke()
+        })
+    }
+
+    private fun updateHomeMessage(message: Message, hashMap: HashMap<String, Any>) {
+        tryAsyncNow(tag = "updateDeleteHome", scope = applicationScope, action = {
+            val path = firestore.collection(GROUPS_ID).document(gid).get().await()
+            val group = path.toObject<Group>() ?: return@tryAsyncNow
+            if (group.lastSentMessage!!.id != message.id!!) return@tryAsyncNow
+            firestore.collection(GROUPS_ID).document(gid)
+                .update(hashMap).await()
+            logMe("updateDeleteHome: Success", "updateDelete")
+        }, error = {
+            logMe("updateDeleteHome: failed ${it.localizedMessage}", "updateDelete")
+        })
+    }
+
+    fun isEditMode(): Boolean = _editAreaState.value?.first ?: false
+
+    init {
+        logMe(notificationToken, "sendMessage")
+        if (isGroup) firebaseMessaging.subscribeToTopic(notificationToken)
     }
 }
 
 sealed class PrivateChatActions {
-    data class MessageLongClick(val message: Message) : PrivateChatActions()
+    data class ReceiverMessageLongClick(val message: Message) : PrivateChatActions()
     data class SendMessage(val messageText: String, val messageType: MessageType) :
         PrivateChatActions()
 
+    data class SenderMessageLongClick(
+        val message: Message,
+        val clickAction: MessageLongClickAction
+    ) : PrivateChatActions()
+
+    object CancelEditClick : PrivateChatActions()
+
     data class Writing(val isWriting: Boolean) : PrivateChatActions()
+    data class SendEditedMessage(val text: String) : PrivateChatActions()
+
     object DataChanged : PrivateChatActions()
 
 

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.R
+import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
@@ -36,37 +37,46 @@ class PrivateChatAdapter(private val uid: String) :
         init {
             binding.root.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
-                onStudentClickListener?.let {
-                    val item = getItem(adapterPosition)
-                    it(
-                        item.group.gid!!,
-                        item.user.name!!,
-                        item.user.imageUrl ?: "",
-                        item.user.uid!!,
-                        item.user.notificationToken!!
-                    )
-                }
+                onStudentClickListener?.let { it(getItem(adapterPosition)) }
             }
         }
 
         fun bind(currentItem: PrivateChat) {
             binding.apply {
-                privateChatNameTv.text = currentItem.user.name ?: ""
-                setImageUsingGlide(privateChatImageIv, currentItem.user.imageUrl ?: "")
+                val roomName: String
+                val roomImage: String
+
+                if (currentItem.group.ofTypeGroup!!) {
+                    roomName = currentItem.group.name!!
+                    roomImage = currentItem.group.image!!
+                } else {
+                    roomName = currentItem.user.name!!
+                    roomImage = currentItem.user.imageUrl!!
+                }
+
+                tvSentAt.text = convertTimeStampToDate(
+                    currentItem.group.lastSentMessage!!.sentAt!!
+                ).split(" ")[1]
+
+                privateChatNameTv.text = roomName
+                setImageUsingGlide(privateChatImageIv, roomImage)
                 val lastMessage = currentItem.group.lastSentMessage ?: return
 
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && lastMessage.sentBy != uid) {
-                    if (lastMessage.seen) {
+                    if (lastMessage.seen || currentItem.group.ofTypeGroup!!) {
                         lastMessageTv.setTextAppearance(R.style.bodyTextStyle)
+                        tvSentAt.setTextAppearance(R.style.verySmallTextStyle)
                         newMessageIndicator.gone()
                     } else {
                         lastMessageTv.setTextAppearance(R.style.headerTextStyleSmall)
+                        tvSentAt.setTextAppearance(R.style.headerTextStyleSmall)
                         newMessageIndicator.show()
                     }
                 }
 
                 val messageText = when {
+                    lastMessage.deleted!! -> lastMessageTv.context.getString(R.string.deleted_message)
                     !lastMessage.messageText.isNullOrEmpty() -> lastMessage.messageText
                     lastMessage.imageUri.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
                     else -> lastMessageTv.context.getString(R.string.sent_an_audio)
@@ -85,8 +95,8 @@ class PrivateChatAdapter(private val uid: String) :
     }
 
 
-    private var onStudentClickListener: ((String, String, String, String, String) -> Unit)? = null
-    fun setOnStudentClickListener(listener: (String, String, String, String, String) -> Unit) {
+    private var onStudentClickListener: ((PrivateChat) -> Unit)? = null
+    fun setOnStudentClickListener(listener: (PrivateChat) -> Unit) {
         onStudentClickListener = listener
     }
 
