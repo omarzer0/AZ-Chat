@@ -55,8 +55,8 @@ class HomeViewModel @Inject constructor(
             val group = document.toObject<Group>()
 //            if (group.ofTypeGroup == true) return@forEach
             if (group.hasNullField()) return@forEach
-            val otherUserID = if (!group.user1!!.path.contains(uid)) group.user1!!.path
-            else group.user2!!.path
+            val otherUserID = if (!group.user1!!.contains(uid)) group.user1!!
+            else group.user2!!
 
             val user = firestore.document(otherUserID).get(from).await().toObject<User>()
                 ?: return@forEach

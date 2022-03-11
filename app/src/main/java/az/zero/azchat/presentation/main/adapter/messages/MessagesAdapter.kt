@@ -32,7 +32,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
 class MessagesAdapter(
     private val uid: String,
-    private val isGroup:Boolean,
+    private val isGroup: Boolean,
     options: FirestoreRecyclerOptions<Message>,
     val onReceivedMessageLongClick: (Message) -> Unit,
     val onSenderMessageLongClick: (message: Message, clickAction: MessageLongClickAction) -> Unit,
@@ -127,10 +127,20 @@ class MessagesAdapter(
 
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 sendAtTextTv.isVisible = currentItem.clicked
-                msgSeenIv.isVisible = currentItem.seen
-                msgSentIv.isVisible = !currentItem.seen
                 lovedImgIv.isVisible = currentItem.loved!! && !currentItem.deleted!!
                 updatedTextTv.isVisible = currentItem.updated!!
+
+                if (isGroup) {
+                    tvUsername.text = currentItem.senderName
+                    tvUsername.show()
+                } else {
+                    tvUsername.gone()
+                }
+
+                if (!isGroup) {
+                    msgSeenIv.isVisible = currentItem.seen
+                    msgSentIv.isVisible = !currentItem.seen
+                }
 
                 if (currentItem.deleted!!) {
                     showDeletedLayout(
@@ -190,10 +200,14 @@ class MessagesAdapter(
             binding.apply {
                 sendAtTextTv.text = convertTimeStampToDate(currentItem.sentAt!!)
                 sendAtTextTv.isVisible = currentItem.clicked
-                msgSeenIv.isVisible = currentItem.seen
-                msgSentIv.isVisible = !currentItem.seen
+
                 lovedImgIv.isVisible = currentItem.loved!! && !currentItem.deleted!!
                 updatedTextTv.isVisible = currentItem.updated!!
+
+                if (!isGroup) {
+                    msgSeenIv.isVisible = currentItem.seen
+                    msgSentIv.isVisible = !currentItem.seen
+                }
 
                 if (currentItem.deleted!!) {
                     showDeletedLayout(

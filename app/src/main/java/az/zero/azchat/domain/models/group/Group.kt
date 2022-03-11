@@ -18,8 +18,8 @@ data class Group(
     var createdBy: String? = null,
     var image: String? = null,
     var lastSentMessage: Message? = null,
-    var user1: @RawValue DocumentReference? = null,
-    var user2: @RawValue DocumentReference? = null,
+    var user1: @RawValue String? = "",
+    var user2: @RawValue String? = "",
     var groupNotificationTopic: String? = null
 ) : Parcelable {
     init {

@@ -283,6 +283,7 @@ class SendMessageHelper @Inject constructor(
         groupName: String,
         groupImage: String
     ) {
+        logMe("exist checkIfGroupExists add group","checkIfGroupExists")
         val uID = sharedPreferenceManger.uid
         // get random id
         val randomId = abs(Random().nextLong())
@@ -301,7 +302,7 @@ class SendMessageHelper @Inject constructor(
         )
 
         checkIfGroupExists(uID, otherUserID, onSuccess = { exists ->
-            logMe("exist checkIfGroupExists $exists")
+            logMe("exist checkIfGroupExists $exists","checkIfGroupExists")
             if (!exists) {
                 val newGroup = Group(
                     gid,
@@ -313,8 +314,8 @@ class SendMessageHelper @Inject constructor(
                     uID,
                     "",
                     message,
-                    firestore.document("users/$uID"),
-                    firestore.document("users/$otherUserID")
+                    firestore.document("users/$uID").path,
+                    firestore.document("users/$otherUserID").path
                 )
                 firestore.collection(GROUPS_ID)
                     .document(gid)
@@ -352,8 +353,10 @@ class SendMessageHelper @Inject constructor(
                 val exists = it.any { document ->
                     val group = document.toObject<Group>()
                     if (group.hasNullField()) return@addOnSuccessListener
-                    group.members!!.contains(otherUserID)
+                    if (group.ofTypeGroup!!) false
+                    else group.members!!.contains(otherUserID)
                 }
+                logMe("exists=> $exists","checkIfGroupExists")
                 onSuccess(exists)
             }
     }

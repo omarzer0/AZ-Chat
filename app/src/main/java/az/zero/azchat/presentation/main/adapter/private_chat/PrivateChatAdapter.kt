@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.R
+import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
@@ -53,17 +54,23 @@ class PrivateChatAdapter(private val uid: String) :
                     roomImage = currentItem.user.imageUrl!!
                 }
 
+                tvSentAt.text = convertTimeStampToDate(
+                    currentItem.group.lastSentMessage!!.sentAt!!
+                ).split(" ")[1]
+
                 privateChatNameTv.text = roomName
                 setImageUsingGlide(privateChatImageIv, roomImage)
                 val lastMessage = currentItem.group.lastSentMessage ?: return
 
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && lastMessage.sentBy != uid) {
-                    if (lastMessage.seen) {
+                    if (lastMessage.seen || currentItem.group.ofTypeGroup!!) {
                         lastMessageTv.setTextAppearance(R.style.bodyTextStyle)
+                        tvSentAt.setTextAppearance(R.style.verySmallTextStyle)
                         newMessageIndicator.gone()
                     } else {
                         lastMessageTv.setTextAppearance(R.style.headerTextStyleSmall)
+                        tvSentAt.setTextAppearance(R.style.headerTextStyleSmall)
                         newMessageIndicator.show()
                     }
                 }

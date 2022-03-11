@@ -8,6 +8,21 @@
     android:layout_marginTop="@dimen/_8sdp"
     android:layout_marginEnd="@dimen/_12sdp">
 
+    <TextView
+        android:id="@+id/tv_username"
+        style="@style/verySmallTextStyle"
+        android:layout_width="0dp"
+        android:singleLine="true"
+        android:gravity="end"
+        android:layout_marginStart="@dimen/_25sdp"
+        android:layout_height="wrap_content"
+        android:ellipsize="start"
+        tools:text="Name of the user"
+        android:textColor="@color/mainColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <include
         android:id="@+id/voicePlayerView"
         layout="@layout/voice_message"
@@ -16,7 +31,7 @@
         android:layout_marginStart="@dimen/_46sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_username" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

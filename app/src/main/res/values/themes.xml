@@ -58,6 +58,12 @@
         <item name="theme">@style/singleLine</item>
     </style>
 
+    <style name="verySmallTextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="singleLine">
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>

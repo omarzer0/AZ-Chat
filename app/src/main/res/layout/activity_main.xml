@@ -26,16 +26,16 @@
                 android:id="@+id/chat_cl"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp"
+
                 android:visibility="visible">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/user_image_iv"
                     style="@style/roundShapeableImage"
-                    android:layout_width="50dp"
-                    android:layout_height="0dp"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
                     android:scaleType="fitXY"
+                    android:padding="4dp"
                     android:src="@color/light_gray"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

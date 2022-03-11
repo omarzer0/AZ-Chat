@@ -52,6 +52,9 @@ class PrivateChatRoomViewModel @Inject constructor(
     private val privateChatNotificationToken = privateChat.user.notificationToken ?: ""
     private val groupNotificationTopic = privateChat.group.groupNotificationTopic ?: ""
 
+    private val notificationToken = if (isGroup) groupNotificationTopic
+    else privateChatNotificationToken
+
     private val otherUserUID = if (isGroup) "" else privateChat.user.uid ?: ""
     private var newGroupChat = stateHandler.get<Boolean>("isNewGroup") ?: false
 
@@ -91,9 +94,9 @@ class PrivateChatRoomViewModel @Inject constructor(
             }
             is PrivateChatActions.SendMessage -> {
                 if (action.messageText.isEmpty() && messageImage == null && messageAudio == null) return
+                logMe(notificationToken, "sendMessage")
+                logMe("checkIfGroupExists new = $newGroupChat","checkIfGroupExists")
 
-                val notificationToken = if (isGroup) groupNotificationTopic
-                else privateChatNotificationToken
                 if (newGroupChat) {
                     sendMessageHelper.addGroup(
                         gid,
@@ -158,6 +161,7 @@ class PrivateChatRoomViewModel @Inject constructor(
                 }
             }
             PrivateChatActions.DataChanged -> {
+                if (isGroup) return
                 sendMessageHelper.setAllMessagesAsSeen(gid)
             }
             is PrivateChatActions.SenderMessageLongClick -> {
@@ -207,8 +211,6 @@ class PrivateChatRoomViewModel @Inject constructor(
     }
 
     private fun getDownloadableUrl(audioFilePath: String, audioDuration: Long) {
-        val notificationToken = if (isGroup) groupNotificationTopic
-        else privateChatNotificationToken
         storage.reference.child("audio/${getUID()}/${audioFilePath}").downloadUrl.addOnSuccessListener {
             sendMessageHelper.checkForImageOrAudioAndSend(
                 MessageType.AUDIO,
@@ -283,7 +285,8 @@ class PrivateChatRoomViewModel @Inject constructor(
     fun isEditMode(): Boolean = _editAreaState.value?.first ?: false
 
     init {
-        if (isGroup) firebaseMessaging.subscribeToTopic(groupNotificationTopic)
+        logMe(notificationToken, "sendMessage")
+        if (isGroup) firebaseMessaging.subscribeToTopic(notificationToken)
     }
 }
 

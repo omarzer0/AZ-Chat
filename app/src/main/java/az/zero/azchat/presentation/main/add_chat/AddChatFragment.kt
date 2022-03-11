@@ -57,6 +57,8 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
                 val groupGID = if (gid.isEmpty()) viewModel.getGID()
                 else gid
 
+                logMe("checkIfGroupExists handleClicks gid= $groupGID", "checkIfGroupExists")
+
                 val action =
                     AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
 //                        groupGID,

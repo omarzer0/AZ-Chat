@@ -102,7 +102,7 @@ class FirebaseService : FirebaseMessagingService() {
             val groupImage = message.data["groupImage"] ?: ""
 
             val notificationToken = message.data["notificationToken"] ?: ""
-//            val otherUserUID = message.data["otherUserUID"] ?: ""
+            val otherUserUID = message.data["otherUserUID"] ?: ""
 
 //            val user: User
 //            val group: Group
@@ -133,6 +133,7 @@ class FirebaseService : FirebaseMessagingService() {
 //                )
 //            }
 //            putParcelable("privateChat", PrivateChat(group, user, gid))
+
             putParcelable(
                 "privateChat", PrivateChat(
                     Group(
@@ -140,8 +141,9 @@ class FirebaseService : FirebaseMessagingService() {
                         name = groupName,
                         image = groupImage,
                         groupNotificationTopic = notificationToken,
-                        ofTypeGroup = true
+                        ofTypeGroup = message.data["isGroup"] == "true"
                     ), User(
+                        uid = otherUserUID,
                         name = username,
                         imageUrl = userImage,
                         notificationToken = notificationToken,

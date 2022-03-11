@@ -63,12 +63,13 @@ class AddChatViewModel @Inject constructor(
     fun getUID() = sharedPreferenceManger.uid
 
     fun checkIfGroupExists(uID: String, otherUID: String, onSuccess: (String) -> Unit) {
-        firestore.collection(GROUPS_ID).whereArrayContains("members", uID).get()
+        firestore.collection(GROUPS_ID).whereArrayContains("members", uID)
+            .get()
             .addOnSuccessListener {
                 val group = it.find { document ->
                     val group = document.toObject<Group>()
                     if (group.hasNullField()) return@addOnSuccessListener
-                    group.members!!.contains(otherUID)
+                    group.members!!.contains(otherUID) && !group.ofTypeGroup!!
                 }
                 group?.let { document ->
                     val existGroup = document.toObject<Group>()
