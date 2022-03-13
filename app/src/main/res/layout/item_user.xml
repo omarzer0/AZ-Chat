@@ -20,6 +20,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars" />
 
+    <ImageView
+        android:id="@+id/selected_iv"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_check_circle_main_color"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/user_image_iv"
+        app:layout_constraintStart_toStartOf="@+id/user_image_iv"
+        tools:visibility="visible" />
+
     <TextView
         android:id="@+id/user_name_tv"
         style="@style/headerTextStyle"

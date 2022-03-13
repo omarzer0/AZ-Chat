@@ -95,7 +95,7 @@ class PrivateChatRoomViewModel @Inject constructor(
             is PrivateChatActions.SendMessage -> {
                 if (action.messageText.isEmpty() && messageImage == null && messageAudio == null) return
                 logMe(notificationToken, "sendMessage")
-                logMe("checkIfGroupExists new = $newGroupChat","checkIfGroupExists")
+                logMe("checkIfGroupExists new = $newGroupChat", "checkIfGroupExists")
 
                 if (newGroupChat) {
                     sendMessageHelper.addGroup(
@@ -273,10 +273,13 @@ class PrivateChatRoomViewModel @Inject constructor(
         tryAsyncNow(tag = "updateDeleteHome", scope = applicationScope, action = {
             val path = firestore.collection(GROUPS_ID).document(gid).get().await()
             val group = path.toObject<Group>() ?: return@tryAsyncNow
-            if (group.lastSentMessage!!.id != message.id!!) return@tryAsyncNow
-            firestore.collection(GROUPS_ID).document(gid)
-                .update(hashMap).await()
-            logMe("updateDeleteHome: Success", "updateDelete")
+            if (group.lastSentMessage == null) return@tryAsyncNow
+
+            group.lastSentMessage?.let {
+                if (it.id != message.id!!) return@tryAsyncNow
+                firestore.collection(GROUPS_ID).document(gid).update(hashMap).await()
+                logMe("updateDeleteHome: Success", "updateDelete")
+            }
         }, error = {
             logMe("updateDeleteHome: failed ${it.localizedMessage}", "updateDelete")
         })

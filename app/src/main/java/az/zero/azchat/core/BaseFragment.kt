@@ -11,6 +11,7 @@ import az.zero.azchat.common.IS_DEBUG
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.event.Event
 import az.zero.azchat.common.logMe
+import az.zero.azchat.common.tryNow
 import es.dmoral.toasty.Toasty
 import gun0912.tedimagepicker.builder.TedImagePicker
 import javax.inject.Inject
@@ -53,7 +54,7 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
 
 
     fun navigateToAction(action: NavDirections) {
-        findNavController().navigate(action)
+        tryNow { findNavController().navigate(action) }
     }
 
     protected fun <T> LiveData<Event<T>>.observeIfNotHandled(result: (T) -> Unit) {

@@ -1,6 +1,7 @@
 package az.zero.azchat.presentation.main.add_chat
 
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -9,12 +10,16 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
+import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.onQueryTextChanged
+import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentAddChatBinding
 import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.private_chat.PrivateChat
+import az.zero.azchat.domain.models.user.User
 import az.zero.azchat.presentation.main.adapter.user.UserAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,8 +29,14 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
     val viewModel: AddChatViewModel by viewModels()
     private lateinit var binding: FragmentAddChatBinding
     private lateinit var searchView: SearchView
-    private val userAdapter = UserAdapter()
-
+    private val userAdapter = UserAdapter(
+        onUserChosenToJoinGroup = {
+            onUserChosenToJoinGroup(it)
+        },
+        onUserClickListener = {
+            onUserClick(it)
+        }
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,6 +49,8 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
 
     private fun setUpRvs() {
         binding.userRv.adapter = userAdapter
+//        binding.userRv.itemAnimator = null
+        userAdapter.updateSelectedUsers(viewModel.getSelectedUsers())
     }
 
     private fun observeViewEvents() {
@@ -49,31 +62,74 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
                 }
             }
         }
+
+        viewModel.selectionMode.observe(viewLifecycleOwner) {
+            TransitionManager.beginDelayedTransition(binding.root)
+            userAdapter.setSelectedMode(true)
+            binding.apply {
+                addNewGroupRootCl.gone()
+                selectedUsersViewRootCl.show()
+            }
+        }
     }
 
     private fun handleClicks() {
-        userAdapter.setOnUserClickListener {
-            viewModel.checkIfGroupExists(viewModel.getUID(), it.uid!!) { gid ->
-                val groupGID = if (gid.isEmpty()) viewModel.getGID()
-                else gid
-
-                logMe("checkIfGroupExists handleClicks gid= $groupGID", "checkIfGroupExists")
-
-                val action =
-                    AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
-//                        groupGID,
-//                        it.name!!,
-//                        it.imageUrl!!,
-//                        it.uid!!,
-//                        gid.isEmpty(),
-//                        it.notificationToken!!
-                        PrivateChat(Group(groupGID), it, groupGID),
-                        gid.isEmpty()
-                    )
-                navigateToAction(action)
-            }
-
+        binding.addNewGroupRootCl.setOnClickListener {
+            viewModel.updateSelectionMode(true)
+            hideKeyboard()
         }
+
+        binding.addNewGroupFab.setOnClickListener {
+//            viewModel.addNewGroup { isSuccessful, newGroup ->
+//                if (!isSuccessful) return@addNewGroup
+//                // navigate to the new group
+//                logMe("added", "addNewGroup")
+//                navigateToAction(
+//                    AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
+//                        PrivateChat(newGroup, User(), newGroup.gid!!),
+//                        false
+//                    )
+//                )
+//            }
+            val selectedUsers = viewModel.getSelectedUsers().apply {
+                add(0, sharedPreferences.uid)
+            }.toTypedArray()
+
+            navigateToAction(
+                AddChatFragmentDirections.actionAddChatFragmentToAddEditInfoFragment(selectedUsers)
+            )
+        }
+    }
+
+
+    private fun onUserClick(user: User) {
+        viewModel.checkIfGroupExists(viewModel.getUID(), user.uid!!) { gid ->
+            val groupGID = if (gid.isEmpty()) viewModel.getGID()
+            else gid
+            val action =
+                AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
+                    PrivateChat(Group(groupGID), user, groupGID),
+                    gid.isEmpty()
+                )
+            navigateToAction(action)
+        }
+    }
+
+
+    private fun onUserChosenToJoinGroup(selectedUsers: MutableList<String>) {
+        logMe("users= $selectedUsers", "selectedUsers")
+        if (selectedUsers.isEmpty()) {
+            binding.apply {
+                addNewGroupIv.gone()
+                addNewGroupFab.gone()
+            }
+            return
+        }
+        binding.apply {
+            addNewGroupIv.show()
+            addNewGroupFab.show()
+        }
+        viewModel.updateSelectedUsers(selectedUsers)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

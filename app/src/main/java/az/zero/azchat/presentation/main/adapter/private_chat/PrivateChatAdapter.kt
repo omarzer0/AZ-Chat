@@ -54,38 +54,40 @@ class PrivateChatAdapter(private val uid: String) :
                     roomImage = currentItem.user.imageUrl!!
                 }
 
-                tvSentAt.text = convertTimeStampToDate(
-                    currentItem.group.lastSentMessage!!.sentAt!!
-                ).split(" ")[1]
 
                 privateChatNameTv.text = roomName
                 setImageUsingGlide(privateChatImageIv, roomImage)
-                val lastMessage = currentItem.group.lastSentMessage ?: return
 
+                val lastMessage = currentItem.group.lastSentMessage
+                if (lastMessage != null) {
+                    tvSentAt.text = convertTimeStampToDate(
+                        lastMessage.sentAt!!
+                    ).split(" ")[1]
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && lastMessage.sentBy != uid) {
-                    if (lastMessage.seen || currentItem.group.ofTypeGroup!!) {
-                        lastMessageTv.setTextAppearance(R.style.bodyTextStyle)
-                        tvSentAt.setTextAppearance(R.style.verySmallTextStyle)
-                        newMessageIndicator.gone()
-                    } else {
-                        lastMessageTv.setTextAppearance(R.style.headerTextStyleSmall)
-                        tvSentAt.setTextAppearance(R.style.headerTextStyleSmall)
-                        newMessageIndicator.show()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && lastMessage.sentBy != uid) {
+                        if (lastMessage.seen || currentItem.group.ofTypeGroup!!) {
+                            lastMessageTv.setTextAppearance(R.style.bodyTextStyle)
+                            tvSentAt.setTextAppearance(R.style.verySmallTextStyle)
+                            newMessageIndicator.gone()
+                        } else {
+                            lastMessageTv.setTextAppearance(R.style.headerTextStyleSmall)
+                            tvSentAt.setTextAppearance(R.style.headerTextStyleSmall)
+                            newMessageIndicator.show()
+                        }
                     }
-                }
 
-                val messageText = when {
-                    lastMessage.deleted!! -> lastMessageTv.context.getString(R.string.deleted_message)
-                    !lastMessage.messageText.isNullOrEmpty() -> lastMessage.messageText
-                    lastMessage.imageUri.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
-                    else -> lastMessageTv.context.getString(R.string.sent_an_audio)
+                    val messageText = when {
+                        lastMessage.deleted!! -> lastMessageTv.context.getString(R.string.deleted_message)
+                        !lastMessage.messageText.isNullOrEmpty() -> lastMessage.messageText
+                        lastMessage.imageUri.isNotEmpty() -> lastMessageTv.context.getString(R.string.sent_an_image)
+                        else -> lastMessageTv.context.getString(R.string.sent_an_audio)
+                    }
+                    logMe("$messageText", "messageText")
+                    val sentBy = if (lastMessage.sentBy!! == uid) {
+                        lastMessageTv.context.getString(R.string.you)
+                    } else ""
+                    lastMessageTv.text = "$sentBy$messageText"
                 }
-                logMe("$messageText", "messageText")
-                val sentBy = if (lastMessage.sentBy!! == uid) {
-                    lastMessageTv.context.getString(R.string.you)
-                } else ""
-                lastMessageTv.text = "$sentBy$messageText"
             }
         }
     }

@@ -2,15 +2,16 @@ package az.zero.azchat.repository
 
 import android.app.Activity
 import android.app.Application
-import android.content.ContentResolver
-import android.graphics.Bitmap
 import android.net.Uri
-import android.provider.MediaStore.Images.Media.getBitmap
 import android.util.Log
-import az.zero.azchat.common.*
+import az.zero.azchat.common.SharedPreferenceManger
+import az.zero.azchat.common.USERS_ID
+import az.zero.azchat.common.logMe
+import az.zero.azchat.common.readFile
 import az.zero.azchat.domain.models.country_code.Countries
 import az.zero.azchat.domain.models.country_code.CountryCode
 import az.zero.azchat.domain.models.user.User
+import az.zero.azchat.presentation.auth.extra_details.UploadImageUseCase
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,8 +19,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,9 +28,9 @@ import javax.inject.Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage,
     private val sharedPreferenceManger: SharedPreferenceManger,
-    private val application: Application
+    private val application: Application,
+    private val uploadImageUseCase: UploadImageUseCase
 ) {
 
     private val TAG = "tag"
@@ -210,45 +209,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     fun uploadProfileImageByUserId(
         uri: Uri,
-        contentResolver: ContentResolver,
         onUploadImageSuccess: (Uri) -> Unit,
         onUploadImageFailed: (String) -> Unit,
     ) {
-        val realPath = RealPathUtil.getRealPath(application, uri)
-        val file = Uri.fromFile(File(realPath))
-        val userId = sharedPreferenceManger.uid
-        val storageRef = storage.reference.child("profileImages/$userId.jpg")
-//        val uploadTask = storageRef.putFile(file)
-
-        val uploadTask = try {
-            val bmp = getBitmap(contentResolver, file)
-            val byteStreamArray = ByteArrayOutputStream()
-            bmp.compress(Bitmap.CompressFormat.JPEG, 25, byteStreamArray)
-            val data: ByteArray = byteStreamArray.toByteArray()
-            storageRef.putBytes(data)
-        } catch (e: Exception) {
-            onUploadImageFailed("Failed to upload the image Please try again!")
-            return
-        }
-
-        uploadTask.continueWithTask { task ->
-            if (!task.isSuccessful) {
-                task.exception?.let {
-                    logMe(it.localizedMessage ?: "taskUrl unknown error")
-                    onUploadImageFailed(it.localizedMessage ?: "unknown error")
-                }
-            }
-            storageRef.downloadUrl
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val downloadUri = task.result?: return@addOnCompleteListener
-                logMe("success $downloadUri")
-                onUploadImageSuccess(downloadUri)
-            } else {
-                logMe("taskUrl addOnCompleteListener failed")
-                onUploadImageFailed("unknown error")
-            }
-        }
+        uploadImageUseCase(uri, onUploadImageSuccess, onUploadImageFailed)
     }
 
 }

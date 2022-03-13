@@ -55,12 +55,17 @@ class HomeViewModel @Inject constructor(
             val group = document.toObject<Group>()
 //            if (group.ofTypeGroup == true) return@forEach
             if (group.hasNullField()) return@forEach
-            val otherUserID = if (!group.user1!!.contains(uid)) group.user1!!
-            else group.user2!!
 
-            val user = firestore.document(otherUserID).get(from).await().toObject<User>()
-                ?: return@forEach
-            if (user.hasNullField()) return@forEach
+            val user = if (!group.ofTypeGroup!!) { // not a group
+                val otherUserID = if (!group.user1!!.contains(uid)) group.user1!!
+                else group.user2!!
+                val firebaseUser =
+                    firestore.document(otherUserID).get(from).await().toObject<User>()
+                        ?: return@forEach
+                if (firebaseUser.hasNullField()) return@forEach
+                firebaseUser
+            } else User()
+
             val privateChat = PrivateChat(group, user, group.gid!!)
             localList.add(privateChat)
         }
