@@ -4,16 +4,109 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.login.LoginFragment">
+    tools:context=".presentation.auth.login.LoginFragment">
 
-    <Button
-        android:id="@+id/login_btn"
-        android:text="Login"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/country_cl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_25sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/country_text_tv"
+            style="@style/headerTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_a_country"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_2sdp"
+            android:background="@color/gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/country_text_tv"
+            app:layout_constraintTop_toBottomOf="@+id/country_text_tv" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/plus_tv"
+        style="@style/headerTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:hint="+"
+        app:layout_constraintBottom_toBottomOf="@+id/code_ed"
+        app:layout_constraintStart_toStartOf="@+id/country_cl"
+        app:layout_constraintTop_toTopOf="@+id/code_ed" />
+
+    <EditText
+        android:id="@+id/code_ed"
+        style="@style/headerTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:hint="20"
+        android:maxLength="6"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@+id/plus_tv"
+        app:layout_constraintTop_toBottomOf="@+id/country_cl"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <EditText
+        android:id="@+id/number_ed"
+        style="@style/headerTextStyle"
+        android:layout_width="0dp"
+        android:nextFocusUp="@id/login_btn"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:hint="1001234567"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/code_ed"
+        app:layout_constraintEnd_toEndOf="@+id/country_cl"
+        app:layout_constraintStart_toEndOf="@+id/code_ed"
+        app:layout_constraintTop_toTopOf="@+id/code_ed" />
+
+    <TextView
+        android:id="@+id/textView2"
+        style="@style/bodyTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:maxLines="99"
+        android:text="@string/please_confirm_your_country_code_and_enter_your_phone_number"
+        app:layout_constraintEnd_toEndOf="@+id/number_ed"
+        app:layout_constraintStart_toStartOf="@+id/code_ed"
+        app:layout_constraintTop_toBottomOf="@+id/number_ed" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/login_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_12sdp"
+        android:src="@drawable/ic_arrow_forward"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:tint="@android:color/white"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <include
+        android:id="@+id/progress_bar_pb"
+        layout="@layout/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_25sdp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

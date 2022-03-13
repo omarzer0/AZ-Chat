@@ -2,37 +2,40 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_nav_graph.xml"
-    app:startDestination="@id/loginFragment">
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="az.zero.azchat.presentation.login.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login">
+        android:id="@+id/homeFragment"
+        android:name="az.zero.azchat.presentation.main.home.HomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_loginFragment_to_verificationFragment"
-            app:destination="@id/verificationFragment" />
+            android:id="@+id/action_homeFragment_to_addChatFragment"
+            app:destination="@id/addChatFragment"
+            app:launchSingleTop="true" />
         <action
-            android:id="@+id/action_loginFragment_to_extraDetailsFragment"
-            app:destination="@id/extraDetailsFragment" />
+            android:id="@+id/action_homeFragment_to_privateChatRoomFragment"
+            app:destination="@id/privateChatRoomFragment" />
     </fragment>
     <fragment
-        android:id="@+id/verificationFragment"
-        android:name="az.zero.azchat.presentation.verify.VerificationFragment"
-        android:label="fragment_verification"
-        tools:layout="@layout/fragment_verification" >
+        android:id="@+id/addChatFragment"
+        android:name="az.zero.azchat.presentation.main.add_chat.AddChatFragment"
+        tools:layout="@layout/fragment_add_chat">
         <action
-            android:id="@+id/action_verificationFragment_to_extraDetailsFragment"
-            app:destination="@id/extraDetailsFragment" />
+            android:id="@+id/action_addChatFragment_to_privateChatRoomFragment"
+            app:destination="@id/privateChatRoomFragment"
+            app:popUpTo="@id/homeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/extraDetailsFragment"
-        android:name="az.zero.azchat.presentation.extra_details.ExtraDetailsFragment"
-        android:label="fragment_extra_details"
-        tools:layout="@layout/fragment_extra_details" >
+        android:id="@+id/privateChatRoomFragment"
+        android:name="az.zero.azchat.presentation.main.private_chat_room.PrivateChatRoomFragment"
+        tools:layout="@layout/fragment_private_chat_room">
         <argument
-            android:name="uid"
-            app:argType="string" />
+            android:name="privateChat"
+            app:argType="az.zero.azchat.domain.models.private_chat.PrivateChat" />
+        <argument
+            android:name="isNewGroup"
+            app:argType="boolean" />
     </fragment>
 </navigation>

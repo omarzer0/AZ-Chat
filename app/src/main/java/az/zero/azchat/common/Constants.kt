@@ -2,6 +2,14 @@ package az.zero.azchat.common
 
 const val GROUPS_ID = "groups"
 const val MESSAGES_ID = "messages"
+const val USERS_ID = "users"
 const val PRIVATE_MESSAGES_ID = "messages"
-const val TEST_USER = "k5VHRypLPYgYzHMSubrja09Rt212"
+const val USER_STATUS = "status"
+const val TEST_USER = "EHx0FzfOtLQXda4vTyuZUxzoAS62"
 const val TEST_GROUP = "F0rLNHDqXZdZz6sqIeJj"
+const val TEST_VERIFICATION_CODE = "123456"
+const val IS_DEBUG = true
+const val FAILED_TO_GET_FROM_CACHE = "Failed to get document from cache"
+const val BASE_URL = "https://fcm.googleapis.com"
+const val CONTENT_TYPE = "application/json"
+const val timeOut = 35L

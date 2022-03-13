@@ -1,3 +1,36 @@
 <resources>
-    <string name="app_name">PhoneLoginMVVM</string>
+    <string name="app_name">AZ Chat</string>
+    <string name="your_phone">Your Phone</string>
+    <string name="please_confirm_your_country_code_and_enter_your_phone_number">Please confirm your country code and enter your phone number</string>
+    <string name="choose_a_country">Choose a country</string>
+    <string name="invalid_code">Invalid Code</string>
+    <string name="verify_phone_number">Verify phone number</string>
+    <string name="search">Search</string>
+    <string name="verified_successfully">Verified successfully</string>
+    <string name="username">Username</string>
+    <string name="bio">Bio</string>
+    <string name="done">done</string>
+    <string name="about_you">About you</string>
+    <string name="search_chats">Search chats</string>
+    <string name="search_users">Search users</string>
+    <string name="enter_user_name">Enter a username</string>
+    <string name="enter_bio">Enter a bio</string>
+    <string name="bio_under_three">Bio should be more than 3 characters</string>
+    <string name="camera_not_granted">Can\'t use camera without permission</string>
+    <string name="your_message">Your message...</string>
+    <string name="sure_want_to_logout">Are you sure you want to logout?</string>
+    <string name="logout">Logout</string>
+    <string name="stay">Stay</string>
+    <string name="online">Online</string>
+    <string name="writing">writing...</string>
+    <string name="updated">Updated</string>
+    <string name="sent_an_image">Sent an image</string>
+    <string name="sent_an_audio">Sent an audio</string>
+    <string name="you">You :</string>
+    <string name="recording_">Recording...</string>
+    <string name="slash__">/</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="deleted_message">Deleted message</string>
+    <string name="update_message">Update message</string>
 </resources>

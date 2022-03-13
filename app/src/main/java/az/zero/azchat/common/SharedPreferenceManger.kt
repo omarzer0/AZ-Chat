@@ -19,9 +19,42 @@ class SharedPreferenceManger @Inject constructor(
         get() = getStringValue(AUTH_TOKEN) ?: ""
         set(value) = setValue(AUTH_TOKEN, value)
 
+    var phoneNumber: String
+        get() = getStringValue(PHONE_NUMBER) ?: ""
+        set(value) = setValue(PHONE_NUMBER, value)
+
     var uid: String
         get() = getStringValue(UID) ?: ""
         set(value) = setValue(UID, value)
+
+    var hasLoggedIn: Boolean
+        get() = getBooleanValue(LOGGED_IN)
+        set(value) = setValue(LOGGED_IN, value)
+
+    var openedTheAppBefore: Boolean
+        get() = getBooleanValue(OPENED_THE_APP_BEFORE)
+        set(value) = setValue(OPENED_THE_APP_BEFORE, value)
+
+    var notificationToken: String
+        get() = getStringValue(NOTIFICATION_TOKEN) ?: ""
+        set(value) = setValue(NOTIFICATION_TOKEN, value)
+
+    var userName: String
+        get() = getStringValue(USER_NAME) ?: ""
+        set(value) = setValue(USER_NAME, value)
+
+    var userImage: String
+        get() = getStringValue(USER_IMAGE) ?: ""
+        set(value) = setValue(USER_IMAGE, value)
+
+    var currentGid: String
+        get() = getStringValue(CURRENT_GID) ?: ""
+        set(value) = setValue(CURRENT_GID, value)
+
+//    var isNotificationsEnabled: Boolean
+//        get() = getBooleanValue(IS_NOTIFICATIONS_ENABLED, true)
+//        set(value) = setValue(IS_NOTIFICATIONS_ENABLED, value)
+
 
     fun setValue(key: String, value: String) {
         editor.putString(key, value)
@@ -55,8 +88,8 @@ class SharedPreferenceManger @Inject constructor(
         return sharedPreferences.getFloat(key, 0F)
     }
 
-    fun getBooleanValue(key: String): Boolean {
-        return sharedPreferences.getBoolean(key, false)
+    fun getBooleanValue(key: String, default: Boolean = false): Boolean {
+        return sharedPreferences.getBoolean(key, default)
     }
 
     fun remove(key: String) {
@@ -64,11 +97,22 @@ class SharedPreferenceManger @Inject constructor(
         editor.apply()
     }
 
+    fun nuke() {
+        sharedPreferences.edit().clear().apply()
+    }
+
     companion object {
         const val SHARED_PREFERENCES_NAME = "login shared pref"
         const val EMPTY = ""
-
         const val AUTH_TOKEN = "AUTH_TOKEN"
         const val UID = "uid"
+        const val LOGGED_IN = "logged_in"
+        const val OPENED_THE_APP_BEFORE = "opened the app before"
+        const val PHONE_NUMBER = "phone number"
+        const val NOTIFICATION_TOKEN = "Notification token"
+        const val USER_NAME = "current username"
+        const val USER_IMAGE = "UserImage"
+        const val IS_NOTIFICATIONS_ENABLED = "is notifications enabled"
+        const val CURRENT_GID = "CURRENT_GID"
     }
 }
