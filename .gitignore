@@ -14,7 +14,7 @@
 .cxx
 local.properties
 /.idea/*
-/apikey.properties
+apikey.properties
 
 # AndroidStudio 3
 .idea/caches/build_file_checksums.ser
