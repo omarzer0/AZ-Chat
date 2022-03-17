@@ -26,6 +26,10 @@
             android:id="@+id/action_addChatFragment_to_privateChatRoomFragment"
             app:destination="@id/privateChatRoomFragment"
             app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/action_addChatFragment_to_addEditInfoFragment"
+            app:destination="@id/addEditInfoFragment"
+            app:popUpTo="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/privateChatRoomFragment"
@@ -37,5 +41,18 @@
         <argument
             android:name="isNewGroup"
             app:argType="boolean" />
+    </fragment>
+    <fragment
+        android:id="@+id/addEditInfoFragment"
+        android:name="az.zero.azchat.presentation.main.add_edit_info.AddEditInfoFragment"
+        android:label="Details132"
+        tools:layout="@layout/fragment_add_edit_info">
+        <argument
+            android:name="selectedUsers"
+            app:argType="string[]" />
+        <action
+            android:id="@+id/action_addEditInfoFragment_to_privateChatRoomFragment"
+            app:destination="@id/privateChatRoomFragment"
+            app:popUpTo="@id/homeFragment" />
     </fragment>
 </navigation>

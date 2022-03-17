@@ -18,8 +18,8 @@ data class Group(
     var createdBy: String? = null,
     var image: String? = null,
     var lastSentMessage: Message? = null,
-    var user1: @RawValue String? = "",
-    var user2: @RawValue String? = "",
+    var user1: String? = "",
+    var user2: String? = "",
     var groupNotificationTopic: String? = null
 ) : Parcelable {
     init {
@@ -35,8 +35,6 @@ data class Group(
             createdAt,
             modifiedAt,
             createdBy,
-            image,
-            user1,
-            user2
+            image
         ).any { it == null }
 }

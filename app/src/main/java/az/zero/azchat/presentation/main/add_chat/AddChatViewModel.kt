@@ -1,9 +1,6 @@
 package az.zero.azchat.presentation.main.add_chat
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import az.zero.azchat.common.GROUPS_ID
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.USERS_ID
@@ -11,10 +8,13 @@ import az.zero.azchat.common.event.Event
 import az.zero.azchat.common.logMe
 import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.user.User
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @HiltViewModel
 class AddChatViewModel @Inject constructor(
@@ -34,9 +34,11 @@ class AddChatViewModel @Inject constructor(
     )
     val searchQuery: LiveData<String> = _searchQuery
 
-    init {
-        getAllUsers()
-    }
+    private val selectedUsersList = mutableListOf<String>()
+
+    private val _selectionModeIsON = MutableLiveData<Boolean>()
+    val selectionMode: LiveData<Boolean> = _selectionModeIsON
+
 
     private fun getAllUsers() {
         val uid = sharedPreferenceManger.uid
@@ -93,9 +95,25 @@ class AddChatViewModel @Inject constructor(
         _searchQuery.postValue(searchQuery)
     }
 
+    fun updateSelectedUsers(selectedUsers: MutableList<String>) {
+        selectedUsersList.clear()
+        selectedUsersList.addAll(selectedUsers)
+    }
+
+    fun updateSelectionMode(isOn: Boolean) {
+        _selectionModeIsON.value = isOn
+    }
+
+    fun getSelectedUsers(): MutableList<String> = selectedUsersList
+
     companion object {
         const val SEARCH_QUERY = "AddChatViewModel search query"
         const val START_SEARCH_QUERY = ""
+    }
+
+
+    init {
+        getAllUsers()
     }
 }
 

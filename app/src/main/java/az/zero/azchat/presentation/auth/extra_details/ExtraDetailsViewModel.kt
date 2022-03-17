@@ -26,9 +26,7 @@ class ExtraDetailsViewModel @Inject constructor(
     fun uploadProfileImageByUserId(uri: Uri, contentResolver: ContentResolver) {
         _event.postValue(Event(ExtraDetailsEvent.UploadingImageLoading))
         repository.uploadProfileImageByUserId(
-            uri,
-            contentResolver,
-            onUploadImageSuccess = {
+            uri, onUploadImageSuccess = {
                 _imageMLD.postValue(it)
                 _event.postValue(Event(ExtraDetailsEvent.UploadImageSuccess(it)))
             },

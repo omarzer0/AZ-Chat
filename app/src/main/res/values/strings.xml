@@ -33,4 +33,7 @@
     <string name="edit">Edit</string>
     <string name="deleted_message">Deleted message</string>
     <string name="update_message">Update message</string>
+    <string name="new_group">New group</string>
+    <string name="choose_users_to_add_to_the_new_group">Choose users to be added to a new group</string>
+    <string name="group_name">Group name</string>
 </resources>
