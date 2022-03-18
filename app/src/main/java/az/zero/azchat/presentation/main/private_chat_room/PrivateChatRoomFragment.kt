@@ -9,6 +9,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.R
+import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.audio.media_player.AudioHandler
 import az.zero.azchat.common.audio.record.AudioRecordListener
 import az.zero.azchat.common.audio.record.AudioRecorderHelper
@@ -42,6 +43,9 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
     @Inject
     lateinit var audioHandler: AudioHandler
 
+    @Inject
+    lateinit var sharedPreferences: SharedPreferenceManger
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentPrivateChatRoomBinding.bind(view)
@@ -49,7 +53,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         setDataToViews()
         setUpRVs()
         observeEvents()
-        observeData()
+        handleClicks()
         AudioRecorderHelper(this, binding.sendAtTextEd.recordIv, this)
         setUpSearchView(binding.sendAtTextEd, actionWhenSend = {
             logMe(it)
@@ -59,10 +63,17 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         })
     }
 
-    private fun observeData() {
-
+    private fun handleClicks() {
+        tryNow {
+            (activity as MainActivity).binding.toolbar.setOnClickListener {
+                navigateToAction(
+                    PrivateChatRoomFragmentDirections.actionPrivateChatRoomFragmentToChatDetailsFragment(
+                        viewModel.getCurrentPrivateChat()
+                    )
+                )
+            }
+        }
     }
-
 
     private fun observeEvents() {
         viewModel.event.observeIfNotHandled { event ->

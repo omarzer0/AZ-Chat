@@ -54,17 +54,22 @@ class MainActivity : BaseActivity() {
             when (destination.id) {
 
                 R.id.privateChatRoomFragment -> {
-                    hideMainAppBar()
+                    showChatAppBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
                 }
                 R.id.homeFragment -> {
-                    showMainAppBar()
+                    hideChatAppBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
 
+                R.id.chatDetailsFragment -> {
+                    hideMainAppBar()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
+
                 else -> {
-                    showMainAppBar()
+                    showChatAppBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
             }
@@ -72,12 +77,23 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showMainAppBar() {
-        binding.chatCl.gone()
+        binding.toolbar.show()
     }
 
     private fun hideMainAppBar() {
-        binding.chatCl.show()
+        binding.toolbar.gone()
     }
+
+    private fun showChatAppBar() {
+        binding.chatCl.show()
+        showMainAppBar()
+    }
+
+    private fun hideChatAppBar() {
+        binding.chatCl.gone()
+        showMainAppBar()
+    }
+
 
     private fun observeData() {
         val header = binding.navDrawerSlider.getHeaderView(0)

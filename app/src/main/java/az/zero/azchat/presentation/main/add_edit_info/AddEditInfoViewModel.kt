@@ -37,6 +37,7 @@ class AddEditInfoViewModel @Inject constructor(
 
     fun addNewGroup(
         groupName: String,
+        aboutGroup: String,
         onSuccess: (newGroup: Group) -> Unit
     ) {
         val gid = firestore.collection(GROUPS_ID).document().id
@@ -52,7 +53,8 @@ class AddEditInfoViewModel @Inject constructor(
             currentUserUID,
             image,
             null,
-            groupNotificationTopic = "/topics/$gid"
+            groupNotificationTopic = "/topics/$gid",
+            about = aboutGroup
         )
 
         firestore.collection(GROUPS_ID).document(gid).set(newGroup)

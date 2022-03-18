@@ -7,16 +7,21 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.viewModels
 import az.zero.azchat.R
+import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentHomeBinding
 import az.zero.azchat.presentation.main.adapter.private_chat.PrivateChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     val viewModel: HomeViewModel by viewModels()
+    @Inject
+    lateinit var sharedPreferences: SharedPreferenceManger
+
     private lateinit var binding: FragmentHomeBinding
     private lateinit var privateChatAdapter: PrivateChatAdapter
 

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray"
+    android:fillViewport="true"
+    tools:context=".presentation.main.chat_details.ChatDetailsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <!--        <com.google.android.material.imageview.ShapeableImageView-->
+        <!--            android:id="@+id/iv_chat_image"-->
+        <!--            style="@style/roundShapeableImage"-->
+        <!--            android:layout_width="@dimen/_150sdp"-->
+        <!--            android:layout_height="@dimen/_150sdp"-->
+        <!--            android:layout_marginTop="@dimen/_8sdp"-->
+        <!--            android:scaleType="fitXY"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--            tools:src="@tools:sample/avatars" />-->
+
+        <ImageView
+            android:id="@+id/iv_chat_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/choose_image_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginBottom="-10dp"
+            android:background="@drawable/circle"
+            android:padding="@dimen/_8sdp"
+            android:src="@drawable/ic_camera"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_chat_image"
+            app:layout_constraintStart_toStartOf="@+id/iv_chat_image"
+            app:tint="@color/white" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_chat_name_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_25sdp"
+            app:layout_constraintTop_toBottomOf="@+id/iv_chat_image">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <TextView
+                    android:id="@+id/tv_chat_name"
+                    style="@style/headerTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:maxLines="2"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_edit_name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Test text\ndasdn\nsdasd" />
+
+                <ImageView
+                    android:id="@+id/iv_edit_name"
+                    style="@style/imageButtonEffect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_edit"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_chat_name" />
+
+
+                <TextView
+                    android:id="@+id/tv_chat_phone"
+                    style="@style/bodyTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_chat_name"
+                    app:layout_constraintStart_toStartOf="@+id/tv_chat_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_chat_name"
+                    app:layout_constraintVertical_bias="0"
+                    tools:text="+2010010101010" />
+
+                <TextView
+                    android:id="@+id/tv_chat_number_of_members"
+                    style="@style/bodyTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_chat_name"
+                    app:layout_constraintStart_toStartOf="@+id/tv_chat_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_chat_phone"
+                    app:layout_constraintVertical_bias="0"
+                    tools:text="3 Members" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cv_chat_name_container"
+            app:layout_constraintVertical_bias="0">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_chat_bio"
+                    style="@style/bodyTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_12sdp"
+                    android:maxLines="99"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_edit_bio_about"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="asada s\ndsadsd\nasdsda" />
+
+                <ImageView
+                    android:id="@+id/iv_edit_bio_about"
+                    style="@style/imageButtonEffect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_edit"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_chat_bio" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

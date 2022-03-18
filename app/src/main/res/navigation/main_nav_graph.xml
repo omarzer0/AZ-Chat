@@ -41,11 +41,14 @@
         <argument
             android:name="isNewGroup"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_privateChatRoomFragment_to_chatDetailsFragment"
+            app:destination="@id/chatDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addEditInfoFragment"
         android:name="az.zero.azchat.presentation.main.add_edit_info.AddEditInfoFragment"
-        android:label="Details132"
+        android:label="Details"
         tools:layout="@layout/fragment_add_edit_info">
         <argument
             android:name="selectedUsers"
@@ -54,5 +57,13 @@
             android:id="@+id/action_addEditInfoFragment_to_privateChatRoomFragment"
             app:destination="@id/privateChatRoomFragment"
             app:popUpTo="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatDetailsFragment"
+        android:name="az.zero.azchat.presentation.main.chat_details.ChatDetailsFragment"
+        tools:layout="@layout/fragment_chat_details">
+        <argument
+            android:name="privateChat"
+            app:argType="az.zero.azchat.domain.models.private_chat.PrivateChat" />
     </fragment>
 </navigation>
