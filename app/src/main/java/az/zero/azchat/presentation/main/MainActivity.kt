@@ -63,7 +63,7 @@ class MainActivity : BaseActivity() {
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
 
-                R.id.chatDetailsFragment -> {
+                R.id.chatDetailsFragment, R.id.chatDetailsBottomSheetFragment -> {
                     hideMainAppBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }

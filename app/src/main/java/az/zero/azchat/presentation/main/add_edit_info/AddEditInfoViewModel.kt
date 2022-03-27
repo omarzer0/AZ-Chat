@@ -27,6 +27,7 @@ class AddEditInfoViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val selectedUsers = savedStateHandle.get<Array<String>>("selectedUsers") ?: emptyArray()
+    val gid = firestore.collection(GROUPS_ID).document().id
 
     private val _event = MutableLiveData<Event<ExtraDetailsEvent>>()
     val event: LiveData<Event<ExtraDetailsEvent>> = _event
@@ -40,7 +41,6 @@ class AddEditInfoViewModel @Inject constructor(
         aboutGroup: String,
         onSuccess: (newGroup: Group) -> Unit
     ) {
-        val gid = firestore.collection(GROUPS_ID).document().id
         val currentUserUID = sharedPreferenceManger.uid
         val image = imageMLD.value?.toString() ?: ""
         val newGroup = Group(
@@ -64,12 +64,14 @@ class AddEditInfoViewModel @Inject constructor(
 
     fun uploadGroupImage(uri: Uri) {
         _event.postValue(Event(ExtraDetailsEvent.UploadingImageLoading))
-        uploadImageUseCase.invoke(uri, onUploadImageSuccess = {
-            _imageMLD.postValue(it)
-            _event.postValue(Event(ExtraDetailsEvent.UploadImageSuccess(it)))
-        }, onUploadImageFailed = {
-            _event.postValue(Event(ExtraDetailsEvent.UploadImageFailed(it)))
-        })
+        uploadImageUseCase.invoke(uri, "chatRoomImages/$gid${System.currentTimeMillis()}",
+            onUploadImageSuccess = {
+                _imageMLD.postValue(it)
+                _event.postValue(Event(ExtraDetailsEvent.UploadImageSuccess(it)))
+            },
+            onUploadImageFailed = {
+                _event.postValue(Event(ExtraDetailsEvent.UploadImageFailed(it)))
+            })
     }
 }
 

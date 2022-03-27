@@ -29,7 +29,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
         setUpRVs()
-        setHasOptionsMenu(true)
         observeViewEvents()
         handleClicks()
     }
@@ -78,18 +77,18 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.home_fragment_menu, menu)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.home_fragment_menu, menu)
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.home_action_search -> {
-            // TODO: go to search
-            true
-        }
-
-        else -> super.onOptionsItemSelected(item)
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+//        R.id.home_action_search -> {
+//            // TODO: go to search
+//            true
+//        }
+//
+//        else -> super.onOptionsItemSelected(item)
+//    }
 
     override fun onResume() {
         super.onResume()

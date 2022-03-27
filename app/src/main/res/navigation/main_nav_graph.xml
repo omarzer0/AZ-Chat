@@ -65,5 +65,20 @@
         <argument
             android:name="privateChat"
             app:argType="az.zero.azchat.domain.models.private_chat.PrivateChat" />
+        <action
+            android:id="@+id/action_chatDetailsFragment_to_chatDetailsBottomSheetFragment"
+            app:destination="@id/chatDetailsBottomSheetFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/chatDetailsBottomSheetFragment"
+        android:name="az.zero.azchat.presentation.main.chat_details_bottom_sheet.ChatDetailsBottomSheetFragment"
+        android:label="bottom_sheet_fragment_chat_details"
+        tools:layout="@layout/bottom_sheet_fragment_chat_details" >
+        <argument
+            android:name="code"
+            app:argType="string" />
+        <argument
+            android:name="text"
+            app:argType="string" />
+    </dialog>
 </navigation>
