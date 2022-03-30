@@ -87,6 +87,10 @@ class PrivateChatAdapter(private val uid: String) :
                         lastMessageTv.context.getString(R.string.you)
                     } else ""
                     lastMessageTv.text = "$sentBy$messageText"
+                }else{
+                    lastMessageTv.text = ""
+                    tvSentAt.text = ""
+                    newMessageIndicator.gone()
                 }
             }
         }

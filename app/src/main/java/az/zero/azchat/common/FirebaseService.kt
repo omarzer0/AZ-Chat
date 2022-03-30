@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.navigation.NavDeepLinkBuilder
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger.Companion.CURRENT_GID
+import az.zero.azchat.common.SharedPreferenceManger.Companion.LOGGED_IN
 import az.zero.azchat.common.SharedPreferenceManger.Companion.SHARED_PREFERENCES_NAME
 import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.private_chat.PrivateChat
@@ -17,11 +18,11 @@ import az.zero.azchat.domain.models.user.User
 import az.zero.azchat.presentation.main.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import dagger.hilt.android.scopes.ServiceScoped
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.random.Random
 
-@ServiceScoped
+@AndroidEntryPoint
 class FirebaseService : FirebaseMessagingService() {
 
     @Inject
@@ -32,7 +33,9 @@ class FirebaseService : FirebaseMessagingService() {
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
         tryNow(tag = "updateUserToken") {
-            logMe("service updateUserToken", "updateUserToken")
+            // First time the uid is empty so an exception will be thrown
+            // Document references must have an even number of segments, but users has 1
+            logMe("newToken= $newToken", "updateUserToken")
             repositoryImpl.updateUserToken(newToken)
         }
 
@@ -48,24 +51,23 @@ class FirebaseService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
+        if (sharedPreference == null) {
+            sharedPreference = this.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        }
+
         var isNotificationsDisabled = false
         if (sharedPreference != null)
             isNotificationsDisabled =
                 message.data["gid"] == sharedPreference!!.getString(CURRENT_GID, "")
-
         if (isNotificationsDisabled) return
 
-
+        val hasLoggedIn = sharedPreference!!.getBoolean(LOGGED_IN, false)
+        if (!hasLoggedIn) return
 
         logMe("onMessageReceived: ${message.data}")
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
                 as NotificationManager
 
-        val notificationID: Int = try {
-            message.senderId?.toLong()?.toInt() ?: Random.nextInt()
-        } catch (e: Exception) {
-            Random.nextInt()
-        }
 
         val argsData = getArgsData(message)
 
@@ -88,7 +90,8 @@ class FirebaseService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent(argsData))
             .build()
 
-        notificationManager.notify(notificationID, notification)
+        logMe("${getNotificationId(message)}", "notificationIDForApp")
+        notificationManager.notify(getNotificationId(message), notification)
 
     }
 
@@ -103,36 +106,6 @@ class FirebaseService : FirebaseMessagingService() {
 
             val notificationToken = message.data["notificationToken"] ?: ""
             val otherUserUID = message.data["otherUserUID"] ?: ""
-
-//            val user: User
-//            val group: Group
-//
-//            if (isGroup == "true") {
-//                logMe(isGroup,"getArgsData")
-//                group = Group(
-//                    gid = gid,
-//                    name = username,
-//                    image = userImage,
-//                    groupNotificationTopic = notificationToken,
-//                    ofTypeGroup = true
-//                )
-//                user = User(name = "", imageUrl = "", notificationToken = "")
-//
-//            } else {
-//                group = Group(
-//                    gid = gid,
-//                    name = "",
-//                    image = "",
-//                    groupNotificationTopic = "",
-//                    ofTypeGroup = false
-//                )
-//                user = User(
-//                    name = username,
-//                    imageUrl = userImage,
-//                    notificationToken = notificationToken,
-//                )
-//            }
-//            putParcelable("privateChat", PrivateChat(group, user, gid))
 
             putParcelable(
                 "privateChat", PrivateChat(
@@ -153,6 +126,20 @@ class FirebaseService : FirebaseMessagingService() {
         }
 
     }
+
+    private fun getNotificationId(message: RemoteMessage) = try {
+        val gid = message.data["gid"] ?: ""
+        var sCode = ""
+        gid.mapIndexed { index, c ->
+            if (index > 8) return@mapIndexed
+            sCode += c.code.rem(9)
+        }
+        sCode.toInt()
+    } catch (e: Exception) {
+        logMe("Failed=> ${e.localizedMessage}", "notificationIDForApp")
+        Random.nextInt()
+    }
+
 
     private fun pendingIntent(args: Bundle): PendingIntent {
         return NavDeepLinkBuilder(applicationContext)
