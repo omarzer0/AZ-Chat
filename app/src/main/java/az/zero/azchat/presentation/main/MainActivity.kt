@@ -123,8 +123,12 @@ class MainActivity : BaseActivity() {
             it.name?.let { name -> sharedPreferences.userName = name }
             it.imageUrl?.let { image -> sharedPreferences.userImage = image }
             setImageUsingGlide(userImageIV, it.imageUrl)
+
+            logMe("blockList:${sharedPreferences.blockList}\nfList:${it.blockList}", "blockList222")
+            sharedPreferences.blockList = it.blockList
         }
     }
+
 
     private fun handleClicks() {
 

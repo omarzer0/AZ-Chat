@@ -2,6 +2,7 @@ package az.zero.azchat.presentation.main.adapter.private_chat
 
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -15,7 +16,11 @@ import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.databinding.ItemPrivateChatBinding
 import az.zero.azchat.domain.models.private_chat.PrivateChat
 
-class PrivateChatAdapter(private val uid: String) :
+class PrivateChatAdapter(
+    private val uid: String,
+    private val onUserClick: (PrivateChat) -> Unit,
+    private val onUserLongClick: (privateChatID: String, isGroup: Boolean, view: View) -> Unit
+) :
     ListAdapter<PrivateChat, PrivateChatAdapter.PrivateChatViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrivateChatViewHolder {
@@ -37,7 +42,19 @@ class PrivateChatAdapter(private val uid: String) :
         init {
             binding.root.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
-                onStudentClickListener?.let { it(getItem(adapterPosition)) }
+                onUserClick(getItem(adapterPosition))
+            }
+
+            binding.root.setOnLongClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) false
+                else {
+                    val isGroup = getItem(adapterPosition).group.ofTypeGroup!!
+                    if (isGroup)
+                        onUserLongClick(getItem(adapterPosition).id,isGroup, it)
+                    else
+                        onUserLongClick(getItem(adapterPosition).user.uid!!,isGroup, it)
+                    true
+                }
             }
         }
 
@@ -87,7 +104,7 @@ class PrivateChatAdapter(private val uid: String) :
                         lastMessageTv.context.getString(R.string.you)
                     } else ""
                     lastMessageTv.text = "$sentBy$messageText"
-                }else{
+                } else {
                     lastMessageTv.text = ""
                     tvSentAt.text = ""
                     newMessageIndicator.gone()
@@ -98,12 +115,6 @@ class PrivateChatAdapter(private val uid: String) :
 
     override fun submitList(list: MutableList<PrivateChat>?) {
         super.submitList(list)
-    }
-
-
-    private var onStudentClickListener: ((PrivateChat) -> Unit)? = null
-    fun setOnStudentClickListener(listener: (PrivateChat) -> Unit) {
-        onStudentClickListener = listener
     }
 
     class DiffCallback : DiffUtil.ItemCallback<PrivateChat>() {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/leave_group_action"
+        android:icon="@drawable/ic_log_out"
+        android:title="@string/leave_the_group"
+        app:showAsAction="ifRoom" />
+</menu>

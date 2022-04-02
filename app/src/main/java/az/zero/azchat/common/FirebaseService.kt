@@ -12,12 +12,14 @@ import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger.Companion.CURRENT_GID
 import az.zero.azchat.common.SharedPreferenceManger.Companion.LOGGED_IN
 import az.zero.azchat.common.SharedPreferenceManger.Companion.SHARED_PREFERENCES_NAME
+import az.zero.azchat.common.SharedPreferenceManger.Companion.USER_BLOCK_LIST
 import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.private_chat.PrivateChat
 import az.zero.azchat.domain.models.user.User
 import az.zero.azchat.presentation.main.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.random.Random
@@ -93,7 +95,27 @@ class FirebaseService : FirebaseMessagingService() {
         val hasLoggedIn = sharedPreference!!.getBoolean(LOGGED_IN, false)
         if (!hasLoggedIn) shouldNotContinue = true
 
+        val blockList = getUserBlockList()
+        val gid = message.data["gid"] ?: ""
+        val otherUserUID = message.data["otherUserUID"] ?: ""
+
+        val isGroup = message.data["isGroup"] ?: ""
+        if (isGroup == "true") {
+            if (blockList.any { it == gid }) return true
+        } else {
+            if (blockList.any { it == otherUserUID }) return true
+        }
+
         return shouldNotContinue
+    }
+
+    private fun getUserBlockList(): List<String> {
+        val value = sharedPreference?.getString(USER_BLOCK_LIST, SharedPreferenceManger.EMPTY) ?: ""
+        return if (value == SharedPreferenceManger.EMPTY) {
+            emptyList()
+        } else {
+            Gson().fromJson(value, Array<String>::class.java).toList()
+        }
     }
 
     private fun getArgsData(message: RemoteMessage): Bundle {

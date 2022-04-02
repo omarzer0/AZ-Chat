@@ -1,10 +1,8 @@
 package az.zero.azchat.presentation.main.home
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.viewModels
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger
@@ -19,6 +17,7 @@ import javax.inject.Inject
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     val viewModel: HomeViewModel by viewModels()
+
     @Inject
     lateinit var sharedPreferences: SharedPreferenceManger
 
@@ -62,33 +61,42 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
     private fun setUpRVs() {
-        privateChatAdapter = PrivateChatAdapter(sharedPreferences.uid)
+        privateChatAdapter = PrivateChatAdapter(sharedPreferences.uid,
+            onUserClick = {
+                viewModel.privateChatClick(it)
+            }, onUserLongClick = { privateChatID, isGroup, view ->
+                showMenu(privateChatID, isGroup, view)
+            })
         binding.groupRv.adapter = privateChatAdapter
+    }
+
+    private fun showMenu(privateChatID: String, isGroup: Boolean, view: View) {
+        val popup = PopupMenu(requireContext(), view)
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.leave_group_action -> {
+                    viewModel.leaveGroup(privateChatID)
+                }
+
+                R.id.block_action -> {
+                    viewModel.blockUser(privateChatID)
+                }
+            }
+            true
+        }
+        val inflateMenu = if (isGroup) R.menu.home_group_action_menu
+        else R.menu.home_user_action_menu
+
+        popup.inflate(inflateMenu)
+        popup.setForceShowIcon(true)
+        popup.show()
     }
 
     private fun handleClicks() {
         binding.addChatFabBtn.setOnClickListener {
             viewModel.addUserClick()
         }
-
-        privateChatAdapter.setOnStudentClickListener { privateChat ->
-            viewModel.privateChatClick(privateChat)
-        }
     }
-
-
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.home_fragment_menu, menu)
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-//        R.id.home_action_search -> {
-//            // TODO: go to search
-//            true
-//        }
-//
-//        else -> super.onOptionsItemSelected(item)
-//    }
 
     override fun onResume() {
         super.onResume()

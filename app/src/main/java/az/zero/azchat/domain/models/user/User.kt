@@ -7,12 +7,12 @@ import kotlinx.parcelize.Parcelize
 data class User(
     var uid: String? = null,
     var name: String? = null,
-//    var address: String? = null,
     var imageUrl: String? = "",
     var bio: String? = null,
     var groups: List<String>? = null,
     var phoneNumber: String? = null,
-    var notificationToken: String? = null,
+    var notificationToken: String? = "",
+    var blockList :List<String> = emptyList()
 ) : Parcelable {
     fun hasNullField(): Boolean {
         if (notificationToken == null) notificationToken = ""
