@@ -45,4 +45,6 @@
     <string name="block">Block</string>
     <string name="blocked_users">Blocked users</string>
     <string name="leave_the_group">Leave the group</string>
+    <string name="login">Login</string>
+    <string name="start">Start</string>
 </resources>

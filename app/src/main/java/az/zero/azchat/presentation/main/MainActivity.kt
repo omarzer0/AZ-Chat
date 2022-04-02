@@ -123,8 +123,6 @@ class MainActivity : BaseActivity() {
             it.name?.let { name -> sharedPreferences.userName = name }
             it.imageUrl?.let { image -> sharedPreferences.userImage = image }
             setImageUsingGlide(userImageIV, it.imageUrl)
-
-            logMe("blockList:${sharedPreferences.blockList}\nfList:${it.blockList}", "blockList222")
             sharedPreferences.blockList = it.blockList
         }
     }
@@ -140,8 +138,6 @@ class MainActivity : BaseActivity() {
                 }
 
                 R.id.go_to_profile -> {
-                    logMe("clicked", "go_to_profile")
-
                     viewModel.getUser()?.let {
                         val action = MainNavGraphDirections.actionGlobalUserFragment(it)
                         navController.navigate(action)
