@@ -10,6 +10,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
+import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.onQueryTextChanged
@@ -22,11 +23,16 @@ import az.zero.azchat.domain.models.private_chat.PrivateChat
 import az.zero.azchat.domain.models.user.User
 import az.zero.azchat.presentation.main.adapter.user.UserAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
 
     val viewModel: AddChatViewModel by viewModels()
+
+    @Inject
+    lateinit var sharedPreferences:SharedPreferenceManger
+
     private lateinit var binding: FragmentAddChatBinding
     private lateinit var searchView: SearchView
     private val userAdapter = UserAdapter(

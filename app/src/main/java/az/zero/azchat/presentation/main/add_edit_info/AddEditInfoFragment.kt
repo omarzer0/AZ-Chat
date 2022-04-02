@@ -60,12 +60,15 @@ class AddEditInfoFragment : BaseFragment(R.layout.fragment_add_edit_info) {
     private fun handleClicks() {
         binding.doneFab.setOnClickListener {
             val groupName = binding.groupNameEt.text?.trim()?.toString() ?: ""
+            val aboutGroup = binding.groupAboutEt.text?.trim()?.toString() ?: ""
             if (groupName.isEmpty() || groupName.length < 3) {
                 toastMy("Please enter 3 characters or more for group name")
                 return@setOnClickListener
+            } else if (aboutGroup.isEmpty() || aboutGroup.length < 3) {
+                toastMy("Please enter 3 characters or more for about the group")
             }
 
-            viewModel.addNewGroup(groupName) { newGroup ->
+            viewModel.addNewGroup(groupName,aboutGroup) { newGroup ->
                 navigateToAction(
                     AddEditInfoFragmentDirections.actionAddEditInfoFragmentToPrivateChatRoomFragment(
                         PrivateChat(newGroup, User(), newGroup.gid!!),

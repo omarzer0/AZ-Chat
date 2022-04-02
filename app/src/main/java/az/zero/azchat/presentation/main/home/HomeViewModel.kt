@@ -1,6 +1,9 @@
 package az.zero.azchat.presentation.main.home
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import az.zero.azchat.common.*
 import az.zero.azchat.common.event.Event
 import az.zero.azchat.domain.models.group.Group
@@ -13,6 +16,7 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,13 +33,13 @@ class HomeViewModel @Inject constructor(
     private val _privateChats = MutableLiveData<MutableList<PrivateChat>>()
     val privateChats: LiveData<MutableList<PrivateChat>>
         get() = _privateChats
-    private var localList: MutableList<PrivateChat> = mutableListOf()
+    private var localList: CopyOnWriteArrayList<PrivateChat> = CopyOnWriteArrayList()
 
     private fun getPrivateChatsForUser() {
         val uid = sharedPreferenceManger.uid
         privateChatsListener = firestore.collection(GROUPS_ID).whereArrayContains("members", uid)
             .addSnapshotListener { value, error ->
-                localList = mutableListOf()
+                localList = CopyOnWriteArrayList()
                 if (error != null || value == null) return@addSnapshotListener
 
                 tryAsyncNow(viewModelScope, action = {
@@ -46,6 +50,7 @@ class HomeViewModel @Inject constructor(
                 }, finally = {
                     localList.sortByDescending { it.group.lastSentMessage?.sentAt }
                     _privateChats.postValue(localList)
+                    logMe("$localList", "MylocalList")
                 })
             }
     }

@@ -11,10 +11,12 @@ class NotificationTokenHelper @Inject constructor(
 ) {
 
     fun updateUserToken(newToken: String) {
-        logMe("main updateUserToken", "updateUserToken")
-        val uid = sharedPreferenceManger.uid
-        sharedPreferenceManger.notificationToken = newToken
-        firestore.collection(USERS_ID).document(uid).update("notificationToken", newToken)
+        tryNow(tag = "updateUserToken") {
+            val uid = sharedPreferenceManger.uid
+            logMe("uid=$uid updateUserToken= $newToken", "updateUserToken")
+            sharedPreferenceManger.notificationToken = newToken
+            firestore.collection(USERS_ID).document(uid).update("notificationToken", newToken)
+        }
     }
 
 }

@@ -7,16 +7,21 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.viewModels
 import az.zero.azchat.R
+import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentHomeBinding
 import az.zero.azchat.presentation.main.adapter.private_chat.PrivateChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     val viewModel: HomeViewModel by viewModels()
+    @Inject
+    lateinit var sharedPreferences: SharedPreferenceManger
+
     private lateinit var binding: FragmentHomeBinding
     private lateinit var privateChatAdapter: PrivateChatAdapter
 
@@ -24,7 +29,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
         setUpRVs()
-        setHasOptionsMenu(true)
         observeViewEvents()
         handleClicks()
     }
@@ -73,18 +77,18 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.home_fragment_menu, menu)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.home_fragment_menu, menu)
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.home_action_search -> {
-            // TODO: go to search
-            true
-        }
-
-        else -> super.onOptionsItemSelected(item)
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+//        R.id.home_action_search -> {
+//            // TODO: go to search
+//            true
+//        }
+//
+//        else -> super.onOptionsItemSelected(item)
+//    }
 
     override fun onResume() {
         super.onResume()

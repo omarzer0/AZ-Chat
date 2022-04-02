@@ -1,7 +1,6 @@
 package az.zero.azchat.presentation.auth.extra_details
 
 import android.app.Application
-import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
@@ -21,13 +20,13 @@ class UploadImageUseCase @Inject constructor(
 
     operator fun invoke(
         uri: Uri,
+        path: String,
         onUploadImageSuccess: (Uri) -> Unit,
         onUploadImageFailed: (String) -> Unit,
     ) {
         val realPath = RealPathUtil.getRealPath(application, uri)
         val file = Uri.fromFile(File(realPath))
-        val userId = sharedPreferenceManger.uid
-        val storageRef = storage.reference.child("profileImages/$userId.jpg")
+        val storageRef = storage.reference.child(path)
 
         val uploadTask = try {
             val bmp = MediaStore.Images.Media.getBitmap(application.contentResolver, file)

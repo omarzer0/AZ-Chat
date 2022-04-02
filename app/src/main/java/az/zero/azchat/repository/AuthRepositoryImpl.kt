@@ -212,7 +212,8 @@ class AuthRepositoryImpl @Inject constructor(
         onUploadImageSuccess: (Uri) -> Unit,
         onUploadImageFailed: (String) -> Unit,
     ) {
-        uploadImageUseCase(uri, onUploadImageSuccess, onUploadImageFailed)
+        val userId = sharedPreferenceManger.uid
+        uploadImageUseCase(uri,"profileImages/$userId.jpg" , onUploadImageSuccess, onUploadImageFailed)
     }
 
 }

@@ -33,13 +33,6 @@ class PrivateChatRoomViewModel @Inject constructor(
 
     private val privateChat = stateHandler.get<PrivateChat>("privateChat")!!
 
-    //    private val gid = stateHandler.get<String>("gid") ?: ""
-    //    val username = stateHandler.get<String>("username") ?: ""
-    //    val userImage = stateHandler.get<String>("userImage") ?: ""
-    //    private val notificationToken = stateHandler.get<String>("notificationToken") ?: ""
-    //    private val otherUserUID = stateHandler.get<String>("otherUserUID") ?: ""
-    //    private var newGroupChat = stateHandler.get<Boolean>("isNewGroup") ?: false
-
     val isGroup = privateChat.group.ofTypeGroup ?: false
     private val gid = privateChat.id
 
@@ -286,6 +279,7 @@ class PrivateChatRoomViewModel @Inject constructor(
     }
 
     fun isEditMode(): Boolean = _editAreaState.value?.first ?: false
+    fun getCurrentPrivateChat() = privateChat
 
     init {
         logMe(notificationToken, "sendMessage")

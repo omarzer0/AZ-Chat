@@ -3,7 +3,6 @@ package az.zero.azchat.common
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -23,7 +22,6 @@ import java.io.File
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 fun logMe(msg: String, tag: String = "TAG") {
     val showLog = IS_DEBUG
@@ -188,86 +186,3 @@ fun tryAsyncNow(
         }
     }
 }
-
-//val <T> T.exhaustive: T
-//    get() = this
-
-//fun pickImage(view: View, action: (Uri) -> Unit) {
-//    TedImagePicker.with(view.context)
-//        .title("Choose image")
-//        .backButton(R.drawable.ic_arrow_back_black_24dp)
-//        .showCameraTile(true)
-//        .buttonBackground(R.drawable.btn_done_button)
-//        .buttonTextColor(R.color.white)
-//        .buttonText("Choose image")
-//        .errorListener { throwable -> logMe(throwable.localizedMessage ?: "pickImage") }
-//        .start { uri ->
-//            action(uri)
-//        }
-//}
-
-//inline fun <reified T> DocumentSnapshot.toValidObject(): T? {
-//    return try {
-//        this.toObject<T>()
-//    } catch (e: Exception) {
-//        null
-//    }
-//}
-
-////
-////    private val _status = MutableLiveData<Event<Status>>()
-////    val status: LiveData<Event<Status>> = _status
-////
-////    private fun <QuerySnapshot> safeCallApi(
-////        action: suspend () -> Task<QuerySnapshot>,
-////        response: (QuerySnapshot) -> Unit,
-////        messageIfSuccess: String? = null,
-////        showLoadingBar: Boolean = true
-////    ) {
-////        viewModelScope.launch(exceptionHandler) {
-////            if (showLoadingBar) {
-////                _status.value = Event(Status.Loading)
-////            }
-////            val callResponse = action()
-////
-////            callResponse.addOnSuccessListener {
-////                response(it)
-////                _status.value = Event(Status.Success(messageIfSuccess))
-////            }.addOnFailureListener {
-////                _status.value = Event(Status.Error(it.localizedMessage ?: "Unknown"))
-////            }
-////        }
-////    }
-////
-////    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-////        viewModelScope.launch(Dispatchers.Main) {
-////
-////
-////            val throwableMessage = throwable.localizedMessage
-////            val errorMessage =
-////                if (throwableMessage != null && throwableMessage.contains("No address associated with hostname"))
-////                    "Check your internet connection!"
-////                else "error"
-////
-////            _status.value =
-////                Event(Status.Error(errorMessage))
-////        }
-////    }
-////}
-////
-////sealed class Result<T>(
-////    val message: String? = null,
-////    val data: T? = null
-////) {
-////    class Success<T>(message: String? = null, data: T? = null) : Result<T>(message, data)
-////    class Loading<T>(message: String? = null, data: T? = null) : Result<T>(message, data)
-////    class Error<T>(message: String? = null, data: T? = null) : Result<T>(message, data)
-////}
-////
-////sealed class Status {
-////    data class Success(val message: String?) : Status()
-////    data class Error(val message: String?) : Status()
-////    object Loading : Status()
-////    object Empty : Status()
-////}
-////

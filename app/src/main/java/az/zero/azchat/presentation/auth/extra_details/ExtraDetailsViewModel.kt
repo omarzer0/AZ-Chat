@@ -23,7 +23,7 @@ class ExtraDetailsViewModel @Inject constructor(
     private val _imageMLD = MutableLiveData<Uri>()
     val imageMLD: LiveData<Uri> = _imageMLD
 
-    fun uploadProfileImageByUserId(uri: Uri, contentResolver: ContentResolver) {
+    fun uploadProfileImageByUserId(uri: Uri) {
         _event.postValue(Event(ExtraDetailsEvent.UploadingImageLoading))
         repository.uploadProfileImageByUserId(
             uri, onUploadImageSuccess = {

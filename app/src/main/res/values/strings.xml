@@ -36,4 +36,10 @@
     <string name="new_group">New group</string>
     <string name="choose_users_to_add_to_the_new_group">Choose users to be added to a new group</string>
     <string name="group_name">Group name</string>
+    <string name="about_group">About group</string>
+    <string name="members">Members</string>
+    <string name="update">Update</string>
+    <string name="profile">Profile</string>
+    <string name="about_developer">About Developer</string>
+    <string name="licence">Licence</string>
 </resources>

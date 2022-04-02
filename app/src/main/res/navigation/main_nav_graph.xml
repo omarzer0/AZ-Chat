@@ -41,11 +41,14 @@
         <argument
             android:name="isNewGroup"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_privateChatRoomFragment_to_chatDetailsFragment"
+            app:destination="@id/chatDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addEditInfoFragment"
         android:name="az.zero.azchat.presentation.main.add_edit_info.AddEditInfoFragment"
-        android:label="Details132"
+        android:label="Details"
         tools:layout="@layout/fragment_add_edit_info">
         <argument
             android:name="selectedUsers"
@@ -55,4 +58,54 @@
             app:destination="@id/privateChatRoomFragment"
             app:popUpTo="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/chatDetailsFragment"
+        android:name="az.zero.azchat.presentation.main.chat_details.ChatDetailsFragment"
+        tools:layout="@layout/fragment_chat_details">
+        <argument
+            android:name="privateChat"
+            app:argType="az.zero.azchat.domain.models.private_chat.PrivateChat" />
+        <action
+            android:id="@+id/action_chatDetailsFragment_to_chatDetailsBottomSheetFragment"
+            app:destination="@id/chatDetailsBottomSheetFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/chatDetailsBottomSheetFragment"
+        android:name="az.zero.azchat.presentation.main.chat_details.chat_details_bottom_sheet.ChatDetailsBottomSheetFragment"
+        android:label="bottom_sheet_fragment_chat_details"
+        tools:layout="@layout/bottom_sheet_fragment_chat_details">
+        <argument
+            android:name="code"
+            app:argType="string" />
+        <argument
+            android:name="text"
+            app:argType="string" />
+    </dialog>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="az.zero.azchat.presentation.main.user.UserFragment"
+        android:label="fragment_user"
+        tools:layout="@layout/fragment_user">
+        <argument
+            android:name="user"
+            app:argType="az.zero.azchat.domain.models.user.User" />
+        <action
+            android:id="@+id/action_userFragment_to_userBottomSheetFragment"
+            app:destination="@id/userBottomSheetFragment" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_userFragment"
+        app:destination="@id/userFragment" />
+    <dialog
+        android:id="@+id/userBottomSheetFragment"
+        android:name="az.zero.azchat.presentation.main.user.user_bottom_sheet.UserBottomSheetFragment"
+        android:label="bottom_sheet_fragment_user"
+        tools:layout="@layout/bottom_sheet_fragment_user">
+        <argument
+            android:name="code"
+            app:argType="string" />
+        <argument
+            android:name="text"
+            app:argType="string" />
+    </dialog>
 </navigation>

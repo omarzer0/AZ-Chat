@@ -8,7 +8,7 @@ data class User(
     var uid: String? = null,
     var name: String? = null,
 //    var address: String? = null,
-    var imageUrl: String? = null,
+    var imageUrl: String? = "",
     var bio: String? = null,
     var groups: List<String>? = null,
     var phoneNumber: String? = null,
