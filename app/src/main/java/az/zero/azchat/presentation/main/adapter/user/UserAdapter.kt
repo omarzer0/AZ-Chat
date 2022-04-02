@@ -6,7 +6,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.databinding.ItemUserBinding
 import az.zero.azchat.domain.models.user.User
@@ -54,7 +53,8 @@ class UserAdapter(
             binding.apply {
                 setImageUsingGlide(userImageIv, currentItem.imageUrl)
                 userNameTv.text = currentItem.name
-                userBioTv.text = currentItem.bio
+                userBioTv.text = if (currentItem.bio!!.trim().isEmpty())
+                    "Lazy user didn't write anything!" else currentItem.bio
 
                 if (selectionModeIsON) {
                     val uid = currentItem.uid!!

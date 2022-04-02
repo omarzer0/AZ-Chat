@@ -172,7 +172,7 @@ fun tryAsyncNow(
     scope: CoroutineScope,
     tag: String = "",
     error: (suspend (Exception) -> Unit)? = null,
-    finally: (() -> Unit)? = null,
+    finally: (suspend () -> Unit)? = null,
     action: suspend () -> Unit
 ) {
     scope.launch {

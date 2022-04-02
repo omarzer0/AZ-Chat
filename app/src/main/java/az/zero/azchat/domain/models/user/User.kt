@@ -5,15 +5,17 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class User(
-    var uid: String? = null,
-    var name: String? = null,
+    var uid: String? = "",
+    var name: String? = "",
     var imageUrl: String? = "",
-    var bio: String? = null,
-    var groups: List<String>? = null,
-    var phoneNumber: String? = null,
+    var bio: String? = "",
+    var groups: List<String>? = emptyList(),
+    var phoneNumber: String? = "",
     var notificationToken: String? = "",
-    var blockList :List<String> = emptyList()
+    var blockList: List<String> = emptyList()
 ) : Parcelable {
+
+    // TODO:hasNullField refactor this
     fun hasNullField(): Boolean {
         if (notificationToken == null) notificationToken = ""
         return listOf(

@@ -45,7 +45,8 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
             binding.apply {
                 setImageUsingGlide(ivUserImage, it.imageUrl)
                 tvUsername.text = it.name
-                tvUserBio.text = it.bio
+                val isEmpty = it.bio?.trim()?.isEmpty() ?: true
+                tvUserBio.text = if (isEmpty) "Lazy user didn't write anything!" else it.bio ?: ""
                 tvUserPhone.text = it.phoneNumber
             }
         }

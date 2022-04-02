@@ -35,7 +35,7 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         observeData()
         observeEvents()
         getDataFromOtherFragmentIFExists()
-        handleBackBtn()
+//        handleBackBtn()
     }
 
     private fun observeEvents() {
@@ -78,7 +78,8 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         showCorrectViews(isGroup)
         val name = if (isGroup) group.name!! else user.name!!
         val image = if (isGroup) group.image!! else user.imageUrl!!
-        val about = if (isGroup) group.about!! else user.bio!!
+        var about = if (isGroup) group.about!! else user.bio!!
+        if (about.trim().isEmpty()) about = "Lazy user didn't write anything!"
 
         binding.apply {
             setImageUsingGlide(ivChatImage, image)

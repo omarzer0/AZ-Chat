@@ -39,11 +39,15 @@ class HomeViewModel @Inject constructor(
             .addSnapshotListener { value, error ->
                 if (error != null || value == null) return@addSnapshotListener
 
-                tryAsyncNow(viewModelScope) {
+                tryAsyncNow(viewModelScope, action = {
+                    val privateChats = getPrivateChats(value, uid, Source.CACHE, blockList)
+                    privateChats.sortByDescending { it.group.lastSentMessage?.sentAt }
+                    _privateChats.value = privateChats
+                }, finally = {
                     val privateChats = getPrivateChats(value, uid, Source.DEFAULT, blockList)
                     privateChats.sortByDescending { it.group.lastSentMessage?.sentAt }
                     _privateChats.value = privateChats
-                }
+                })
             }
     }
 
@@ -106,8 +110,6 @@ class HomeViewModel @Inject constructor(
         firestore.collection(USERS_ID).document(uid)
             .update("blockList", FieldValue.arrayUnion(privateChatID))
             .addOnSuccessListener { getPrivateChatsForUser() }
-
-
     }
 
     fun leaveGroup(privateChatID: String) {

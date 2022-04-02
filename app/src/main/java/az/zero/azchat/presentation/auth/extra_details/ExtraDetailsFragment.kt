@@ -55,6 +55,10 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
 
         binding.doneFaBtn.setOnClickListener {
             val username = binding.usernameEt.text.toString().trim()
+            if (username.trim().isEmpty() || username.trim().length < 3) {
+                toastMy("Please enter 3 characters or more for the name")
+                return@setOnClickListener
+            }
             val bio = binding.bioEt.text.toString().trim()
             viewModel.addUser(username, bio)
         }
