@@ -3,10 +3,12 @@ package az.zero.azchat.presentation.main.chat_details
 import android.Manifest
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.hideKeyboard
@@ -16,6 +18,7 @@ import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentChatDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
@@ -32,7 +35,7 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         observeData()
         observeEvents()
         getDataFromOtherFragmentIFExists()
-
+        handleBackBtn()
     }
 
     private fun observeEvents() {
@@ -50,6 +53,7 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
                     toastMy("Failed to upload the image please try again later")
                 }
                 is ChatDetailsEvent.UpdateText -> {
+                    viewModel.haveUpdate = true
                     if (event.isName) {
                         binding.tvChatName.text = event.value
                     } else {
@@ -167,6 +171,18 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         const val NAME_CODE_KEY = "NAME_CODE_KEY"
         const val ABOUT_CODE_KEY = "ABOUT_CODE_KEY"
 
+    }
+
+    private fun handleBackBtn() {
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                    // Handle the back button event
+                    if (viewModel.haveUpdate) findNavController().navigate(R.id.homeFragment)
+                    else findNavController().navigateUp()
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(requireActivity(), callback)
     }
 
     override fun onDestroy() {

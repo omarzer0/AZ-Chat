@@ -24,6 +24,7 @@ class ChatDetailsViewModel @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
+    var haveUpdate: Boolean = false
     private val privateChat = stateHandler.get<PrivateChat>("privateChat")!!
 
     private val _event = MutableLiveData<Event<ChatDetailsEvent>>()
