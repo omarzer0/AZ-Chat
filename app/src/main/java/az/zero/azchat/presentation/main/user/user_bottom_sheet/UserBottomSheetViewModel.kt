@@ -1,4 +1,4 @@
-package az.zero.azchat.presentation.main.chat_details_bottom_sheet
+package az.zero.azchat.presentation.main.user.user_bottom_sheet
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -6,10 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatDetailsBottomSheetViewModel @Inject constructor(
+class UserBottomSheetViewModel @Inject constructor(
     private val stateHandle: SavedStateHandle
 ) : ViewModel() {
-
     val code = stateHandle.get<String>("code") ?: ""
     val text = stateHandle.get<String>("text") ?: ""
 }

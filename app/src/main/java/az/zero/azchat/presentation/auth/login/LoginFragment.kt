@@ -39,8 +39,8 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
             val number = binding.numberEd.text.toString()
             logMe(code)
             logMe(number)
+            hideKeyboard()
             viewModel.login(code, number, requireActivity())
-//            viewModel.login("20", "1001111111", requireActivity())
         }
 
         binding.countryCl.setOnClickListener {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.main.chat_details.chat_details_bottom_sheet.ChatDetailsBottomSheetFragment">
+    tools:context=".presentation.main.user.user_bottom_sheet.UserBottomSheetFragment">
 
     <EditText
         android:id="@+id/ed_text"

@@ -1,4 +1,4 @@
-package az.zero.azchat.presentation.main.chat_details_bottom_sheet
+package az.zero.azchat.presentation.main.chat_details.chat_details_bottom_sheet
 
 import android.content.Context
 import android.os.Bundle
@@ -59,16 +59,5 @@ class ChatDetailsBottomSheetFragment : BottomSheetDialogFragment() {
                 findNavController().navigateUp()
             }
         }
-    }
-
-    private fun focusEditText() {
-        binding.edText.requestFocus()
-        val inputMethodManager: InputMethodManager =
-            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-        inputMethodManager.toggleSoftInput(
-            InputMethodManager.SHOW_FORCED,
-            InputMethodManager.HIDE_IMPLICIT_ONLY
-        )
     }
 }

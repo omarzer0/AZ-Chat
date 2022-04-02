@@ -25,12 +25,6 @@ class ChatDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val privateChat = stateHandler.get<PrivateChat>("privateChat")!!
-//    private val group = privateChat.group
-//    private val user = privateChat.user
-//    private val isGroup = group.ofTypeGroup!!
-//    private val name = if (isGroup) group.name!! else user.name!!
-//    private val image = if (isGroup) group.image!! else user.imageUrl!!
-//    private val about = if (isGroup) group.about!! else user.bio!!
 
     private val _event = MutableLiveData<Event<ChatDetailsEvent>>()
     val event: LiveData<Event<ChatDetailsEvent>> = _event

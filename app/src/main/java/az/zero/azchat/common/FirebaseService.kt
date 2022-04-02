@@ -55,19 +55,7 @@ class FirebaseService : FirebaseMessagingService() {
             sharedPreference = this.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
         }
 
-        var isNotificationsDisabled = false
-        if (sharedPreference != null)
-            isNotificationsDisabled =
-                message.data["gid"] == sharedPreference!!.getString(CURRENT_GID, "")
-        if (isNotificationsDisabled) return
-
-        val hasLoggedIn = sharedPreference!!.getBoolean(LOGGED_IN, false)
-        if (!hasLoggedIn) return
-
-        logMe("onMessageReceived: ${message.data}")
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
-                as NotificationManager
-
+        if (shouldNotContinue(message)) return
 
         val argsData = getArgsData(message)
 
@@ -82,6 +70,7 @@ class FirebaseService : FirebaseMessagingService() {
         val isGroup = message.data["isGroup"] ?: ""
         val title = if (isGroup == "true") message.data["groupName"] ?: ""
         else message.data["username"] ?: ""
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(contentText)
@@ -90,9 +79,21 @@ class FirebaseService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent(argsData))
             .build()
 
-        logMe("${getNotificationId(message)}", "notificationIDForApp")
-        notificationManager.notify(getNotificationId(message), notification)
+        val notifyManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notifyManager.notify(getNotificationId(message), notification)
 
+    }
+
+    private fun shouldNotContinue(message: RemoteMessage): Boolean {
+        var shouldNotContinue = false
+        val isNotificationsDisabled =
+            message.data["gid"] == sharedPreference!!.getString(CURRENT_GID, "")
+        if (isNotificationsDisabled) shouldNotContinue = true
+
+        val hasLoggedIn = sharedPreference!!.getBoolean(LOGGED_IN, false)
+        if (!hasLoggedIn) shouldNotContinue = true
+
+        return shouldNotContinue
     }
 
     private fun getArgsData(message: RemoteMessage): Bundle {

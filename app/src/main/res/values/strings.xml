@@ -39,4 +39,7 @@
     <string name="about_group">About group</string>
     <string name="members">Members</string>
     <string name="update">Update</string>
+    <string name="profile">Profile</string>
+    <string name="about_developer">About Developer</string>
+    <string name="licence">Licence</string>
 </resources>

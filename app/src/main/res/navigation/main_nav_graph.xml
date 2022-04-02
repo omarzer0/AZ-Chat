@@ -71,9 +71,36 @@
     </fragment>
     <dialog
         android:id="@+id/chatDetailsBottomSheetFragment"
-        android:name="az.zero.azchat.presentation.main.chat_details_bottom_sheet.ChatDetailsBottomSheetFragment"
+        android:name="az.zero.azchat.presentation.main.chat_details.chat_details_bottom_sheet.ChatDetailsBottomSheetFragment"
         android:label="bottom_sheet_fragment_chat_details"
-        tools:layout="@layout/bottom_sheet_fragment_chat_details" >
+        tools:layout="@layout/bottom_sheet_fragment_chat_details">
+        <argument
+            android:name="code"
+            app:argType="string" />
+        <argument
+            android:name="text"
+            app:argType="string" />
+    </dialog>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="az.zero.azchat.presentation.main.user.UserFragment"
+        android:label="fragment_user"
+        tools:layout="@layout/fragment_user">
+        <argument
+            android:name="user"
+            app:argType="az.zero.azchat.domain.models.user.User" />
+        <action
+            android:id="@+id/action_userFragment_to_userBottomSheetFragment"
+            app:destination="@id/userBottomSheetFragment" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_userFragment"
+        app:destination="@id/userFragment" />
+    <dialog
+        android:id="@+id/userBottomSheetFragment"
+        android:name="az.zero.azchat.presentation.main.user.user_bottom_sheet.UserBottomSheetFragment"
+        android:label="bottom_sheet_fragment_user"
+        tools:layout="@layout/bottom_sheet_fragment_user">
         <argument
             android:name="code"
             app:argType="string" />

@@ -98,6 +98,14 @@ class SharedPreferenceManger @Inject constructor(
     }
 
     fun nuke() {
+        hasLoggedIn = false
+        uid = ""
+        authToken = ""
+        phoneNumber = ""
+        currentGid = ""
+        userImage = ""
+        userName = ""
+        notificationToken = ""
         sharedPreferences.edit().clear().apply()
     }
 

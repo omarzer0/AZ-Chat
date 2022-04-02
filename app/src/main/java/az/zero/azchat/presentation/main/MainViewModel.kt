@@ -1,14 +1,10 @@
 package az.zero.azchat.presentation.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import az.zero.azchat.common.SharedPreferenceManger
-import az.zero.azchat.common.USERS_ID
-import az.zero.azchat.common.logMe
+import az.zero.azchat.common.*
 import az.zero.azchat.domain.models.user.User
-import az.zero.azchat.common.NotificationTokenHelper
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.messaging.FirebaseMessaging
@@ -42,7 +38,7 @@ class MainViewModel @Inject constructor(
 
     private fun getNotificationToken() {
         FirebaseMessaging.getInstance().token.addOnSuccessListener { newToken ->
-            Log.e("TAG", "onCreate: $newToken")
+            logMe("newToken= $newToken")
             repositoryImpl.updateUserToken(newToken)
         }
     }
@@ -51,9 +47,13 @@ class MainViewModel @Inject constructor(
         firestore.clearPersistence()
     }
 
+    fun getUser(): User? = user.value
+
     init {
-        getUserInfo()
-        getNotificationToken()
+        tryNow {
+            getUserInfo()
+            getNotificationToken()
+        }
     }
 }
 

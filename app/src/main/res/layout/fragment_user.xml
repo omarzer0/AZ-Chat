@@ -6,26 +6,14 @@
     android:layout_height="match_parent"
     android:background="@color/gray"
     android:fillViewport="true"
-    tools:context=".presentation.main.chat_details.ChatDetailsFragment">
+    tools:context=".presentation.main.user.UserFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
-        <!--        <com.google.android.material.imageview.ShapeableImageView-->
-        <!--            android:id="@+id/iv_chat_image"-->
-        <!--            style="@style/roundShapeableImage"-->
-        <!--            android:layout_width="@dimen/_150sdp"-->
-        <!--            android:layout_height="@dimen/_150sdp"-->
-        <!--            android:layout_marginTop="@dimen/_8sdp"-->
-        <!--            android:scaleType="fitXY"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent"-->
-        <!--            tools:src="@tools:sample/avatars" />-->
-
         <ImageView
-            android:id="@+id/iv_chat_image"
+            android:id="@+id/iv_user_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_200sdp"
             android:scaleType="fitXY"
@@ -39,10 +27,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_chat_image"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_user_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/iv_chat_image" />
+            app:layout_constraintTop_toTopOf="@+id/iv_user_image" />
 
 
         <ImageView
@@ -54,8 +42,8 @@
             android:background="@drawable/circle"
             android:padding="@dimen/_8sdp"
             android:src="@drawable/ic_camera"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_chat_image"
-            app:layout_constraintStart_toStartOf="@+id/iv_chat_image"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_user_image"
+            app:layout_constraintStart_toStartOf="@+id/iv_user_image"
             app:tint="@color/white" />
 
 
@@ -64,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_25sdp"
-            app:layout_constraintTop_toBottomOf="@+id/iv_chat_image">
+            app:layout_constraintTop_toBottomOf="@+id/iv_user_image">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -72,7 +60,7 @@
 
 
                 <TextView
-                    android:id="@+id/tv_chat_name"
+                    android:id="@+id/tv_username"
                     style="@style/headerTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -93,40 +81,25 @@
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_chat_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_username"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/tv_chat_name" />
+                    app:layout_constraintTop_toTopOf="@+id/tv_username" />
 
 
                 <TextView
-                    android:id="@+id/tv_chat_phone"
+                    android:id="@+id/tv_user_phone"
                     style="@style/bodyTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
-                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/tv_chat_name"
-                    app:layout_constraintStart_toStartOf="@+id/tv_chat_name"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_chat_name"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_username"
+                    app:layout_constraintStart_toStartOf="@+id/tv_username"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_username"
                     app:layout_constraintVertical_bias="0"
                     tools:text="+2010010101010" />
 
-                <TextView
-                    android:id="@+id/tv_chat_number_of_members"
-                    style="@style/bodyTextStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:layout_marginBottom="@dimen/_8sdp"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/tv_chat_name"
-                    app:layout_constraintStart_toStartOf="@+id/tv_chat_name"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_chat_phone"
-                    app:layout_constraintVertical_bias="0"
-                    tools:text="3 Members" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
@@ -146,7 +119,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/about_tv"
+                    android:id="@+id/bio_tv"
                     style="@style/headerTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -159,7 +132,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/tv_chat_bio"
+                    android:id="@+id/tv_user_bio"
                     style="@style/bodyTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -171,7 +144,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_edit_bio_about"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/about_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/bio_tv"
                     tools:text="asada s\ndsadsd\nasdsda" />
 
                 <ImageView
@@ -182,9 +155,9 @@
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_chat_bio"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_user_bio"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/tv_chat_bio" />
+                    app:layout_constraintTop_toTopOf="@+id/tv_user_bio" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

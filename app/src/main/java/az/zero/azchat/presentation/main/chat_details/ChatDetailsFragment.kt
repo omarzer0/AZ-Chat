@@ -168,4 +168,9 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         const val ABOUT_CODE_KEY = "ABOUT_CODE_KEY"
 
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activityResultLauncher.unregister()
+    }
 }

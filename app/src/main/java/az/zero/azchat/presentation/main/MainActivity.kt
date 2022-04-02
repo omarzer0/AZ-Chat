@@ -13,6 +13,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
@@ -33,6 +34,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        if (!sharedPreferences.hasLoggedIn) loginOutFromActivity()
+        logMe("hasLoggedIn ${sharedPreferences.hasLoggedIn}", "hasLoggedIn")
 
         setSupportActionBar(binding.toolbar)
         val navHostFragment =
@@ -63,7 +66,7 @@ class MainActivity : BaseActivity() {
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
 
-                R.id.chatDetailsFragment, R.id.chatDetailsBottomSheetFragment -> {
+                R.id.chatDetailsFragment, R.id.chatDetailsBottomSheetFragment, R.id.userFragment, R.id.userBottomSheetFragment -> {
                     hideMainAppBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
@@ -131,8 +134,27 @@ class MainActivity : BaseActivity() {
                 R.id.header_user_image_iv -> {
                     logMe("clicked")
                 }
+
+                R.id.go_to_profile -> {
+                    logMe("clicked", "go_to_profile")
+
+                    viewModel.getUser()?.let {
+                        val action = MainNavGraphDirections.actionGlobalUserFragment(it)
+                        navController.navigate(action)
+                    }
+                }
+
+                R.id.go_to_about_developer -> {
+
+                }
+
+                R.id.go_to_licence -> {
+
+                }
             }
 
+            menuItem.isChecked = true
+            binding.drawerLayout.close()
             true
         }
     }
