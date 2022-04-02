@@ -47,4 +47,7 @@
     <string name="leave_the_group">Leave the group</string>
     <string name="login">Login</string>
     <string name="start">Start</string>
+    <string name="_20">20</string>
+    <string name="fake_number">1001234567</string>
+    <string name="enter_the_code_you_received">Enter the code you received</string>
 </resources>

@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="az.zero.azchat">
+    package="az.zero.azchat"
+    tools:ignore="MissingLeanbackLauncher">
+
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -34,7 +42,7 @@
             android:screenOrientation="portrait"
             android:name=".presentation.auth.AuthActivity"
             android:exported="true"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:screenOrientation="portrait"

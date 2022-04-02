@@ -17,6 +17,19 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/otp" />
 
+    <TextView
+        android:id="@+id/textView2"
+        style="@style/headerTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:gravity="center"
+        android:maxLines="99"
+        android:text="@string/enter_the_code_you_received"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/animationView" />
+
     <com.broooapps.otpedittext2.OtpEditText
         android:id="@+id/otp_ed"
         android:layout_width="match_parent"
@@ -32,7 +45,7 @@
         android:textSize="@dimen/_20ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/animationView"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
         app:oev_box_style="@string/style_rounded_underline"
         app:oev_primary_color="@color/green_light"
         app:oev_secondary_color="@color/light_gray"
