@@ -146,8 +146,11 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
-}
 
+    // Lottie files
+    def lottieVersion = "3.4.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
+}
 
 kapt {
     correctErrorTypes true

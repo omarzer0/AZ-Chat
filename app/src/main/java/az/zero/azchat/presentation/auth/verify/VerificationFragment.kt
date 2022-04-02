@@ -27,8 +27,8 @@ class VerificationFragment : BaseFragment(R.layout.fragment_verification) {
         handleClicks()
         observeData()
 
-        binding.otpEd.requestFocus()
-        showKeyboard()
+//        binding.otpEd.requestFocus()
+//        showKeyboard()
     }
 
     private fun handleClicks() {
