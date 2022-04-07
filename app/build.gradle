@@ -150,6 +150,10 @@ dependencies {
     // Lottie files
     def lottieVersion = "3.4.0"
     implementation "com.airbnb.android:lottie:$lottieVersion"
+
+    // Image Viewer
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
 }
 
 kapt {

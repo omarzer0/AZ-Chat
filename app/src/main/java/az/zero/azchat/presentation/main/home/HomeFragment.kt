@@ -5,10 +5,9 @@ import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger
-import az.zero.azchat.common.extension.gone
-import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentHomeBinding
@@ -39,7 +38,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     private fun observeViewEvents() {
         viewModel.privateChats.observe(viewLifecycleOwner) {
             binding.apply {
-                groupRv.isVisible =  it.isNotEmpty()
+                groupRv.isVisible = it.isNotEmpty()
                 noChatGroup.isVisible = it.isEmpty()
             }
             privateChatAdapter.submitList(it)
@@ -70,6 +69,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                 viewModel.privateChatClick(it)
             }, onUserLongClick = { privateChatID, isGroup, view ->
                 showMenu(privateChatID, isGroup, view)
+            }, onUserImageClicked = { image ->
+                val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+                navigateToAction(action)
             })
         binding.groupRv.adapter = privateChatAdapter
     }

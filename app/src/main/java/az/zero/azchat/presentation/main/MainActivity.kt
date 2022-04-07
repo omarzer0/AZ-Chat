@@ -76,6 +76,11 @@ class MainActivity : BaseActivity() {
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
 
+                R.id.imageViewerFragment -> {
+                    hideChatAppBar()
+                    hideMainAppBar()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
                 else -> {
                     showChatAppBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)

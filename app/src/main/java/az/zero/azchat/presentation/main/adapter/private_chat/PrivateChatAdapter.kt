@@ -19,7 +19,8 @@ import az.zero.azchat.domain.models.private_chat.PrivateChat
 class PrivateChatAdapter(
     private val uid: String,
     private val onUserClick: (PrivateChat) -> Unit,
-    private val onUserLongClick: (privateChatID: String, isGroup: Boolean, view: View) -> Unit
+    private val onUserLongClick: (privateChatID: String, isGroup: Boolean, view: View) -> Unit,
+    private val onUserImageClicked: (image: String) -> Unit
 ) :
     ListAdapter<PrivateChat, PrivateChatAdapter.PrivateChatViewHolder>(DiffCallback()) {
 
@@ -45,14 +46,22 @@ class PrivateChatAdapter(
                 onUserClick(getItem(adapterPosition))
             }
 
+            binding.privateChatImageIv.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                val isGroup = getItem(adapterPosition).group.ofTypeGroup ?: false
+                val image = if (isGroup) getItem(adapterPosition).group.image ?: ""
+                else getItem(adapterPosition).user.imageUrl ?: ""
+                onUserImageClicked(image)
+            }
+
             binding.root.setOnLongClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) false
                 else {
                     val isGroup = getItem(adapterPosition).group.ofTypeGroup!!
                     if (isGroup)
-                        onUserLongClick(getItem(adapterPosition).id,isGroup, it)
+                        onUserLongClick(getItem(adapterPosition).id, isGroup, it)
                     else
-                        onUserLongClick(getItem(adapterPosition).user.uid!!,isGroup, it)
+                        onUserLongClick(getItem(adapterPosition).user.uid!!, isGroup, it)
                     true
                 }
             }
