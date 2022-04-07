@@ -44,7 +44,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun logOut() {
-        firestore.clearPersistence()
+        tryNow { firestore.clearPersistence() }
     }
 
     fun getUser(): User? = user.value

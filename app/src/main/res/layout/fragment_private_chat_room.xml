@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/_4sdp"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/send_at_text_ed"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,6 +30,42 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:itemCount="20"
         tools:listitem="@layout/item_message_mirrored" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_no_messages"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+        app:lottie_rawRes="@raw/send_a_new_message" />
+
+    <TextView
+        android:id="@+id/tv_no_messages"
+        style="@style/headerTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="99"
+        android:padding="@dimen/_12sdp"
+        android:text="@string/no_messages_yet_the_fun_begins_when_you_start_chatting"
+        app:layout_constraintBottom_toTopOf="@+id/send_at_text_ed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/animationView" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/no_messages_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_no_messages,animationView" />
 
     <FrameLayout
         android:id="@+id/send_message_container_fl"

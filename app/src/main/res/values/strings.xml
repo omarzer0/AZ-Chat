@@ -15,7 +15,8 @@
     <string name="search_users">Search users</string>
     <string name="enter_user_name">Enter a username</string>
     <string name="enter_bio">Enter a bio</string>
-    <string name="bio_under_three">Bio should be more than 3 characters</string>
+    <string name="bio_under_three">Bio should be 3 characters or more</string>
+    <string name="username_under_three">Username should be 3 characters or more</string>
     <string name="camera_not_granted">Can\'t use camera without permission</string>
     <string name="your_message">Your message...</string>
     <string name="sure_want_to_logout">Are you sure you want to logout?</string>
@@ -47,7 +48,10 @@
     <string name="leave_the_group">Leave the group</string>
     <string name="login">Login</string>
     <string name="start">Start</string>
+    <string name="users">Users</string>
     <string name="_20">20</string>
     <string name="fake_number">1001234567</string>
     <string name="enter_the_code_you_received">Enter the code you received</string>
+    <string name="no_chats_yet_start_chatting_now">No chats yet. Start chatting now</string>
+    <string name="no_messages_yet_the_fun_begins_when_you_start_chatting">No messages yet!.The fun begins when you start chatting.</string>
 </resources>

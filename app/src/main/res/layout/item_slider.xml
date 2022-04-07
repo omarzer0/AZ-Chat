@@ -13,7 +13,6 @@
         android:scaleType="fitXY"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
-        app:lottie_rawRes="@raw/globe"
         app:layout_constraintBottom_toTopOf="@+id/tv_header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

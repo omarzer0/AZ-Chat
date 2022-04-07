@@ -71,6 +71,11 @@ class MainActivity : BaseActivity() {
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
 
+                R.id.addChatFragment -> {
+                    hideChatAppBar()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
+
                 else -> {
                     showChatAppBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -100,10 +105,13 @@ class MainActivity : BaseActivity() {
 
     private fun observeData() {
         val header = binding.navDrawerSlider.getHeaderView(0)
+        header.setOnClickListener { goToProfile() }
+
         val userImageIV = header.findViewById<ShapeableImageView>(R.id.header_user_image_iv)
         val userNameTV = header.findViewById<TextView>(R.id.username_tv)
         val userPhoneNumberTV = header.findViewById<TextView>(R.id.phone_number_tv)
         val logoutIV = header.findViewById<ImageView>(R.id.logout_iv)
+
         logoutIV.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.sure_want_to_logout))
@@ -138,10 +146,7 @@ class MainActivity : BaseActivity() {
                 }
 
                 R.id.go_to_profile -> {
-                    viewModel.getUser()?.let {
-                        val action = MainNavGraphDirections.actionGlobalUserFragment(it)
-                        navController.navigate(action)
-                    }
+                    goToProfile()
                 }
 
                 R.id.go_to_about_developer -> {
@@ -156,6 +161,13 @@ class MainActivity : BaseActivity() {
             menuItem.isChecked = true
             binding.drawerLayout.close()
             true
+        }
+    }
+
+    private fun goToProfile() {
+        viewModel.getUser()?.let {
+            val action = MainNavGraphDirections.actionGlobalUserFragment(it)
+            navController.navigate(action)
         }
     }
 

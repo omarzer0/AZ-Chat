@@ -132,7 +132,7 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
         val searchItem = menu.findItem(R.id.add_chat_action_search)
         searchView = searchItem.actionView as SearchView
 
-        searchItem.expandActionView()
+//        searchItem.expandActionView()
         val pendingQuery = viewModel.searchQuery.value
         if (pendingQuery != null && pendingQuery.isNotEmpty() && pendingQuery != AddChatViewModel.START_SEARCH_QUERY) {
             searchItem.expandActionView()

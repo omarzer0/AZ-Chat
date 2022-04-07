@@ -25,7 +25,6 @@ import az.zero.azchat.databinding.FragmentPrivateChatRoomBinding
 import az.zero.azchat.databinding.SendEditTextBinding
 import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.presentation.main.MainActivity
-import az.zero.azchat.presentation.main.adapter.messages.MessageLongClickAction.*
 import az.zero.azchat.presentation.main.adapter.messages.MessagesAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -134,7 +133,11 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
             onSenderMessageLongClick = { message, action ->
                 viewModel.postAction(PrivateChatActions.SenderMessageLongClick(message, action))
             },
-            onDataChange = {
+            onDataChange = { isListEmpty ->
+                binding.apply {
+                    noMessagesGroup.isVisible = isListEmpty
+                    chatsRv.isVisible = !isListEmpty
+                }
                 viewModel.postAction(PrivateChatActions.DataChanged)
             },
             audioHandler

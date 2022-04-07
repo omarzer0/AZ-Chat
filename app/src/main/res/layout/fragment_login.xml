@@ -57,7 +57,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
-        app:lottie_rawRes="@raw/globe" />
+        app:lottie_rawRes="@raw/login" />
 
     <EditText
         android:id="@+id/code_ed"

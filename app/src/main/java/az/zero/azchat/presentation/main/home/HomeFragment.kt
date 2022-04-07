@@ -3,9 +3,12 @@ package az.zero.azchat.presentation.main.home
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger
+import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentHomeBinding
@@ -35,8 +38,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     private fun observeViewEvents() {
         viewModel.privateChats.observe(viewLifecycleOwner) {
-            it.forEach { chat ->
-                logMe("$chat\n\n\n", "Home observeViewEvents")
+            binding.apply {
+                groupRv.isVisible =  it.isNotEmpty()
+                noChatGroup.isVisible = it.isEmpty()
             }
             privateChatAdapter.submitList(it)
         }
@@ -95,6 +99,10 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     private fun handleClicks() {
         binding.addChatFabBtn.setOnClickListener {
             viewModel.addUserClick()
+        }
+
+        binding.tvNoChats.setOnClickListener {
+            navigateToAction(HomeFragmentDirections.actionHomeFragmentToAddChatFragment())
         }
     }
 

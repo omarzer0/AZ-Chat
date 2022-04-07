@@ -36,7 +36,7 @@ class MessagesAdapter(
     options: FirestoreRecyclerOptions<Message>,
     val onReceivedMessageLongClick: (Message) -> Unit,
     val onSenderMessageLongClick: (message: Message, clickAction: MessageLongClickAction) -> Unit,
-    val onDataChange: () -> Unit,
+    val onDataChange: (isEmpty: Boolean) -> Unit,
     private val audioHandler: AudioHandler
 ) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options),
     AudioPlaybackListener {
@@ -86,7 +86,7 @@ class MessagesAdapter(
 
     override fun onDataChanged() {
         super.onDataChanged()
-        onDataChange()
+        onDataChange(itemCount <= 0)
     }
 
     inner class ReceiverMessagesViewHolder(private val binding: ItemMessageMirroredBinding) :

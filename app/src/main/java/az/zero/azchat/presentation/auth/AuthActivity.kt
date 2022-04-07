@@ -21,7 +21,7 @@ class AuthActivity : BaseActivity() {
     private lateinit var navController: NavController
     private lateinit var binding: ActivityAuthBinding
     private lateinit var appBarrConfiguration: AppBarConfiguration
-    private lateinit var graph: NavGraph
+    lateinit var graph: NavGraph
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +55,16 @@ class AuthActivity : BaseActivity() {
             if (destination.id == R.id.onBoardingFragment) hideAppBar()
             else showAppBar()
         }
+    }
+
+    override fun onBackPressed() {
+        navController.currentDestination?.let {
+            if (it.id == R.id.loginFragment) {
+                finish()
+            } else {
+                super.onBackPressed()
+            }
+        } ?: super.onBackPressed()
     }
 
     private fun showAppBar() {

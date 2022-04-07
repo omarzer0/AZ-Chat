@@ -3,6 +3,8 @@ package az.zero.azchat.presentation.auth.onboarding
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.extension.hide
@@ -44,7 +46,7 @@ class OnBoardingFragment : BaseFragment(R.layout.fragment_onboarding) {
             add(SliderItem(R.raw.safe, "Secure", "AZ chat keeps your messages secure and safe"))
             add(
                 SliderItem(
-                    R.raw.free, "Free", "AZ chat is a free to use. No ads or subscription fees"
+                    R.raw.free_to_chat, "Free", "AZ chat is a free to use. No ads or subscription fees"
                 )
             )
         }
@@ -74,6 +76,13 @@ class OnBoardingFragment : BaseFragment(R.layout.fragment_onboarding) {
     private fun handleClicks() {
         binding.btnStart.setOnClickListener {
             sharedPreferenceManger.openedTheAppBefore = true
+//
+//            val startDestination = R.id.loginFragment
+//            val navOptions = NavOptions.Builder()
+//                .setPopUpTo(startDestination, true)
+//                .build()
+//            findNavController().navigate(startDestination, null, navOptions)
+
             navigateToAction(OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment())
         }
     }

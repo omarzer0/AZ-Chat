@@ -118,6 +118,7 @@ class SharedPreferenceManger @Inject constructor(
     }
 
     fun nuke() {
+        sharedPreferences.edit().clear().apply()
         hasLoggedIn = false
         uid = ""
         authToken = ""
@@ -127,7 +128,7 @@ class SharedPreferenceManger @Inject constructor(
         userName = ""
         notificationToken = ""
         blockList = emptyList()
-        sharedPreferences.edit().clear().apply()
+        openedTheAppBefore = true
     }
 
     companion object {

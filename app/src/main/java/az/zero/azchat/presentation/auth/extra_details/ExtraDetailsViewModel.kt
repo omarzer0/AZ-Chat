@@ -1,6 +1,5 @@
 package az.zero.azchat.presentation.auth.extra_details
 
-import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -37,14 +36,11 @@ class ExtraDetailsViewModel @Inject constructor(
 
     fun addUser(username: String, bio: String) {
         when {
-            username.isEmpty() -> {
+            username.trim().isEmpty() -> {
                 _event.postValue(Event(ExtraDetailsEvent.ValidateUserInputsError(R.string.enter_user_name)))
             }
-            bio.isEmpty() -> {
-                _event.postValue(Event(ExtraDetailsEvent.ValidateUserInputsError(R.string.enter_bio)))
-            }
-            bio.length < 3 -> {
-                _event.postValue(Event(ExtraDetailsEvent.ValidateUserInputsError(R.string.bio_under_three)))
+            username.trim().length < 3 -> {
+                _event.postValue(Event(ExtraDetailsEvent.ValidateUserInputsError(R.string.username_under_three)))
             }
             else -> {
                 _event.postValue(Event(ExtraDetailsEvent.AddUserLoading))
