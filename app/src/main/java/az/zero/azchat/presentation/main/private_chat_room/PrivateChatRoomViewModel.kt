@@ -9,6 +9,7 @@ import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.domain.models.private_chat.PrivateChat
 import az.zero.azchat.presentation.main.adapter.messages.MessageLongClickAction
+import az.zero.azchat.presentation.main.private_chat_room.MessageType.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
@@ -106,17 +107,23 @@ class PrivateChatRoomViewModel @Inject constructor(
                     )
 
                 } else {
-                    sendMessageHelper.checkForImageOrAudioAndSend(
-                        action.messageType,
-                        action.messageText,
-                        messageImage,
-                        messageAudio,
-                        gid,
-                        notificationToken,
-                        isGroup = isGroup,
-                        groupName = groupName,
-                        groupImage = groupImage
-                    )
+                    if (action.messageType != TEXT) {
+                        logMe("send", "sendFakeTempMessage")
+                        val randomId = firestore.collection(GROUPS_ID).document().id
+                        sendFakeTempMessage(action.messageType, randomId, imagePath = messageImage)
+                    }
+
+//                    sendMessageHelper.checkForImageOrAudioAndSend(
+//                        action.messageType,
+//                        action.messageText,
+//                        messageImage,
+//                        messageAudio,
+//                        gid,
+//                        notificationToken,
+//                        isGroup = isGroup,
+//                        groupName = groupName,
+//                        groupImage = groupImage
+//                    )
                 }
             }
             PrivateChatActions.ViewPaused -> {
@@ -185,28 +192,56 @@ class PrivateChatRoomViewModel @Inject constructor(
         }
     }
 
+    private fun sendFakeTempMessage(
+        messageType: MessageType,
+        messageId: String,
+        audioFilePath: Uri? = null,
+        audioDuration: Long = 0,
+        imagePath: Uri? = null
+    ) {
+        if (messageType == TEXT) return
+        logMe("not text $messageType", "sendFakeTempMessage")
+
+        sendMessageHelper.checkForImageOrAudioAndSend(
+            messageType,
+            "",
+            imagePath,
+            audioFilePath,
+            gid,
+            "",
+            audioDuration,
+            isGroup = isGroup,
+            groupName = groupName,
+            groupImage = groupImage,
+            messageId = messageId
+        )
+    }
+
     fun onMessageImageSelected(uri: Uri?) {
         messageImage = uri
-        postAction(PrivateChatActions.SendMessage("", MessageType.IMAGE))
+        postAction(PrivateChatActions.SendMessage("", IMAGE))
     }
 
     fun uploadAudioFile(mLocalFilePath: String, duration: Long) {
+        val randomId = firestore.collection(GROUPS_ID).document().id
         val currentTimeMillis = System.currentTimeMillis()
         val audioFilePath = "${currentTimeMillis}.3gp"
         val ref = storage.reference.child("audio/${getUID()}/${audioFilePath}")
         val localUri = Uri.fromFile(File(mLocalFilePath))
+        sendFakeTempMessage(AUDIO, randomId, audioFilePath = localUri)
+
         ref.putFile(localUri).addOnSuccessListener {
             logMe("uploadAudioFile: success")
-            getDownloadableUrl(audioFilePath, duration)
+            getDownloadableUrl(audioFilePath, duration, randomId)
         }.addOnFailureListener {
             logMe("uploadAudioFile: ${it.localizedMessage ?: "Unknown"}")
         }
     }
 
-    private fun getDownloadableUrl(audioFilePath: String, audioDuration: Long) {
+    private fun getDownloadableUrl(audioFilePath: String, audioDuration: Long, id: String? = null) {
         storage.reference.child("audio/${getUID()}/${audioFilePath}").downloadUrl.addOnSuccessListener {
             sendMessageHelper.checkForImageOrAudioAndSend(
-                MessageType.AUDIO,
+                AUDIO,
                 "",
                 null,
                 it,
@@ -215,7 +250,8 @@ class PrivateChatRoomViewModel @Inject constructor(
                 audioDuration,
                 isGroup = isGroup,
                 groupName = groupName,
-                groupImage = groupImage
+                groupImage = groupImage,
+                messageId = id
             )
         }
     }

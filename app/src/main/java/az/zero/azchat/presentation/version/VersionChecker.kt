@@ -14,7 +14,7 @@ class VersionChecker @Inject constructor(
 ) {
 
     operator fun invoke() {
-        val document = firestore.collection("versions").document("dgLRpMhPNQxMuYVR6EVm")
+        val document = firestore.collection("versions").document("123321")
         document.get().addOnSuccessListener {
             tryNow {
                 logMe(

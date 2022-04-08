@@ -18,6 +18,7 @@ import az.zero.azchat.common.audio.media_player.AudioPlaybackListener
 import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.getShimmerDrawable
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.databinding.ItemMessageBinding
@@ -367,7 +368,17 @@ class MessagesAdapter(
                 messageTextTv.gone()
                 messageImageContainerCv.show()
                 voicePlayerView.root.gone()
-                setImageUsingGlide(messageImageIv, currentItem.imageUri)
+//                if (currentItem.imageUri.startsWith(FAKE_MAGE)) {
+//                    setImageUsingGlide(messageImageIv, getShimmerDrawable(), false)
+//                } else {
+//                    setImageUsingGlide(messageImageIv, currentItem.imageUri)
+//                }
+                setImageUsingGlide(
+                    messageImageIv,
+                    currentItem.imageUri,
+                    isProfileImage = false,
+                    errorImage = getShimmerDrawable()
+                )
                 imageAndTextBgCl.background =
                     getDrawable(
                         imageAndTextBgCl.context,

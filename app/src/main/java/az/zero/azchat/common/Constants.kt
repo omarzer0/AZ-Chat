@@ -11,5 +11,6 @@ const val BASE_URL = "https://fcm.googleapis.com"
 const val CONTENT_TYPE = "application/json"
 const val timeOut = 35L
 const val APP_VERSION_CODE = "2"
+const val FAKE_MAGE = "fake"
 const val BLOCKED =
     "We have blocked all requests from this device due to unusual activity. Try again later"
