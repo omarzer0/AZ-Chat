@@ -149,10 +149,9 @@ class SendMessageHelper @Inject constructor(
         groupName: String,
         groupImage: String
     ) {
-        logMe("$userImage???","????????")
         sendMessage(
             "",
-            "$userImage",
+            userImage,
             "",
             gid,
             sharedPreferenceManger.userName,
