@@ -3,12 +3,10 @@ package az.zero.azchat.presentation.main.chat_details
 import android.Manifest
 import android.os.Bundle
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.extension.*
@@ -34,7 +32,6 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChatDetailsBinding.bind(view)
-        hideSystemBars()
         setDataToViews()
         setUpRV()
         handleClicks()
@@ -202,29 +199,9 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
 
     }
 
-    private fun handleBackBtn() {
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true /* enabled by default */) {
-                override fun handleOnBackPressed() {
-                    // Handle the back button event
-                    if (viewModel.haveUpdate) findNavController().navigate(R.id.homeFragment)
-                    else findNavController().navigateUp()
-                }
-            }
-        requireActivity().onBackPressedDispatcher.addCallback(requireActivity(), callback)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         activityResultLauncher.unregister()
-        showSystemBars()
     }
 
-    private fun hideSystemBars() {
-        requireActivity().makeStatusBarTransparent()
-    }
-
-    private fun showSystemBars() {
-        requireActivity().clearTransparentStatusBar()
-    }
 }

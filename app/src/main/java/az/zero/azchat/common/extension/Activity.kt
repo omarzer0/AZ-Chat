@@ -38,10 +38,6 @@ fun Activity.showKeyboard() {
 
 fun Activity.makeStatusBarTransparent() {
     window.apply {
-        logMe(
-            "makeStatusBarTransparent ${decorView.systemUiVisibility}",
-            "makeStatusBarTransparent"
-        )
         clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

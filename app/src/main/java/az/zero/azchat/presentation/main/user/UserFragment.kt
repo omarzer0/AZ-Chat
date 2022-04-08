@@ -178,8 +178,8 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
         }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         activityResultLauncher.unregister()
     }
 }
