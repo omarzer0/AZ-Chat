@@ -9,20 +9,18 @@ import az.zero.azchat.common.event.Event
 import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.private_chat.PrivateChat
 import az.zero.azchat.domain.models.user.User
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.Source
+import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
-import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val sharedPreferenceManger: SharedPreferenceManger,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val firebaseMessaging: FirebaseMessaging
 ) : ViewModel() {
 
     private var privateChatsListener: ListenerRegistration? = null
@@ -33,32 +31,35 @@ class HomeViewModel @Inject constructor(
     private val _privateChats = MutableLiveData<MutableList<PrivateChat>>()
     val privateChats: LiveData<MutableList<PrivateChat>>
         get() = _privateChats
-    private var localList: CopyOnWriteArrayList<PrivateChat> = CopyOnWriteArrayList()
 
     private fun getPrivateChatsForUser() {
         val uid = sharedPreferenceManger.uid
+        val blockList = sharedPreferenceManger.blockList
         privateChatsListener = firestore.collection(GROUPS_ID).whereArrayContains("members", uid)
             .addSnapshotListener { value, error ->
-                localList = CopyOnWriteArrayList()
                 if (error != null || value == null) return@addSnapshotListener
 
                 tryAsyncNow(viewModelScope, action = {
-                    getPrivateChats(value, uid, Source.CACHE)
-                }, error = {
-                    if (it.localizedMessage?.contains(FAILED_TO_GET_FROM_CACHE) == true)
-                        getPrivateChats(value, uid, Source.SERVER)
+                    val privateChats = getPrivateChats(value, uid, Source.CACHE, blockList)
+                    privateChats.sortByDescending { it.group.lastSentMessage?.sentAt }
+                    _privateChats.value = privateChats
                 }, finally = {
-                    localList.sortByDescending { it.group.lastSentMessage?.sentAt }
-                    _privateChats.postValue(localList)
-                    logMe("$localList", "MylocalList")
+                    val privateChats = getPrivateChats(value, uid, Source.DEFAULT, blockList)
+                    privateChats.sortByDescending { it.group.lastSentMessage?.sentAt }
+                    _privateChats.value = privateChats
                 })
             }
     }
 
-    private suspend fun getPrivateChats(query: QuerySnapshot, uid: String, from: Source) {
+    private suspend fun getPrivateChats(
+        query: QuerySnapshot,
+        uid: String,
+        from: Source,
+        blockList: List<String>
+    ): MutableList<PrivateChat> {
+        val privateChatList = mutableListOf<PrivateChat>()
         query.forEach { document ->
             val group = document.toObject<Group>()
-//            if (group.ofTypeGroup == true) return@forEach
             if (group.hasNullField()) return@forEach
 
             val user = if (!group.ofTypeGroup!!) { // not a group
@@ -71,9 +72,17 @@ class HomeViewModel @Inject constructor(
                 firebaseUser
             } else User()
 
+            // user or group is blocked
+            if (!group.ofTypeGroup!!) {
+                if (blockList.any { it == user.uid!! }) return@forEach
+            } else {
+                if (blockList.any { it == group.gid!! }) return@forEach
+            }
+
             val privateChat = PrivateChat(group, user, group.gid!!)
-            localList.add(privateChat)
+            privateChatList.add(privateChat)
         }
+        return privateChatList
     }
 
     fun addUserClick() {
@@ -92,71 +101,23 @@ class HomeViewModel @Inject constructor(
         getPrivateChatsForUser()
     }
 
+    fun blockUser(privateChatID: String) {
+        val blockList = sharedPreferenceManger.blockList.toMutableList()
+            .apply { add(privateChatID) }.toSet().toList()
+        sharedPreferenceManger.blockList = blockList
+        logMe("${sharedPreferenceManger.blockList}", "blockUserBlockList")
+        val uid = sharedPreferenceManger.uid
+        firestore.collection(USERS_ID).document(uid)
+            .update("blockList", FieldValue.arrayUnion(privateChatID))
+        getPrivateChatsForUser()
+    }
 
-    //    private val _chatsList = mutableListOf<PrivateChat>()
-
-//    private fun getPrivateChatsForUser() {
-//        viewModelScope.launch {
-//            repositoryImpl.getPrivateChatsForUser { chat ->
-//                val exist = _chatsList.find { it.group.gid == chat.group.gid }
-//                if (exist != null) {
-//                    //exists
-//                    val index = _chatsList.indexOf(exist)
-//                    _chatsList[index] = chat
-//                } else {
-//                    _chatsList.add(chat)
-//                }
-//                _chatsList.sortByDescending { it.group.lastSentMessage?.sentAt }
-//                _privateChats.postValue(_chatsList)
-//            }
-//        }
-//    }
-
+    fun leaveGroup(privateChatID: String) {
+        val uid = sharedPreferenceManger.uid
+        firebaseMessaging.unsubscribeFromTopic("/topics/$privateChatID")
+        firestore.collection(GROUPS_ID).document(privateChatID)
+            .update("members", FieldValue.arrayRemove(uid)).addOnSuccessListener {
+                getPrivateChatsForUser()
+            }
+    }
 }
-
-//private fun getPrivateChats(){
-//        tryAsyncNow(viewModelScope, action = {
-//            value.forEach { document ->
-//                val group = document.toObject<Group>()
-//                if (group.ofTypeGroup == true) return@forEach
-//                if (group.hasNullField()) return@forEach
-//                val otherUserID = if (!group.user1!!.path.contains(uid)) group.user1!!.path
-//                else group.user2!!.path
-//
-////                        val user = firestore.document(otherUserID).get().await().toObject<User>()
-////                            ?: return@forEach
-//
-////                        // TODO 2: The user is not gonna update in the home screen as we are getting it form the cache first
-//
-//                val user = firestore.document(otherUserID).get(Source.CACHE)
-//                    .await().toObject<User>() ?: firestore.document(otherUserID)
-//                    .get(Source.SERVER).await().toObject<User>() ?: return@forEach
-//
-//                if (user.hasNullField()) return@forEach
-//                val privateChat = PrivateChat(group, user, group.gid!!)
-//                localList.add(privateChat)
-//
-////                        var test = ""
-////                        localList.forEach {
-////                            test += "$it\n\n\n\n"
-////                        }
-////                        logMe("${localList.size}\n\n\n\n$test", "getPrivateChatsForUser222222")
-////
-////                        localList.add()
-////                        localList.add(privateChat)
-////                        _privateChats.value = localList
-//
-//            }
-//        }, error = {
-//            if (it.localizedMessage?.contains(FAILED_TO_GET_FROM_CACHE) == true) {
-//
-//            }
-//        }, finally = {
-//            val x = localList.apply {
-//                distinctBy { it.user.name }
-//                sortByDescending { it.group.lastSentMessage?.sentAt }
-//            }
-//            logMe("${x.size}\n\n\n\n$x", "getPrivateChatsForUser")
-//            _privateChats.postValue(localList)
-//        })
-//    }

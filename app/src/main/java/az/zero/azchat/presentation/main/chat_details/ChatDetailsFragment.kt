@@ -7,32 +7,41 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
-import az.zero.azchat.common.extension.gone
-import az.zero.azchat.common.extension.hideKeyboard
-import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.extension.*
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentChatDetailsBinding
+import az.zero.azchat.presentation.main.adapter.user.UserAdapter
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
 
     val viewModel: ChatDetailsViewModel by viewModels()
     private lateinit var binding: FragmentChatDetailsBinding
-
+    private val userAdapter =
+        UserAdapter(onImageClick = { image ->
+            val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+            navigateToAction(action)
+        }, onUserChosenToJoinGroup = {}, onUserClickListener = {})
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChatDetailsBinding.bind(view)
         setDataToViews()
+        setUpRV()
         handleClicks()
         observeData()
         observeEvents()
         getDataFromOtherFragmentIFExists()
+    }
 
+    private fun setUpRV() {
+        binding.rvGroupUsers.adapter = userAdapter
     }
 
     private fun observeEvents() {
@@ -50,6 +59,7 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
                     toastMy("Failed to upload the image please try again later")
                 }
                 is ChatDetailsEvent.UpdateText -> {
+                    viewModel.haveUpdate = true
                     if (event.isName) {
                         binding.tvChatName.text = event.value
                     } else {
@@ -64,6 +74,16 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         viewModel.imageMLD.observe(viewLifecycleOwner) {
             setImageUsingGlide(binding.ivChatImage, it.toString())
         }
+
+        viewModel.usersMLD.observe(viewLifecycleOwner) { users ->
+            if (users.isEmpty()) {
+                binding.clMembersRootView.gone()
+                return@observe
+            }
+            userAdapter.submitList(users)
+            binding.clMembersRootView.show()
+        }
+
     }
 
     private fun setDataToViews() {
@@ -74,7 +94,8 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         showCorrectViews(isGroup)
         val name = if (isGroup) group.name!! else user.name!!
         val image = if (isGroup) group.image!! else user.imageUrl!!
-        val about = if (isGroup) group.about!! else user.bio!!
+        var about = if (isGroup) group.about!! else user.bio!!
+        if (about.trim().isEmpty()) about = "Lazy user didn't write anything!"
 
         binding.apply {
             setImageUsingGlide(ivChatImage, image)
@@ -106,6 +127,15 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
 
             ivEditBioAbout.setOnClickListener {
                 updateNameOrAbout(false)
+            }
+
+            ivChatImage.setOnClickListener {
+                val group = viewModel.getCurrentPrivateChat().group
+                val user = viewModel.getCurrentPrivateChat().user
+                val isGroup = viewModel.getCurrentPrivateChat().group.ofTypeGroup ?: false
+                val image = if (isGroup) group.image ?: "" else user.imageUrl ?: ""
+                val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+                navigateToAction(action)
             }
         }
     }
@@ -169,8 +199,9 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         activityResultLauncher.unregister()
     }
+
 }

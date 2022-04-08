@@ -39,10 +39,17 @@ class CountryCodeViewModel @Inject constructor(
         }
     }
 
-    fun searchCountry(country: String) {
+    fun searchCountry(countryOrNumber: String) {
         _countryCode.value?.let { countries ->
+            val countryOrNumberWithoutPlus =
+                if (countryOrNumber.startsWith('+')) countryOrNumber.removeRange(0..0)
+                else countryOrNumber
             val searchedCountries =
-                countries.filter { it.name.lowercase().contains(country.trim().lowercase()) }
+                countries.filter {
+                    it.name.lowercase().contains(countryOrNumberWithoutPlus.trim().lowercase())
+                            || it.callingCode.lowercase()
+                        .contains(countryOrNumberWithoutPlus.trim().lowercase())
+                }
             _event.postValue(Event(CountryCodeEvent.SearchCountry(searchedCountries)))
         }
     }

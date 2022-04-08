@@ -19,16 +19,24 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
+import az.zero.azchat.common.toastMy
 import az.zero.azchat.core.BaseActivity
 import az.zero.azchat.databinding.ActivityMainBinding
+import az.zero.azchat.presentation.version.VersionChecker
 import com.google.android.material.imageview.ShapeableImageView
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
     private lateinit var navController: NavController
     lateinit var binding: ActivityMainBinding
     private lateinit var appBarrConfiguration: AppBarConfiguration
     val viewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var versionChecker: VersionChecker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +50,10 @@ class MainActivity : BaseActivity() {
             supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
 
-        appBarrConfiguration = AppBarConfiguration(setOf(R.id.homeFragment), binding.drawerLayout)
+        appBarrConfiguration = AppBarConfiguration(
+            setOf(R.id.homeFragment, R.id.imageViewerFragment),
+            binding.drawerLayout
+        )
 
         setupActionBarWithNavController(navController, appBarrConfiguration)
         binding.navDrawerSlider.setupWithNavController(navController)
@@ -71,6 +82,16 @@ class MainActivity : BaseActivity() {
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
 
+                R.id.addChatFragment -> {
+                    hideChatAppBar()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
+
+                R.id.imageViewerFragment -> {
+                    hideChatAppBar()
+                    hideMainAppBar()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
                 else -> {
                     showChatAppBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -100,10 +121,13 @@ class MainActivity : BaseActivity() {
 
     private fun observeData() {
         val header = binding.navDrawerSlider.getHeaderView(0)
+        header.setOnClickListener { goToProfile() }
+
         val userImageIV = header.findViewById<ShapeableImageView>(R.id.header_user_image_iv)
         val userNameTV = header.findViewById<TextView>(R.id.username_tv)
         val userPhoneNumberTV = header.findViewById<TextView>(R.id.phone_number_tv)
         val logoutIV = header.findViewById<ImageView>(R.id.logout_iv)
+
         logoutIV.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.sure_want_to_logout))
@@ -123,8 +147,10 @@ class MainActivity : BaseActivity() {
             it.name?.let { name -> sharedPreferences.userName = name }
             it.imageUrl?.let { image -> sharedPreferences.userImage = image }
             setImageUsingGlide(userImageIV, it.imageUrl)
+            sharedPreferences.blockList = it.blockList
         }
     }
+
 
     private fun handleClicks() {
 
@@ -136,20 +162,15 @@ class MainActivity : BaseActivity() {
                 }
 
                 R.id.go_to_profile -> {
-                    logMe("clicked", "go_to_profile")
-
-                    viewModel.getUser()?.let {
-                        val action = MainNavGraphDirections.actionGlobalUserFragment(it)
-                        navController.navigate(action)
-                    }
+                    goToProfile()
                 }
 
                 R.id.go_to_about_developer -> {
-
+                    toastMy(this, "Wanna know about me? not now hahah", true)
                 }
 
                 R.id.go_to_licence -> {
-
+                    toastMy(this, "Booooooooooring will be added on the release")
                 }
             }
 
@@ -159,7 +180,19 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private fun goToProfile() {
+        viewModel.getUser()?.let {
+            val action = MainNavGraphDirections.actionGlobalUserFragment(it)
+            navController.navigate(action)
+        }
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarrConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        versionChecker()
     }
 }

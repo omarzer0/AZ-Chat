@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.hideKeyboard
@@ -14,6 +15,7 @@ import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentUserBinding
+import az.zero.azchat.presentation.main.adapter.user.UserAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,10 +24,18 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
     val viewModel: UserViewModel by viewModels()
     private lateinit var binding: FragmentUserBinding
 
+    private val userAdapter =
+        UserAdapter(onImageClick = { image ->
+            val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+            navigateToAction(action)
+        }, onUserChosenToJoinGroup = {}, onUserClickListener = {}, onDeleteUserClick = { id ->
+            viewModel.removeUserFromBlockedList(id)
+        })
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentUserBinding.bind(view)
+        setUpRV()
         observeEvents()
         observeData()
         setDataToViews()
@@ -34,18 +44,33 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
 
     }
 
+    private fun setUpRV() {
+        binding.rvGroupUsers.adapter = userAdapter
+        userAdapter.setDeleteMode(true)
+    }
+
     private fun observeData() {
         viewModel.imageMLD.observe(viewLifecycleOwner) {
             setImageUsingGlide(binding.ivUserImage, it.toString())
         }
+
+        viewModel.blockedUsersMLD.observe(viewLifecycleOwner) { users ->
+            if (users.isEmpty()) {
+                binding.clBlockedUsersRoot.gone()
+                return@observe
+            }
+            userAdapter.submitList(users)
+            binding.clBlockedUsersRoot.show()
+        }
     }
 
     private fun setDataToViews() {
-        viewModel.user?.let {
+        viewModel.getCurrentUser()?.let {
             binding.apply {
                 setImageUsingGlide(ivUserImage, it.imageUrl)
                 tvUsername.text = it.name
-                tvUserBio.text = it.bio
+                val isEmpty = it.bio?.trim()?.isEmpty() ?: true
+                tvUserBio.text = if (isEmpty) "Lazy user didn't write anything!" else it.bio ?: ""
                 tvUserPhone.text = it.phoneNumber
             }
         }
@@ -104,10 +129,17 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
         binding.chooseImageIv.setOnClickListener {
             checkMyPermissions()
         }
+
+        binding.ivUserImage.setOnClickListener {
+            val user = viewModel.getCurrentUser() ?: return@setOnClickListener
+            val image = user.imageUrl ?: ""
+            val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+            navigateToAction(action)
+        }
     }
 
     private fun updateNameOrAbout(isName: Boolean) {
-        val user = viewModel.user ?: return
+        val user = viewModel.getCurrentUser() ?: return
         navigateToAction(
             UserFragmentDirections.actionUserFragmentToUserBottomSheetFragment(
                 if (isName) USER_NAME_CODE_KEY else USER_BIO_CODE_KEY,
@@ -146,8 +178,8 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
         }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         activityResultLauncher.unregister()
     }
 }

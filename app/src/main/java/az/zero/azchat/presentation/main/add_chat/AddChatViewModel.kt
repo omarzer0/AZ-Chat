@@ -1,6 +1,9 @@
 package az.zero.azchat.presentation.main.add_chat
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import az.zero.azchat.common.GROUPS_ID
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.USERS_ID
@@ -8,13 +11,10 @@ import az.zero.azchat.common.event.Event
 import az.zero.azchat.common.logMe
 import az.zero.azchat.domain.models.group.Group
 import az.zero.azchat.domain.models.user.User
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @HiltViewModel
 class AddChatViewModel @Inject constructor(
@@ -46,7 +46,7 @@ class AddChatViewModel @Inject constructor(
         firestore.collection(USERS_ID).get().addOnSuccessListener { documents ->
             documents.forEach { document ->
                 val user = document.toObject<User>()
-                if (!user.hasNullField() && user.uid != uid) {
+                if (!user.hasNullField() && user.uid != uid && !sharedPreferenceManger.blockList.any { it == user.uid!! }) {
                     users.add(user)
                 } else {
                     logMe("Has null: $user")

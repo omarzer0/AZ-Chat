@@ -9,6 +9,7 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.extension.gone
@@ -31,7 +32,7 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
     val viewModel: AddChatViewModel by viewModels()
 
     @Inject
-    lateinit var sharedPreferences:SharedPreferenceManger
+    lateinit var sharedPreferences: SharedPreferenceManger
 
     private lateinit var binding: FragmentAddChatBinding
     private lateinit var searchView: SearchView
@@ -41,6 +42,9 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
         },
         onUserClickListener = {
             onUserClick(it)
+        }, onImageClick = { image ->
+            val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+            navigateToAction(action)
         }
     )
 
@@ -55,7 +59,6 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
 
     private fun setUpRvs() {
         binding.userRv.adapter = userAdapter
-//        binding.userRv.itemAnimator = null
         userAdapter.updateSelectedUsers(viewModel.getSelectedUsers())
     }
 
@@ -86,17 +89,6 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
         }
 
         binding.addNewGroupFab.setOnClickListener {
-//            viewModel.addNewGroup { isSuccessful, newGroup ->
-//                if (!isSuccessful) return@addNewGroup
-//                // navigate to the new group
-//                logMe("added", "addNewGroup")
-//                navigateToAction(
-//                    AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
-//                        PrivateChat(newGroup, User(), newGroup.gid!!),
-//                        false
-//                    )
-//                )
-//            }
             val selectedUsers = viewModel.getSelectedUsers().apply {
                 add(0, sharedPreferences.uid)
             }.toTypedArray()
@@ -110,11 +102,10 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
 
     private fun onUserClick(user: User) {
         viewModel.checkIfGroupExists(viewModel.getUID(), user.uid!!) { gid ->
-            val groupGID = if (gid.isEmpty()) viewModel.getGID()
-            else gid
+            val groupGID = gid.ifEmpty { viewModel.getGID() }
             val action =
                 AddChatFragmentDirections.actionAddChatFragmentToPrivateChatRoomFragment(
-                    PrivateChat(Group(groupGID), user, groupGID),
+                    PrivateChat(Group(groupGID, ofTypeGroup = false), user, groupGID),
                     gid.isEmpty()
                 )
             navigateToAction(action)
@@ -144,7 +135,6 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
         val searchItem = menu.findItem(R.id.add_chat_action_search)
         searchView = searchItem.actionView as SearchView
 
-        searchItem.expandActionView()
         val pendingQuery = viewModel.searchQuery.value
         if (pendingQuery != null && pendingQuery.isNotEmpty() && pendingQuery != AddChatViewModel.START_SEARCH_QUERY) {
             searchItem.expandActionView()

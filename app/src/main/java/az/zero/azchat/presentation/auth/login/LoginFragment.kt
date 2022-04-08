@@ -5,11 +5,13 @@ import android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
+import az.zero.azchat.common.tryNow
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentLoginBinding
 import az.zero.azchat.domain.models.country_code.CountryCode
@@ -27,6 +29,11 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
+        tryNow(tag = "setStartDestination") {
+//            (activity as AuthActivity).graph.setStartDestination(R.id.loginFragment)
+//            findNavController().popBackStack()
+        }
+
         handleClicks()
         getDataFromOtherFragmentIFExists()
         observeViewEvents()

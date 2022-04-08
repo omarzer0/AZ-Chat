@@ -96,6 +96,17 @@ class SendMessageHelper @Inject constructor(
             }
             IMAGE -> {
                 if (realPath.isEmpty()) return
+                val randomId = messageId ?: firestore.collection(GROUPS_ID).document().id
+                sendFakeTempImage(
+                    userId,
+                    userName,
+                    realPath,
+                    gid,
+                    randomId,
+                    isGroup,
+                    groupName,
+                    groupImage
+                )
                 uploadImageByUserId(
                     application.contentResolver,
                     realPath,
@@ -115,7 +126,7 @@ class SendMessageHelper @Inject constructor(
                             userId,
                             otherUserNotificationToken,
                             audioDuration,
-                            messageId,
+                            randomId,
                             isGroup,
                             groupName,
                             groupImage
@@ -126,6 +137,38 @@ class SendMessageHelper @Inject constructor(
                     })
             }
         }
+    }
+
+    private fun sendFakeTempImage(
+        userId: String,
+        userName: String,
+        userImage: String,
+        gid: String,
+        messageId: String,
+        isGroup: Boolean,
+        groupName: String,
+        groupImage: String
+    ) {
+        logMe("$userImage???","????????")
+        sendMessage(
+            "",
+            "$userImage",
+            "",
+            gid,
+            sharedPreferenceManger.userName,
+            "",
+            hasImage = true,
+            hasVoice = false,
+            userName,
+            userImage,
+            userId,
+            "",
+            messageId = messageId,
+            audioDuration = 0,
+            isGroup = isGroup,
+            groupName = groupName,
+            groupImage = groupImage
+        )
     }
 
     private fun sendMessage(
@@ -283,7 +326,7 @@ class SendMessageHelper @Inject constructor(
         groupName: String,
         groupImage: String
     ) {
-        logMe("exist checkIfGroupExists add group","checkIfGroupExists")
+        logMe("exist checkIfGroupExists add group", "checkIfGroupExists")
         val uID = sharedPreferenceManger.uid
         // get random id
         val randomId = abs(Random().nextLong())
@@ -302,7 +345,7 @@ class SendMessageHelper @Inject constructor(
         )
 
         checkIfGroupExists(uID, otherUserID, onSuccess = { exists ->
-            logMe("exist checkIfGroupExists $exists","checkIfGroupExists")
+            logMe("exist checkIfGroupExists $exists", "checkIfGroupExists")
             if (!exists) {
                 val newGroup = Group(
                     gid,
@@ -356,7 +399,7 @@ class SendMessageHelper @Inject constructor(
                     if (group.ofTypeGroup!!) false
                     else group.members!!.contains(otherUserID)
                 }
-                logMe("exists=> $exists","checkIfGroupExists")
+                logMe("exists=> $exists", "checkIfGroupExists")
                 onSuccess(exists)
             }
     }

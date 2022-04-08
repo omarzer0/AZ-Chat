@@ -10,16 +10,16 @@
         android:id="@+id/country_cl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_12sdp"
-        android:layout_marginTop="@dimen/_25sdp"
-        android:layout_marginEnd="@dimen/_12sdp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintTop_toBottomOf="@+id/animationView"
+        tools:layout_editor_absoluteX="16dp">
 
         <TextView
             android:id="@+id/country_text_tv"
             style="@style/headerTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_12sdp"
             android:text="@string/choose_a_country"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,20 +40,33 @@
         style="@style/headerTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
         android:hint="+"
+
         app:layout_constraintBottom_toBottomOf="@+id/code_ed"
         app:layout_constraintStart_toStartOf="@+id/country_cl"
         app:layout_constraintTop_toTopOf="@+id/code_ed" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="@dimen/_150sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+        app:lottie_rawRes="@raw/login" />
 
     <EditText
         android:id="@+id/code_ed"
         style="@style/headerTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:hint="20"
-        android:maxLength="6"
+        android:hint="@string/_20"
         android:inputType="number"
+        android:maxLength="6"
         app:layout_constraintStart_toEndOf="@+id/plus_tv"
         app:layout_constraintTop_toBottomOf="@+id/country_cl"
         tools:ignore="TouchTargetSizeCheck" />
@@ -62,11 +75,12 @@
         android:id="@+id/number_ed"
         style="@style/headerTextStyle"
         android:layout_width="0dp"
-        android:nextFocusUp="@id/login_btn"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"
-        android:hint="1001234567"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:hint="@string/fake_number"
         android:inputType="number"
+        android:nextFocusUp="@id/login_btn"
         app:layout_constraintBottom_toBottomOf="@+id/code_ed"
         app:layout_constraintEnd_toEndOf="@+id/country_cl"
         app:layout_constraintStart_toEndOf="@+id/code_ed"

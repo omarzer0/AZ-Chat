@@ -15,7 +15,9 @@
         style="@style/roundShapeableImage"
         android:layout_width="@dimen/_46sdp"
         android:layout_height="@dimen/_46sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars" />
@@ -46,16 +48,16 @@
         app:layout_constraintTop_toBottomOf="@+id/private_chat_name_tv"
         tools:text="Test Text" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_1sdp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:background="@color/gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/last_message_tv"
-        app:layout_constraintTop_toBottomOf="@+id/private_chat_image_iv"
-        app:layout_constraintVertical_bias="0" />
+    <!--    <View-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="@dimen/_1sdp"-->
+    <!--        android:layout_marginTop="@dimen/_12sdp"-->
+    <!--        android:background="@color/gray"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/last_message_tv"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/private_chat_image_iv"-->
+    <!--        app:layout_constraintVertical_bias="0" />-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/new_message_indicator"
@@ -74,9 +76,9 @@
         android:id="@+id/tv_sent_at"
         style="@style/bodyTextStyle"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_4sdp"
         android:textSize="@dimen/_10ssp"
-        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/private_chat_name_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/private_chat_name_tv"

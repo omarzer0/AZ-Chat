@@ -4,16 +4,17 @@ import android.os.Parcelable
 import az.zero.azchat.domain.models.message.Message
 import com.google.firebase.Timestamp
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 @Parcelize
 data class Group(
-    var gid: String? = null,
-    var name: String? = null,
-    var ofTypeGroup: Boolean? = null,
-    var members: List<String>? = null,
-    var createdAt: Timestamp? = null,
-    var modifiedAt: Timestamp? = null,
-    var createdBy: String? = null,
+    var gid: String? = "",
+    var name: String? = "",
+    var ofTypeGroup: Boolean? = false,
+    var members: List<String>? = emptyList(),
+    var createdAt: Timestamp? = Timestamp(Date()),
+    var modifiedAt: Timestamp? = Timestamp(Date()),
+    var createdBy: String? = "",
     var image: String? = "",
     var lastSentMessage: Message? = null,
     var user1: String? = "",
@@ -25,6 +26,8 @@ data class Group(
         if (groupNotificationTopic == null) groupNotificationTopic = ""
     }
 
+
+    // TODO:hasNullField refactor it
     fun hasNullField() =
         listOf(
             gid,

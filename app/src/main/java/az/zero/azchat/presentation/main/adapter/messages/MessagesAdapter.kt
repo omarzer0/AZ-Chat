@@ -18,6 +18,7 @@ import az.zero.azchat.common.audio.media_player.AudioPlaybackListener
 import az.zero.azchat.common.convertTimeStampToDate
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.getShimmerDrawable
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.databinding.ItemMessageBinding
@@ -36,7 +37,8 @@ class MessagesAdapter(
     options: FirestoreRecyclerOptions<Message>,
     val onReceivedMessageLongClick: (Message) -> Unit,
     val onSenderMessageLongClick: (message: Message, clickAction: MessageLongClickAction) -> Unit,
-    val onDataChange: () -> Unit,
+    val onDataChange: (isEmpty: Boolean) -> Unit,
+    val onImageClicked: (image: String) -> Unit,
     private val audioHandler: AudioHandler
 ) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options),
     AudioPlaybackListener {
@@ -86,7 +88,7 @@ class MessagesAdapter(
 
     override fun onDataChanged() {
         super.onDataChanged()
-        onDataChange()
+        onDataChange(itemCount <= 0)
     }
 
     inner class ReceiverMessagesViewHolder(private val binding: ItemMessageMirroredBinding) :
@@ -99,6 +101,10 @@ class MessagesAdapter(
                     if (!message.deleted!!) onReceivedMessageLongClick(message)
                 }
                 true
+            }
+
+            binding.messageImageIv.setOnClickListener {
+                onImageClicked(getItem(adapterPosition).imageUri)
             }
 
             binding.root.setOnClickListener {
@@ -173,6 +179,15 @@ class MessagesAdapter(
             binding.root.setOnLongClickListener {
                 showMenu(it, getItem(adapterPosition))
                 true
+            }
+
+            binding.messageImageIv.setOnLongClickListener {
+                showMenu(it, getItem(adapterPosition))
+                true
+            }
+
+            binding.messageImageIv.setOnClickListener {
+                onImageClicked(getItem(adapterPosition).imageUri)
             }
 
             binding.root.setOnClickListener {
@@ -353,7 +368,17 @@ class MessagesAdapter(
                 messageTextTv.gone()
                 messageImageContainerCv.show()
                 voicePlayerView.root.gone()
-                setImageUsingGlide(messageImageIv, currentItem.imageUri)
+//                if (currentItem.imageUri.startsWith(FAKE_MAGE)) {
+//                    setImageUsingGlide(messageImageIv, getShimmerDrawable(), false)
+//                } else {
+//                    setImageUsingGlide(messageImageIv, currentItem.imageUri)
+//                }
+                setImageUsingGlide(
+                    messageImageIv,
+                    currentItem.imageUri,
+                    isProfileImage = false,
+                    errorImage = getShimmerDrawable()
+                )
                 imageAndTextBgCl.background =
                     getDrawable(
                         imageAndTextBgCl.context,
@@ -378,21 +403,21 @@ class MessagesAdapter(
 
     override fun onCompletion() {
         logMe("onCompletion", "playingAudioView")
-        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_play)
+        playingAudioView?.setImageResource(R.drawable.ic_play)
     }
 
     override fun onPause() {
         logMe("onPause", "playingAudioView")
-        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_play)
+        playingAudioView?.setImageResource(R.drawable.ic_play)
     }
 
     override fun onStart() {
         logMe("onStart $playingAudioView", "playingAudioView")
-        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_pause)
+        playingAudioView?.setImageResource(R.drawable.ic_pause)
     }
 
     override fun onResume() {
         logMe("onResume $playingAudioView", "playingAudioView222")
-        playingAudioView!!.setImageResource(az.zero.azchat.R.drawable.ic_pause)
+        playingAudioView!!.setImageResource(R.drawable.ic_pause)
     }
 }

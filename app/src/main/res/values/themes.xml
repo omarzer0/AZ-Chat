@@ -14,6 +14,7 @@
         <item name="android:statusBarColor">@color/secondaryColor</item>
         <!-- Customize your theme here. -->
         <item name="textAllCaps">false</item>
+        <item name="android:overScrollMode">never</item>
 
     </style>
 

@@ -21,6 +21,7 @@
     <fragment
         android:id="@+id/addChatFragment"
         android:name="az.zero.azchat.presentation.main.add_chat.AddChatFragment"
+        android:label="@string/users"
         tools:layout="@layout/fragment_add_chat">
         <action
             android:id="@+id/action_addChatFragment_to_privateChatRoomFragment"
@@ -108,4 +109,13 @@
             android:name="text"
             app:argType="string" />
     </dialog>
+    <fragment
+        android:id="@+id/imageViewerFragment"
+        android:name="az.zero.azchat.presentation.main.image_viewer.ImageViewerFragment"
+        android:label="fragment_view_image"
+        tools:layout="@layout/fragment_view_image" >
+        <argument
+            android:name="image"
+            app:argType="string" />
+    </fragment><action android:id="@+id/action_global_imageViewerFragment" app:destination="@id/imageViewerFragment"/>
 </navigation>

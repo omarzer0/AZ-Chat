@@ -2,6 +2,7 @@ package az.zero.azchat.common
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,6 +15,7 @@ class SharedPreferenceManger @Inject constructor(
     private var sharedPreferences: SharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
     private var editor: SharedPreferences.Editor = sharedPreferences.edit()
+    private val gson = Gson()
 
     var authToken: String
         get() = getStringValue(AUTH_TOKEN) ?: ""
@@ -55,6 +57,24 @@ class SharedPreferenceManger @Inject constructor(
 //        get() = getBooleanValue(IS_NOTIFICATIONS_ENABLED, true)
 //        set(value) = setValue(IS_NOTIFICATIONS_ENABLED, value)
 
+    // this is bad but the alt is to use a database for a single list
+    var blockList: List<String>
+        get() = getUserBlockList()
+        set(value) = setUserBlockList(value)
+
+    private fun getUserBlockList(): List<String> {
+        val value = getStringValue(USER_BLOCK_LIST)
+        return if (value == EMPTY) {
+            emptyList()
+        } else {
+            gson.fromJson(value, Array<String>::class.java).toList()
+        }
+    }
+
+    private fun setUserBlockList(value: List<String>) {
+        val json = gson.toJson(value)
+        setValue(USER_BLOCK_LIST, json)
+    }
 
     fun setValue(key: String, value: String) {
         editor.putString(key, value)
@@ -98,6 +118,7 @@ class SharedPreferenceManger @Inject constructor(
     }
 
     fun nuke() {
+        sharedPreferences.edit().clear().apply()
         hasLoggedIn = false
         uid = ""
         authToken = ""
@@ -106,7 +127,8 @@ class SharedPreferenceManger @Inject constructor(
         userImage = ""
         userName = ""
         notificationToken = ""
-        sharedPreferences.edit().clear().apply()
+        blockList = emptyList()
+        openedTheAppBefore = true
     }
 
     companion object {
@@ -122,5 +144,6 @@ class SharedPreferenceManger @Inject constructor(
         const val USER_IMAGE = "UserImage"
         const val IS_NOTIFICATIONS_ENABLED = "is notifications enabled"
         const val CURRENT_GID = "CURRENT_GID"
+        const val USER_BLOCK_LIST = "USER_BLOCK_LIST"
     }
 }

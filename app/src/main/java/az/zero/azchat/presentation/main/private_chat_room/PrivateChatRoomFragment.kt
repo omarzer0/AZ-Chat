@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.audio.media_player.AudioHandler
@@ -25,7 +26,6 @@ import az.zero.azchat.databinding.FragmentPrivateChatRoomBinding
 import az.zero.azchat.databinding.SendEditTextBinding
 import az.zero.azchat.domain.models.message.Message
 import az.zero.azchat.presentation.main.MainActivity
-import az.zero.azchat.presentation.main.adapter.messages.MessageLongClickAction.*
 import az.zero.azchat.presentation.main.adapter.messages.MessagesAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -134,10 +134,18 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
             onSenderMessageLongClick = { message, action ->
                 viewModel.postAction(PrivateChatActions.SenderMessageLongClick(message, action))
             },
-            onDataChange = {
+            onDataChange = { isListEmpty ->
+                binding.apply {
+                    noMessagesGroup.isVisible = isListEmpty
+                    chatsRv.isVisible = !isListEmpty
+                }
                 viewModel.postAction(PrivateChatActions.DataChanged)
+            }, onImageClicked = { image ->
+                val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+                navigateToAction(action)
             },
             audioHandler
+
         )
         messageAdapter.startListening()
         messageAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {

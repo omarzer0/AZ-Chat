@@ -62,12 +62,21 @@ fun getShimmerDrawable(): ShimmerDrawable {
     }
 }
 
-fun setImageUsingGlide(view: ImageView, imageUrl: String?) {
+fun setImageUsingGlide(
+    view: ImageView,
+    image: Any?,
+    isProfileImage: Boolean = true,
+    errorImage: Any? = null
+) {
     try {
         Glide.with(view.context)
-            .load(imageUrl)
+            .load(image)
             .placeholder(getShimmerDrawable())
-            .error(R.drawable.ic_no_image)
+            .error(
+                if (isProfileImage) R.drawable.no_profile_image else {
+                    errorImage ?: R.drawable.ic_no_image
+                }
+            )
             .into(view)
     } catch (e: Exception) {
         logMe("setImageUsingGlide ${e.localizedMessage}")
@@ -172,7 +181,7 @@ fun tryAsyncNow(
     scope: CoroutineScope,
     tag: String = "",
     error: (suspend (Exception) -> Unit)? = null,
-    finally: (() -> Unit)? = null,
+    finally: (suspend () -> Unit)? = null,
     action: suspend () -> Unit
 ) {
     scope.launch {

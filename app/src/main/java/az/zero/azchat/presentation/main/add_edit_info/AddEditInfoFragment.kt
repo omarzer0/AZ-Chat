@@ -64,8 +64,6 @@ class AddEditInfoFragment : BaseFragment(R.layout.fragment_add_edit_info) {
             if (groupName.isEmpty() || groupName.length < 3) {
                 toastMy("Please enter 3 characters or more for group name")
                 return@setOnClickListener
-            } else if (aboutGroup.isEmpty() || aboutGroup.length < 3) {
-                toastMy("Please enter 3 characters or more for about the group")
             }
 
             viewModel.addNewGroup(groupName,aboutGroup) { newGroup ->
