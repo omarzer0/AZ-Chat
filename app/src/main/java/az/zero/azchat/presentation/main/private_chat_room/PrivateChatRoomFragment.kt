@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.audio.media_player.AudioHandler
@@ -139,8 +140,12 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
                     chatsRv.isVisible = !isListEmpty
                 }
                 viewModel.postAction(PrivateChatActions.DataChanged)
+            }, onImageClicked = { image ->
+                val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+                navigateToAction(action)
             },
             audioHandler
+
         )
         messageAdapter.startListening()
         messageAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {

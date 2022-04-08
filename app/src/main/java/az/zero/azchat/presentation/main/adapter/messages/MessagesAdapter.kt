@@ -37,6 +37,7 @@ class MessagesAdapter(
     val onReceivedMessageLongClick: (Message) -> Unit,
     val onSenderMessageLongClick: (message: Message, clickAction: MessageLongClickAction) -> Unit,
     val onDataChange: (isEmpty: Boolean) -> Unit,
+    val onImageClicked: (image: String) -> Unit,
     private val audioHandler: AudioHandler
 ) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options),
     AudioPlaybackListener {
@@ -99,6 +100,10 @@ class MessagesAdapter(
                     if (!message.deleted!!) onReceivedMessageLongClick(message)
                 }
                 true
+            }
+
+            binding.messageImageIv.setOnClickListener {
+                onImageClicked(getItem(adapterPosition).imageUri)
             }
 
             binding.root.setOnClickListener {
@@ -173,6 +178,15 @@ class MessagesAdapter(
             binding.root.setOnLongClickListener {
                 showMenu(it, getItem(adapterPosition))
                 true
+            }
+
+            binding.messageImageIv.setOnLongClickListener {
+                showMenu(it, getItem(adapterPosition))
+                true
+            }
+
+            binding.messageImageIv.setOnClickListener {
+                onImageClicked(getItem(adapterPosition).imageUri)
             }
 
             binding.root.setOnClickListener {
@@ -378,21 +392,21 @@ class MessagesAdapter(
 
     override fun onCompletion() {
         logMe("onCompletion", "playingAudioView")
-        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_play)
+        playingAudioView?.setImageResource(R.drawable.ic_play)
     }
 
     override fun onPause() {
         logMe("onPause", "playingAudioView")
-        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_play)
+        playingAudioView?.setImageResource(R.drawable.ic_play)
     }
 
     override fun onStart() {
         logMe("onStart $playingAudioView", "playingAudioView")
-        playingAudioView?.setImageResource(az.zero.azchat.R.drawable.ic_pause)
+        playingAudioView?.setImageResource(R.drawable.ic_pause)
     }
 
     override fun onResume() {
         logMe("onResume $playingAudioView", "playingAudioView222")
-        playingAudioView!!.setImageResource(az.zero.azchat.R.drawable.ic_pause)
+        playingAudioView!!.setImageResource(R.drawable.ic_pause)
     }
 }

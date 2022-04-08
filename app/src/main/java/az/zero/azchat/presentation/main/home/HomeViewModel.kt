@@ -109,7 +109,7 @@ class HomeViewModel @Inject constructor(
         val uid = sharedPreferenceManger.uid
         firestore.collection(USERS_ID).document(uid)
             .update("blockList", FieldValue.arrayUnion(privateChatID))
-            .addOnSuccessListener { getPrivateChatsForUser() }
+        getPrivateChatsForUser()
     }
 
     fun leaveGroup(privateChatID: String) {

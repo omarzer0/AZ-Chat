@@ -62,12 +62,12 @@ fun getShimmerDrawable(): ShimmerDrawable {
     }
 }
 
-fun setImageUsingGlide(view: ImageView, imageUrl: String?) {
+fun setImageUsingGlide(view: ImageView, image: Any?, isProfileImage: Boolean = true) {
     try {
         Glide.with(view.context)
-            .load(imageUrl)
+            .load(image)
             .placeholder(getShimmerDrawable())
-            .error(R.drawable.ic_no_image)
+            .error(if (isProfileImage) R.drawable.no_profile_image else R.drawable.ic_no_image)
             .into(view)
     } catch (e: Exception) {
         logMe("setImageUsingGlide ${e.localizedMessage}")

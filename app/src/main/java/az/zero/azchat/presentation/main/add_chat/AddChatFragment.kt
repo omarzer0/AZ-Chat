@@ -9,6 +9,7 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.extension.gone
@@ -41,6 +42,9 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
         },
         onUserClickListener = {
             onUserClick(it)
+        }, onImageClick = { image ->
+            val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
+            navigateToAction(action)
         }
     )
 
@@ -55,7 +59,6 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
 
     private fun setUpRvs() {
         binding.userRv.adapter = userAdapter
-//        binding.userRv.itemAnimator = null
         userAdapter.updateSelectedUsers(viewModel.getSelectedUsers())
     }
 
@@ -132,7 +135,6 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
         val searchItem = menu.findItem(R.id.add_chat_action_search)
         searchView = searchItem.actionView as SearchView
 
-//        searchItem.expandActionView()
         val pendingQuery = viewModel.searchQuery.value
         if (pendingQuery != null && pendingQuery.isNotEmpty() && pendingQuery != AddChatViewModel.START_SEARCH_QUERY) {
             searchItem.expandActionView()

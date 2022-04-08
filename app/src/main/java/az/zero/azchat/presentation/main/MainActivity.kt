@@ -19,6 +19,7 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
+import az.zero.azchat.common.toastMy
 import az.zero.azchat.core.BaseActivity
 import az.zero.azchat.databinding.ActivityMainBinding
 import com.google.android.material.imageview.ShapeableImageView
@@ -42,7 +43,10 @@ class MainActivity : BaseActivity() {
             supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
 
-        appBarrConfiguration = AppBarConfiguration(setOf(R.id.homeFragment), binding.drawerLayout)
+        appBarrConfiguration = AppBarConfiguration(
+            setOf(R.id.homeFragment, R.id.imageViewerFragment),
+            binding.drawerLayout
+        )
 
         setupActionBarWithNavController(navController, appBarrConfiguration)
         binding.navDrawerSlider.setupWithNavController(navController)
@@ -155,11 +159,11 @@ class MainActivity : BaseActivity() {
                 }
 
                 R.id.go_to_about_developer -> {
-
+                    toastMy(this, "Wanna know about me? not now hahah", true)
                 }
 
                 R.id.go_to_licence -> {
-
+                    toastMy(this, "Booooooooooring will be added on the release")
                 }
             }
 

@@ -13,15 +13,21 @@ import az.zero.azchat.domain.models.user.User
 class UserAdapter(
     val onUserChosenToJoinGroup: (MutableList<String>) -> Unit,
     val onUserClickListener: (User) -> Unit,
-
-    ) : ListAdapter<User, UserAdapter.UserViewHolder>(DiffUtil) {
+    val onImageClick: (image: String) -> Unit,
+    val onDeleteUserClick: ((id: String) -> Unit)? = null
+) : ListAdapter<User, UserAdapter.UserViewHolder>(DiffUtil) {
 
 
     private var selectedUsers = mutableListOf<String>()
     private var selectionModeIsON = false
+    private var isDeleteModeOn = false
 
     fun setSelectedMode(isOn: Boolean) {
         selectionModeIsON = isOn
+    }
+
+    fun setDeleteMode(isOn: Boolean) {
+        isDeleteModeOn = isOn
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
@@ -47,6 +53,16 @@ class UserAdapter(
                     goToChat(adapterPosition)
                 }
             }
+
+            binding.ivRemoveUser.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onDeleteUserClick?.invoke(getItem(adapterPosition).uid ?: "")
+            }
+
+            binding.userImageIv.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onImageClick(getItem(adapterPosition).imageUrl ?: "")
+            }
         }
 
         fun bind(currentItem: User) {
@@ -60,6 +76,8 @@ class UserAdapter(
                     val uid = currentItem.uid!!
                     selectedIv.isVisible = selectedUsers.any { it == uid }
                 }
+
+                ivRemoveUser.isVisible = isDeleteModeOn
             }
         }
     }
