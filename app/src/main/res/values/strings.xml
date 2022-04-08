@@ -54,4 +54,5 @@
     <string name="enter_the_code_you_received">Enter the code you received</string>
     <string name="no_chats_yet_start_chatting_now">No chats yet. Start chatting now</string>
     <string name="no_messages_yet_the_fun_begins_when_you_start_chatting">No messages yet!.The fun begins when you start chatting.</string>
+    <string name="this_is_an_old_version_please_update">This is an old version. Please update to the newest version</string>
 </resources>

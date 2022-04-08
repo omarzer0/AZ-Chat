@@ -11,9 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
-import az.zero.azchat.common.extension.gone
-import az.zero.azchat.common.extension.hideKeyboard
-import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.extension.*
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
@@ -36,6 +34,7 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChatDetailsBinding.bind(view)
+        hideSystemBars()
         setDataToViews()
         setUpRV()
         handleClicks()
@@ -215,8 +214,17 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         requireActivity().onBackPressedDispatcher.addCallback(requireActivity(), callback)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         activityResultLauncher.unregister()
+        showSystemBars()
+    }
+
+    private fun hideSystemBars() {
+        requireActivity().makeStatusBarTransparent()
+    }
+
+    private fun showSystemBars() {
+        requireActivity().clearTransparentStatusBar()
     }
 }

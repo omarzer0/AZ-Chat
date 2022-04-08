@@ -15,9 +15,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -33,24 +31,25 @@
         android:theme="@style/Theme.PhoneLoginMVVM"
         tools:replace="android:supportsRtl">
         <activity
-            android:screenOrientation="portrait"
+            android:name=".presentation.version.VersionActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.main.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustUnspecified" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".presentation.auth.AuthActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan" />
-
-        <activity
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
             android:name=".presentation.splash.SplashActivity"
             android:exported="true"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashScreenTheme">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -66,7 +65,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
-
         </service>
     </application>
 

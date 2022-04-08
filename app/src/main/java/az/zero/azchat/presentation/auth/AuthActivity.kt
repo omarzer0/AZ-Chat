@@ -13,7 +13,9 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.core.BaseActivity
 import az.zero.azchat.databinding.ActivityAuthBinding
+import az.zero.azchat.presentation.version.VersionChecker
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AuthActivity : BaseActivity() {
@@ -22,6 +24,9 @@ class AuthActivity : BaseActivity() {
     private lateinit var binding: ActivityAuthBinding
     private lateinit var appBarrConfiguration: AppBarConfiguration
     lateinit var graph: NavGraph
+
+    @Inject
+    lateinit var versionChecker: VersionChecker
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,5 +82,10 @@ class AuthActivity : BaseActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarrConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        versionChecker()
     }
 }

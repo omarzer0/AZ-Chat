@@ -22,14 +22,21 @@ import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.common.toastMy
 import az.zero.azchat.core.BaseActivity
 import az.zero.azchat.databinding.ActivityMainBinding
+import az.zero.azchat.presentation.version.VersionChecker
 import com.google.android.material.imageview.ShapeableImageView
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
     private lateinit var navController: NavController
     lateinit var binding: ActivityMainBinding
     private lateinit var appBarrConfiguration: AppBarConfiguration
     val viewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var versionChecker: VersionChecker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -182,5 +189,10 @@ class MainActivity : BaseActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarrConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        versionChecker()
     }
 }
