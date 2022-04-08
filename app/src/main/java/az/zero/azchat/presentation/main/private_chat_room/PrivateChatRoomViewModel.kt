@@ -113,17 +113,17 @@ class PrivateChatRoomViewModel @Inject constructor(
                         sendFakeTempMessage(action.messageType, randomId, imagePath = messageImage)
                     }
 
-//                    sendMessageHelper.checkForImageOrAudioAndSend(
-//                        action.messageType,
-//                        action.messageText,
-//                        messageImage,
-//                        messageAudio,
-//                        gid,
-//                        notificationToken,
-//                        isGroup = isGroup,
-//                        groupName = groupName,
-//                        groupImage = groupImage
-//                    )
+                    sendMessageHelper.checkForImageOrAudioAndSend(
+                        action.messageType,
+                        action.messageText,
+                        messageImage,
+                        messageAudio,
+                        gid,
+                        notificationToken,
+                        isGroup = isGroup,
+                        groupName = groupName,
+                        groupImage = groupImage
+                    )
                 }
             }
             PrivateChatActions.ViewPaused -> {
