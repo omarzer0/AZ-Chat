@@ -8,11 +8,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import az.zero.azchat.R
-import az.zero.azchat.common.convertTimeStampToDate
+import az.zero.azchat.common.*
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
-import az.zero.azchat.common.logMe
-import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.databinding.ItemPrivateChatBinding
 import az.zero.azchat.domain.models.private_chat.PrivateChat
 
@@ -49,8 +47,13 @@ class PrivateChatAdapter(
             binding.privateChatImageIv.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
                 val isGroup = getItem(adapterPosition).group.ofTypeGroup ?: false
-                val image = if (isGroup) getItem(adapterPosition).group.image ?: ""
+                val chatImage = if (isGroup) getItem(adapterPosition).group.image ?: ""
                 else getItem(adapterPosition).user.imageUrl ?: ""
+                val image = chatImage.ifEmpty {
+                    if (isGroup) FAKE_GROUP_NAME else FAKE_PROFILE_NAME
+                }
+
+                logMe("chatImage: $image", "chatImagechatImage")
                 onUserImageClicked(image)
             }
 
@@ -71,8 +74,9 @@ class PrivateChatAdapter(
             binding.apply {
                 val roomName: String
                 val roomImage: String
+                val isGroup = currentItem.group.ofTypeGroup!!
 
-                if (currentItem.group.ofTypeGroup!!) {
+                if (isGroup) {
                     roomName = currentItem.group.name!!
                     roomImage = currentItem.group.image!!
                 } else {
@@ -82,7 +86,12 @@ class PrivateChatAdapter(
 
 
                 privateChatNameTv.text = roomName
-                setImageUsingGlide(privateChatImageIv, roomImage)
+                setImageUsingGlide(
+                    privateChatImageIv,
+                    roomImage,
+                    isProfileImage = false,
+                    if (isGroup) R.drawable.no_group_image else R.drawable.no_profile_image
+                )
 
                 val lastMessage = currentItem.group.lastSentMessage
                 if (lastMessage != null) {

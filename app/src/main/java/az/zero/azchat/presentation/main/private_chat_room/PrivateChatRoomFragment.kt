@@ -179,7 +179,12 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
             (activity as MainActivity).binding.apply {
                 usernameTv.text = roomName
                 userStateTv.gone()
-                setImageUsingGlide(userImageIv, roomImage)
+                setImageUsingGlide(
+                    userImageIv,
+                    roomImage,
+                    isProfileImage = false,
+                    if (viewModel.isGroup) R.drawable.no_group_image else R.drawable.no_profile_image
+                )
             }
         }
 

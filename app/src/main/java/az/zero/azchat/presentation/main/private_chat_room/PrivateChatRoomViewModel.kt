@@ -107,23 +107,26 @@ class PrivateChatRoomViewModel @Inject constructor(
                     )
 
                 } else {
-                    if (action.messageType != TEXT) {
+                    val randomId = firestore.collection(GROUPS_ID).document().id
+
+                    if (action.messageType == IMAGE) {
                         logMe("send", "sendFakeTempMessage")
-                        val randomId = firestore.collection(GROUPS_ID).document().id
                         sendFakeTempMessage(action.messageType, randomId, imagePath = messageImage)
                     }
 
-                    sendMessageHelper.checkForImageOrAudioAndSend(
-                        action.messageType,
-                        action.messageText,
-                        messageImage,
-                        messageAudio,
-                        gid,
-                        notificationToken,
-                        isGroup = isGroup,
-                        groupName = groupName,
-                        groupImage = groupImage
-                    )
+                    if (action.messageType == TEXT) {
+                        sendMessageHelper.checkForImageOrAudioAndSend(
+                            action.messageType,
+                            action.messageText,
+                            messageImage,
+                            messageAudio,
+                            gid,
+                            notificationToken,
+                            isGroup = isGroup,
+                            groupName = groupName,
+                            groupImage = groupImage
+                        )
+                    }
                 }
             }
             PrivateChatActions.ViewPaused -> {
