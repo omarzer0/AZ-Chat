@@ -99,7 +99,10 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         val name = if (isGroup) group.name!! else user.name!!
         val image = if (isGroup) group.image!! else user.imageUrl!!
         var about = if (isGroup) group.about!! else user.bio!!
-        if (about.trim().isEmpty()) about = "Lazy user didn't write anything!"
+        if (about.trim().isEmpty()) {
+            about = if (isGroup) getString(R.string.lazy_users)
+            else getString(R.string.lazy_user)
+        }
 
         binding.apply {
             setImageUsingGlide(
@@ -110,9 +113,15 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
             )
             tvChatName.text = name
             tvChatBio.text = about
-            if (isGroup) tvChatNumberOfMembers.text =
-                "${group.members!!.size} ${getString(R.string.members)}"
-            else tvChatPhone.text = user.phoneNumber ?: ""
+
+            if (isGroup) {
+                aboutTv.text = getString(R.string.about)
+                tvChatNumberOfMembers.text =
+                    "${group.members!!.size} ${getString(R.string.members)}"
+            } else {
+                aboutTv.text = getString(R.string.bio)
+                tvChatPhone.text = user.phoneNumber ?: ""
+            }
         }
     }
 
