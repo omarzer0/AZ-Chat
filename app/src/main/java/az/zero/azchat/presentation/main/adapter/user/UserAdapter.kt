@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import az.zero.azchat.common.FAKE_PROFILE_NAME
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.databinding.ItemUserBinding
 import az.zero.azchat.domain.models.user.User
@@ -61,7 +62,10 @@ class UserAdapter(
 
             binding.userImageIv.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
-                onImageClick(getItem(adapterPosition).imageUrl ?: "")
+                val image = getItem(adapterPosition).imageUrl.let {
+                    if (it.isNullOrEmpty()) FAKE_PROFILE_NAME else it
+                }
+                onImageClick(image)
             }
         }
 

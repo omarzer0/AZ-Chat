@@ -8,6 +8,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
+import az.zero.azchat.common.FAKE_PROFILE_NAME
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.show
@@ -132,7 +133,9 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
 
         binding.ivUserImage.setOnClickListener {
             val user = viewModel.getCurrentUser() ?: return@setOnClickListener
-            val image = user.imageUrl ?: ""
+            val image = user.imageUrl.let {
+                if (it.isNullOrEmpty()) FAKE_PROFILE_NAME else it
+            }
             val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
             navigateToAction(action)
         }

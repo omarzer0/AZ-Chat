@@ -368,11 +368,7 @@ class MessagesAdapter(
                 messageTextTv.gone()
                 messageImageContainerCv.show()
                 voicePlayerView.root.gone()
-//                if (currentItem.imageUri.startsWith(FAKE_MAGE)) {
-//                    setImageUsingGlide(messageImageIv, getShimmerDrawable(), false)
-//                } else {
-//                    setImageUsingGlide(messageImageIv, currentItem.imageUri)
-//                }
+
                 setImageUsingGlide(
                     messageImageIv,
                     currentItem.imageUri,

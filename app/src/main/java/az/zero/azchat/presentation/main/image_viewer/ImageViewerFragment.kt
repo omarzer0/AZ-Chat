@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
+import az.zero.azchat.common.FAKE_GROUP_NAME
+import az.zero.azchat.common.FAKE_PROFILE_NAME
+import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.databinding.FragmentViewImageBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +31,21 @@ class ImageViewerFragment : Fragment(R.layout.fragment_view_image) {
         binding = FragmentViewImageBinding.bind(view)
         changeStatusBarColor(true)
 
-        setImageUsingGlide(binding.photoView, viewModel.image)
+        val errorImage: Any = when (viewModel.image) {
+            FAKE_PROFILE_NAME -> R.drawable.no_profile_image
+            FAKE_GROUP_NAME -> R.drawable.no_group_image
+            else -> R.drawable.ic_no_image
+        }
+        logMe(
+            "chatImage: ${viewModel.image}\nerrorImage: $errorImage",
+            "chatImagechatImage"
+        )
+        setImageUsingGlide(
+            binding.photoView,
+            viewModel.image,
+            isProfileImage = false,
+            errorImage = errorImage
+        )
         binding.root.setOnClickListener { findNavController().navigateUp() }
     }
 

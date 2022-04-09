@@ -9,7 +9,11 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
-import az.zero.azchat.common.extension.*
+import az.zero.azchat.common.FAKE_GROUP_NAME
+import az.zero.azchat.common.FAKE_PROFILE_NAME
+import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.hideKeyboard
+import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
@@ -98,7 +102,12 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         if (about.trim().isEmpty()) about = "Lazy user didn't write anything!"
 
         binding.apply {
-            setImageUsingGlide(ivChatImage, image)
+            setImageUsingGlide(
+                ivChatImage,
+                image,
+                isProfileImage = false,
+                if (isGroup) R.drawable.no_group_image else R.drawable.no_profile_image
+            )
             tvChatName.text = name
             tvChatBio.text = about
             if (isGroup) tvChatNumberOfMembers.text =
@@ -133,7 +142,10 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
                 val group = viewModel.getCurrentPrivateChat().group
                 val user = viewModel.getCurrentPrivateChat().user
                 val isGroup = viewModel.getCurrentPrivateChat().group.ofTypeGroup ?: false
-                val image = if (isGroup) group.image ?: "" else user.imageUrl ?: ""
+                val chatImage = if (isGroup) group.image ?: "" else user.imageUrl ?: ""
+                val image = chatImage.ifEmpty {
+                    if (isGroup) FAKE_GROUP_NAME else FAKE_PROFILE_NAME
+                }
                 val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
                 navigateToAction(action)
             }
