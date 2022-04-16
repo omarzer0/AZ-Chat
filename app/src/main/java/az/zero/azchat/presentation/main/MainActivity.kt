@@ -1,5 +1,6 @@
 package az.zero.azchat.presentation.main
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,6 +18,8 @@ import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.extension.showContentAboveStatusBar
+import az.zero.azchat.common.extension.showContentNormallyUnderStatusBarWithMainColor
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.common.toastMy
@@ -69,31 +72,37 @@ class MainActivity : BaseActivity() {
 
                 R.id.privateChatRoomFragment -> {
                     showChatAppBar()
+                    showContentNormallyUnderStatusBarWithMainColor()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
                 }
                 R.id.homeFragment -> {
                     hideChatAppBar()
+                    showContentNormallyUnderStatusBarWithMainColor()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
 
                 R.id.chatDetailsFragment, R.id.chatDetailsBottomSheetFragment, R.id.userFragment, R.id.userBottomSheetFragment -> {
                     hideMainAppBar()
+                    showContentAboveStatusBar()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
 
                 R.id.addChatFragment -> {
                     hideChatAppBar()
+                    showContentNormallyUnderStatusBarWithMainColor()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
 
                 R.id.imageViewerFragment -> {
                     hideChatAppBar()
                     hideMainAppBar()
+                    showContentAboveStatusBar(Color.TRANSPARENT)
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
                 else -> {
                     showChatAppBar()
+                    showContentNormallyUnderStatusBarWithMainColor()
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
             }

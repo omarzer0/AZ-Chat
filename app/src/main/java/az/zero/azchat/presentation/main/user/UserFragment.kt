@@ -9,15 +9,14 @@ import androidx.fragment.app.viewModels
 import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.FAKE_PROFILE_NAME
-import az.zero.azchat.common.extension.gone
-import az.zero.azchat.common.extension.hideKeyboard
-import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.extension.*
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentUserBinding
 import az.zero.azchat.presentation.main.adapter.user.UserAdapter
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class UserFragment : BaseFragment(R.layout.fragment_user) {
@@ -36,6 +35,8 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentUserBinding.bind(view)
+
+//        requireActivity().showContentAboveStatusBar()
         setUpRV()
         observeEvents()
         observeData()
@@ -184,5 +185,6 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
     override fun onDestroyView() {
         super.onDestroyView()
         activityResultLauncher.unregister()
+//        requireActivity().showContentNormallyUnderStatusBarWithMainColor()
     }
 }

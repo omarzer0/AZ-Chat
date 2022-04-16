@@ -1,6 +1,7 @@
 package az.zero.azchat.common.extension
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 
 fun View.show() {
@@ -26,4 +27,15 @@ fun View.enable() {
 
 fun View.disable() {
     this.isEnabled = false
+}
+
+fun View.setMargin(
+    marginLeft: Int = 0,
+    marginTop: Int = 0,
+    marginRight: Int = 0,
+    marginBottom: Int = 0
+) {
+    val menuLayoutParams = this.layoutParams as ViewGroup.MarginLayoutParams
+    menuLayoutParams.setMargins(marginLeft, marginTop, marginRight, marginBottom)
+    this.layoutParams = menuLayoutParams
 }
