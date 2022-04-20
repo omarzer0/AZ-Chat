@@ -5,16 +5,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavDirections
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
 import az.zero.azchat.common.IS_DEBUG
-import az.zero.azchat.common.SharedPreferenceManger
 import az.zero.azchat.common.event.Event
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.tryNow
 import es.dmoral.toasty.Toasty
 import gun0912.tedimagepicker.builder.TedImagePicker
-import javax.inject.Inject
 
 abstract class BaseFragment(layout: Int) : Fragment(layout) {
 
@@ -50,8 +49,16 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
     }
 
 
-    fun navigateToAction(action: NavDirections) {
-        tryNow { findNavController().navigate(action) }
+    fun navigateToAction(
+        action: NavDirections,
+        shouldHaveNoAnimation: Boolean = false,
+        navOptions: NavOptions = NavOptions.Builder()
+            .setEnterAnim(android.R.anim.fade_in)
+            .setPopEnterAnim(android.R.anim.fade_in)
+            .build()
+    ) {
+        if (shouldHaveNoAnimation) tryNow { findNavController().navigate(action) }
+        else tryNow { findNavController().navigate(action, navOptions) }
     }
 
     protected fun <T> LiveData<Event<T>>.observeIfNotHandled(result: (T) -> Unit) {
