@@ -9,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import az.zero.azchat.common.IS_DEBUG
 import az.zero.azchat.common.tryNow
-import java.util.*
 import javax.inject.Singleton
 
 @Singleton
@@ -106,7 +105,7 @@ class AudioRecorderHelper(
 
     private fun endCount() {
         endTimerCount = System.currentTimeMillis()
-        if (endTimerCount - startTimerCount < 1500) {
+        if (endTimerCount - startTimerCount < RECORD_MIN_DURATION) {
             throw Exception("Too short record!")
         }
     }
@@ -131,6 +130,10 @@ class AudioRecorderHelper(
 
     init {
         initTouchListener()
+    }
+
+    companion object {
+        const val RECORD_MIN_DURATION = 1000
     }
 }
 

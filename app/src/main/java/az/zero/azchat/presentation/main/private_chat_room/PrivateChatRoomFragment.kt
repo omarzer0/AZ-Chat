@@ -1,6 +1,7 @@
 package az.zero.azchat.presentation.main.private_chat_room
 
 import android.Manifest
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,6 +45,9 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
     lateinit var audioHandler: AudioHandler
 
     @Inject
+    lateinit var mMediaPlayer: MediaPlayer
+
+    @Inject
     lateinit var sharedPreferences: SharedPreferenceManger
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,7 +61,12 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         AudioRecorderHelper(this, binding.sendAtTextEd.recordIv, this)
         setUpSearchView(binding.sendAtTextEd, actionWhenSend = {
             logMe(it)
-            viewModel.postAction(PrivateChatActions.SendMessage(it, MessageType.TEXT))
+            viewModel.postAction(
+                PrivateChatActions.SendMessage(
+                    messageText = it,
+                    messageType = MessageType.TEXT
+                )
+            )
         }, writing = {
             viewModel.postAction(PrivateChatActions.Writing(it))
         })
@@ -98,6 +107,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
                         }
                     }
                 }
+                PrivateChatEvents.PlaySendMessageSound -> tryNow { mMediaPlayer.start() }
             }
         }
 
@@ -280,12 +290,22 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
         super.onDestroyView()
         messageAdapter.stopListening()
         messageAdapter.clearAllAudio()
+        tryNow {
+            mMediaPlayer.apply {
+                stop()
+                release()
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.postAction(PrivateChatActions.ViewResumed)
         sharedPreferences.currentGid = viewModel.getGID()
+
+        tryNow {
+            mMediaPlayer.prepare()
+        }
     }
 
     override fun onPause() {
@@ -295,7 +315,13 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
     }
 
     override fun onRecordSuccess(filePath: String, duration: Long) {
-        viewModel.uploadAudioFile(filePath, duration)
+        viewModel.postAction(
+            PrivateChatActions.SendMessage(
+                messageAudio = filePath,
+                audioDuration = duration,
+                messageType = MessageType.AUDIO
+            )
+        )
     }
 
     override fun onRecordFailure(error: String) {

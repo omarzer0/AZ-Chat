@@ -59,9 +59,6 @@ class PrivateChatRoomViewModel @Inject constructor(
     private val _editAreaState = MutableLiveData<Pair<Boolean, String>>()
     val editAreaState: LiveData<Pair<Boolean, String>> = _editAreaState
 
-    private var messageImage: Uri? = null
-    private var messageAudio: Uri? = null
-
     private val _event = MutableLiveData<Event<PrivateChatEvents>>()
     val event: LiveData<Event<PrivateChatEvents>> = _event
 
@@ -87,17 +84,22 @@ class PrivateChatRoomViewModel @Inject constructor(
                 })
             }
             is PrivateChatActions.SendMessage -> {
-                if (action.messageText.isEmpty() && messageImage == null && messageAudio == null) return
+                logMe("SendMessage before check", "SendMessage")
+//                if (action.messageText.isEmpty() && messageImage == null && messageAudio == null) return
+                if (action.messageText.isEmpty() && action.messageImage.isEmpty() && action.messageAudio.isEmpty()) return
                 logMe(notificationToken, "sendMessage")
                 logMe("checkIfGroupExists new = $newGroupChat", "checkIfGroupExists")
+                _event.value = Event(PrivateChatEvents.PlaySendMessageSound)
+
+                logMe("SendMessage", "SendMessage")
 
                 if (newGroupChat) {
                     sendMessageHelper.addGroup(
                         gid,
                         otherUserUID,
                         action.messageText,
-                        messageImage,
-                        messageAudio,
+                        action.messageImage,
+                        action.messageAudio,
                         action.messageType,
                         onSuccess = { newGroupChat = it },
                         notificationToken = notificationToken,
@@ -109,23 +111,32 @@ class PrivateChatRoomViewModel @Inject constructor(
                 } else {
                     val randomId = firestore.collection(GROUPS_ID).document().id
 
-                    if (action.messageType == IMAGE) {
-                        logMe("send", "sendFakeTempMessage")
-                        sendFakeTempMessage(action.messageType, randomId, imagePath = messageImage)
-                    }
-
-                    if (action.messageType == TEXT) {
-                        sendMessageHelper.checkForImageOrAudioAndSend(
-                            action.messageType,
-                            action.messageText,
-                            messageImage,
-                            messageAudio,
-                            gid,
-                            notificationToken,
-                            isGroup = isGroup,
-                            groupName = groupName,
-                            groupImage = groupImage
-                        )
+                    when (action.messageType) {
+                        IMAGE -> {
+                            logMe("send", "sendFakeTempMessage")
+                            sendFakeTempMessage(
+                                action.messageType,
+                                randomId,
+                                imagePath = action.messageImage
+                            )
+                        }
+                        TEXT -> {
+                            sendMessageHelper.checkForImageOrAudioAndSend(
+                                action.messageType,
+                                action.messageText,
+                                action.messageImage,
+                                action.messageAudio,
+                                gid,
+                                notificationToken,
+                                isGroup = isGroup,
+                                groupName = groupName,
+                                groupImage = groupImage
+                            )
+                        }
+                        AUDIO -> {
+                            logMe("Audio", "SendMessage")
+                            uploadAudioFile(action.messageAudio, action.audioDuration)
+                        }
                     }
                 }
             }
@@ -198,9 +209,9 @@ class PrivateChatRoomViewModel @Inject constructor(
     private fun sendFakeTempMessage(
         messageType: MessageType,
         messageId: String,
-        audioFilePath: Uri? = null,
+        audioFilePath: String? = null,
         audioDuration: Long = 0,
-        imagePath: Uri? = null
+        imagePath: String? = null
     ) {
         if (messageType == TEXT) return
         logMe("not text $messageType", "sendFakeTempMessage")
@@ -221,17 +232,21 @@ class PrivateChatRoomViewModel @Inject constructor(
     }
 
     fun onMessageImageSelected(uri: Uri?) {
-        messageImage = uri
-        postAction(PrivateChatActions.SendMessage("", IMAGE))
+        postAction(
+            PrivateChatActions.SendMessage(
+                messageImage = uri?.toString() ?: "",
+                messageType = IMAGE
+            )
+        )
     }
 
-    fun uploadAudioFile(mLocalFilePath: String, duration: Long) {
+    private fun uploadAudioFile(mLocalFilePath: String, duration: Long) {
         val randomId = firestore.collection(GROUPS_ID).document().id
         val currentTimeMillis = System.currentTimeMillis()
         val audioFilePath = "${currentTimeMillis}.3gp"
         val ref = storage.reference.child("audio/${getUID()}/${audioFilePath}")
         val localUri = Uri.fromFile(File(mLocalFilePath))
-        sendFakeTempMessage(AUDIO, randomId, audioFilePath = localUri)
+        sendFakeTempMessage(AUDIO, randomId, audioFilePath = audioFilePath)
 
         ref.putFile(localUri).addOnSuccessListener {
             logMe("uploadAudioFile: success")
@@ -247,7 +262,7 @@ class PrivateChatRoomViewModel @Inject constructor(
                 AUDIO,
                 "",
                 null,
-                it,
+                it.toString(),
                 gid,
                 notificationToken,
                 audioDuration,
@@ -328,8 +343,13 @@ class PrivateChatRoomViewModel @Inject constructor(
 
 sealed class PrivateChatActions {
     data class ReceiverMessageLongClick(val message: Message) : PrivateChatActions()
-    data class SendMessage(val messageText: String, val messageType: MessageType) :
-        PrivateChatActions()
+    data class SendMessage(
+        val messageText: String = "",
+        val messageAudio: String = "",
+        val audioDuration: Long = -1L,
+        val messageImage: String = "",
+        val messageType: MessageType
+    ) : PrivateChatActions()
 
     data class SenderMessageLongClick(
         val message: Message,
@@ -351,6 +371,7 @@ sealed class PrivateChatActions {
 
 sealed class PrivateChatEvents {
     data class OtherUserState(val otherUserStatus: UserStatus) : PrivateChatEvents()
+    object PlaySendMessageSound : PrivateChatEvents()
 }
 
 enum class UserStatus {

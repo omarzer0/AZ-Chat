@@ -1,7 +1,6 @@
 package az.zero.azchat.common.audio.media_player
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
@@ -10,13 +9,10 @@ import android.util.Log
 import android.widget.SeekBar
 import android.widget.TextView
 import az.zero.azchat.common.IS_DEBUG
-import az.zero.azchat.common.tryAsyncNow
 import az.zero.azchat.common.tryNow
 import az.zero.azchat.di.remote.ApplicationScope
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,6 +34,7 @@ class AudioHandler @Inject constructor(
         listener = audioPlaybackListener
     }
 
+    // TODO Passing views is bad and will be fix in exo player update
     fun playAudio(audioPath: String, seekBar: SeekBar, textTvToUpdate: TextView) {
         tryNow(tag = "playNewAudio") {
             val audioUri = Uri.parse(audioPath)
