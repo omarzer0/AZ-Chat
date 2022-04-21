@@ -88,6 +88,12 @@ class MainActivity : BaseActivity() {
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
 
+                R.id.aboutMeFragment -> {
+                    hideMainAppBar()
+                    showContentNormallyUnderStatusBarWithMainColor()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
+
                 R.id.addChatFragment -> {
                     hideChatAppBar()
                     showContentNormallyUnderStatusBarWithMainColor()
@@ -175,11 +181,12 @@ class MainActivity : BaseActivity() {
                 }
 
                 R.id.go_to_about_developer -> {
-                    toastMy(this, "Wanna know about me? not now hahah", true)
+                    navController.navigate(MainNavGraphDirections.actionGlobalAboutMeFragment())
+//                    toastMy(this, "Wanna know about me? not now hahah", true)
                 }
 
                 R.id.go_to_licence -> {
-                    toastMy(this, "Booooooooooring will be added on the release")
+                    toastMy(this, "Will be added on the release")
                 }
             }
 

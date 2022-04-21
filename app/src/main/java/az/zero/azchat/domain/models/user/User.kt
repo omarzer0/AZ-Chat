@@ -12,7 +12,8 @@ data class User(
     var groups: List<String>? = emptyList(),
     var phoneNumber: String? = "",
     var notificationToken: String? = "",
-    var blockList: List<String> = emptyList()
+    var blockList: List<String> = emptyList(),
+    var numberIsHidden: Boolean = true
 ) : Parcelable {
 
     // TODO:hasNullField refactor this

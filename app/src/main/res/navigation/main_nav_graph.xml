@@ -118,4 +118,9 @@
             android:name="image"
             app:argType="string" />
     </fragment><action android:id="@+id/action_global_imageViewerFragment" app:destination="@id/imageViewerFragment"/>
+    <fragment
+        android:id="@+id/aboutMeFragment"
+        android:name="az.zero.azchat.presentation.main.about_me.AboutMeFragment"
+        android:label="fragment_about_me"
+        tools:layout="@layout/fragment_about_me" /><action android:id="@+id/action_global_aboutMeFragment" app:destination="@id/aboutMeFragment"/>
 </navigation>

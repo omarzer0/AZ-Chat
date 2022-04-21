@@ -119,8 +119,11 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
                 tvChatNumberOfMembers.text =
                     "${group.members!!.size} ${getString(R.string.members)}"
             } else {
+
+                logMe("userNumberIsHidden ${user.numberIsHidden}")
                 aboutTv.text = getString(R.string.bio)
-                tvChatPhone.text = user.phoneNumber ?: ""
+                tvChatPhone.text = if (user.numberIsHidden) "User hid his phone number"
+                else user.phoneNumber ?: ""
             }
         }
     }

@@ -98,6 +98,13 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun updateHideNumber(checked: Boolean) {
+        val uid = sharedPreferenceManger.uid
+        tryAsyncNow(viewModelScope) {
+            firestore.collection(USERS_ID).document(uid).update("numberIsHidden", checked)
+        }
+    }
+
     init {
         getBlockedListUserId()
     }

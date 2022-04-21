@@ -56,7 +56,8 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
         binding.doneFaBtn.setOnClickListener {
             val username = binding.usernameEt.text.toString().trim()
             val bio = binding.bioEt.text.toString().trim()
-            viewModel.addUser(username, bio)
+            val isChecked = binding.swHidePhoneNumber.isChecked
+            viewModel.addUser(username, bio,isChecked)
         }
     }
 

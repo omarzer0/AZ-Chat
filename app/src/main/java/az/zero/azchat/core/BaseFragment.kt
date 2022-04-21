@@ -57,8 +57,10 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
             .setPopEnterAnim(android.R.anim.fade_in)
             .build()
     ) {
-        if (shouldHaveNoAnimation) tryNow { findNavController().navigate(action) }
-        else tryNow { findNavController().navigate(action, navOptions) }
+        tryNow {
+            if (shouldHaveNoAnimation) findNavController().navigate(action)
+            else findNavController().navigate(action, navOptions)
+        }
     }
 
     protected fun <T> LiveData<Event<T>>.observeIfNotHandled(result: (T) -> Unit) {

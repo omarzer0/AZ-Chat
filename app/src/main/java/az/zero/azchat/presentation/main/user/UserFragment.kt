@@ -9,7 +9,9 @@ import androidx.fragment.app.viewModels
 import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
 import az.zero.azchat.common.FAKE_PROFILE_NAME
-import az.zero.azchat.common.extension.*
+import az.zero.azchat.common.extension.gone
+import az.zero.azchat.common.extension.hideKeyboard
+import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
@@ -139,6 +141,10 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
             }
             val action = MainNavGraphDirections.actionGlobalImageViewerFragment(image)
             navigateToAction(action)
+        }
+
+        binding.swHidePhoneNumber.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.updateHideNumber(isChecked)
         }
     }
 
