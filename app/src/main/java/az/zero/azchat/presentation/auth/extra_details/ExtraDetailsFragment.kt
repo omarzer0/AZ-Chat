@@ -12,6 +12,7 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
+import az.zero.azchat.common.tryNow
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentExtraDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -112,12 +113,14 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
 
 
     private fun checkMyPermissions() {
-        activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+        tryNow {
+            activityResultLauncher.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
             )
-        )
+        }
     }
 
     private val activityResultLauncher =

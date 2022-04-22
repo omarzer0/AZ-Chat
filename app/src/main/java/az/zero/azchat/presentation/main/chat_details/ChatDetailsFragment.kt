@@ -9,13 +9,10 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
-import az.zero.azchat.common.FAKE_GROUP_NAME
-import az.zero.azchat.common.FAKE_PROFILE_NAME
+import az.zero.azchat.common.*
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.show
-import az.zero.azchat.common.logMe
-import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentChatDetailsBinding
 import az.zero.azchat.presentation.main.adapter.user.UserAdapter
@@ -195,12 +192,14 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
     }
 
     private fun checkMyPermissions() {
-        activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+        tryNow {
+            activityResultLauncher.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
             )
-        )
+        }
     }
 
     private val activityResultLauncher =

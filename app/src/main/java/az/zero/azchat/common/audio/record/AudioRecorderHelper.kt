@@ -111,11 +111,14 @@ class AudioRecorderHelper(
     }
 
     private fun checkMyPermissions() {
-        activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.RECORD_AUDIO,
+        tryNow {
+            activityResultLauncher.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
             )
-        )
+        }
     }
 
     private val activityResultLauncher =

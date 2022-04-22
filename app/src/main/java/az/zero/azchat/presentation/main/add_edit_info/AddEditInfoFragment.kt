@@ -10,6 +10,7 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
+import az.zero.azchat.common.tryNow
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentAddEditInfoBinding
 import az.zero.azchat.domain.models.private_chat.PrivateChat
@@ -82,12 +83,14 @@ class AddEditInfoFragment : BaseFragment(R.layout.fragment_add_edit_info) {
     }
 
     private fun checkMyPermissions() {
-        activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+        tryNow {
+            activityResultLauncher.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
             )
-        )
+        }
     }
 
     private val activityResultLauncher =

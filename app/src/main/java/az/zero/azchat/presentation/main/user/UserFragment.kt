@@ -14,6 +14,7 @@ import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
+import az.zero.azchat.common.tryNow
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentUserBinding
 import az.zero.azchat.presentation.main.adapter.user.UserAdapter
@@ -166,12 +167,14 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
     }
 
     private fun checkMyPermissions() {
-        activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+        tryNow {
+            activityResultLauncher.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
             )
-        )
+        }
     }
 
     private val activityResultLauncher =
