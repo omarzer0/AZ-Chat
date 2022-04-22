@@ -25,7 +25,7 @@ class UserViewModel @Inject constructor(
     private val sharedPreferenceManger: SharedPreferenceManger,
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
-    private var user = stateHandle.get<User>("user")
+    private var user = stateHandle.get<User>("user")!!
 
     private val _event = MutableLiveData<Event<UserFragmentEvent>>()
     val event: LiveData<Event<UserFragmentEvent>> = _event
@@ -47,7 +47,7 @@ class UserViewModel @Inject constructor(
                 _imageMLD.value = it
                 _event.postValue(Event(UserFragmentEvent.UploadImageSuccess(it)))
                 firestore.collection(USERS_ID).document(uid).update("imageUrl", it.toString())
-                user = user?.copy(imageUrl = it.toString())
+                user = user.copy(imageUrl = it.toString())
             },
             onUploadImageFailed = {
                 _event.postValue(Event(UserFragmentEvent.UploadImageFailed(it)))
@@ -65,6 +65,10 @@ class UserViewModel @Inject constructor(
         val uid = sharedPreferenceManger.uid
         firestore.collection(USERS_ID).document(uid).update(fieldToUpdate, value)
         _event.postValue(Event(UserFragmentEvent.UpdateText(isName, value)))
+
+        val editedUser = if (fieldToUpdate == "name") user.copy(name = value)
+        else user.copy(bio = value)
+        user = editedUser
     }
 
     fun getCurrentUser() = user

@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/_12sdp"
-    android:background="@drawable/four_corner_normal_background"
-    android:backgroundTint="@color/gray"
+    android:background="@drawable/four_corner_audio_background"
     android:padding="@dimen/_8sdp"
     android:visibility="gone"
     tools:visibility="visible">

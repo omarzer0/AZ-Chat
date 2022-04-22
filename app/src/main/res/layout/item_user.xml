@@ -15,8 +15,8 @@
         style="@style/roundShapeableImage"
         android:layout_width="@dimen/_46sdp"
         android:layout_height="@dimen/_46sdp"
-        android:scaleType="fitXY"
         android:layout_marginBottom="@dimen/_8sdp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginEnd="@dimen/_8sdp"
+        android:gravity="left"
         app:layout_constraintBottom_toTopOf="@+id/user_bio_tv"
         app:layout_constraintEnd_toStartOf="@+id/iv_remove_user"
         app:layout_constraintHorizontal_bias="0.5"
@@ -51,6 +52,7 @@
         style="@style/bodyTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="left"
         app:layout_constraintBottom_toBottomOf="@+id/user_image_iv"
         app:layout_constraintEnd_toEndOf="@+id/user_name_tv"
         app:layout_constraintHorizontal_bias="0.5"
@@ -60,27 +62,27 @@
 
     <ImageView
         android:id="@+id/iv_remove_user"
+        style="@style/imageButtonEffect"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:padding="4dp"
-        android:visibility="gone"
-        style="@style/imageButtonEffect"
         android:layout_marginEnd="@dimen/_8sdp"
+        android:padding="4dp"
         android:src="@drawable/ic_cancel"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <View-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="@dimen/_1sdp"-->
-<!--        android:layout_marginTop="@dimen/_12sdp"-->
-<!--        android:background="@color/gray"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/user_bio_tv"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/user_name_tv"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/user_image_iv"-->
-<!--        app:layout_constraintVertical_bias="0" />-->
+    <!--    <View-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="@dimen/_1sdp"-->
+    <!--        android:layout_marginTop="@dimen/_12sdp"-->
+    <!--        android:background="@color/gray"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/user_bio_tv"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/user_name_tv"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/user_image_iv"-->
+    <!--        app:layout_constraintVertical_bias="0" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

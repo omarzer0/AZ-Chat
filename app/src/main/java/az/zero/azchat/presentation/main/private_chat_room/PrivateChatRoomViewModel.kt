@@ -246,7 +246,7 @@ class PrivateChatRoomViewModel @Inject constructor(
         val audioFilePath = "${currentTimeMillis}.3gp"
         val ref = storage.reference.child("audio/${getUID()}/${audioFilePath}")
         val localUri = Uri.fromFile(File(mLocalFilePath))
-        sendFakeTempMessage(AUDIO, randomId, audioFilePath = audioFilePath)
+        sendFakeTempMessage(AUDIO, randomId, audioFilePath = localUri.toString())
 
         ref.putFile(localUri).addOnSuccessListener {
             logMe("uploadAudioFile: success")

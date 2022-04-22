@@ -67,7 +67,7 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
                     if (event.isName) {
                         binding.tvChatName.text = event.value
                     } else {
-                        binding.tvChatBio.text = event.value
+                        binding.tvChatBio.text = event.value.ifEmpty { getString(R.string.lazy_users) }
                     }
                 }
             }

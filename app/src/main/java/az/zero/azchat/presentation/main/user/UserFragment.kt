@@ -98,7 +98,7 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
                     if (event.isName) {
                         binding.tvUsername.text = event.value
                     } else {
-                        binding.tvUserBio.text = event.value
+                        binding.tvUserBio.text = event.value.ifEmpty { getString(R.string.lazy_user) }
                     }
                 }
             }
