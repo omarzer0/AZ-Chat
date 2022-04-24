@@ -53,15 +53,25 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
 
     fun navigateToAction(
         action: NavDirections,
-        shouldHaveNoAnimation: Boolean = false,
-        navOptions: NavOptions = NavOptions.Builder()
-            .setEnterAnim(android.R.anim.fade_in)
-            .setPopEnterAnim(android.R.anim.fade_in)
-            .build()
+        popBackToDestination: Int = -1,
+        isInclusive: Boolean = false,
+        haveAnimation: Boolean = true,
+        navOptions: NavOptions.Builder = NavOptions.Builder()
     ) {
+
         tryNow {
-            if (shouldHaveNoAnimation) findNavController().navigate(action)
-            else findNavController().navigate(action, navOptions)
+            if (!haveAnimation) {
+                findNavController().navigate(action)
+                return@tryNow
+            }
+
+            navOptions.apply {
+                setEnterAnim(android.R.anim.fade_in)
+                setPopEnterAnim(android.R.anim.fade_in)
+                if (popBackToDestination != -1) setPopUpTo(popBackToDestination,isInclusive)
+            }
+
+            findNavController().navigate(action, navOptions.build())
         }
     }
 

@@ -106,6 +106,13 @@ class MainActivity : BaseActivity() {
                     showContentAboveStatusBar(Color.TRANSPARENT)
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
+
+                R.id.addEditInfoFragment ->{
+                    hideChatAppBar()
+                    showContentNormallyUnderStatusBarWithMainColor()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
+                }
                 else -> {
                     showChatAppBar()
                     showContentNormallyUnderStatusBarWithMainColor()

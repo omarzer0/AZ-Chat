@@ -70,7 +70,7 @@ class AddEditInfoFragment : BaseFragment(R.layout.fragment_add_edit_info) {
                     AddEditInfoFragmentDirections.actionAddEditInfoFragmentToPrivateChatRoomFragment(
                         PrivateChat(newGroup, User(), newGroup.gid!!),
                         false
-                    )
+                    ), R.id.homeFragment
                 )
             }
         }

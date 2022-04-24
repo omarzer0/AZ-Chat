@@ -94,7 +94,8 @@ class AddChatFragment : BaseFragment(R.layout.fragment_add_chat) {
             }.toTypedArray()
 
             navigateToAction(
-                AddChatFragmentDirections.actionAddChatFragmentToAddEditInfoFragment(selectedUsers)
+                AddChatFragmentDirections.actionAddChatFragmentToAddEditInfoFragment(selectedUsers),
+                R.id.homeFragment
             )
         }
     }
