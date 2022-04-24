@@ -8,8 +8,6 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import az.zero.azchat.common.IS_DEBUG
-import az.zero.azchat.common.tryNow
-import java.util.*
 import javax.inject.Singleton
 
 @Singleton
@@ -34,7 +32,7 @@ class AudioRecorderHelper(
 
 
     private fun startRecording() {
-        tryNow {
+        try {
             mRecorder = MediaRecorder()
             mLocalFilePath =
                 "$defaultPath/$relativePath${System.currentTimeMillis()}.$fileExtension"
@@ -48,6 +46,8 @@ class AudioRecorderHelper(
                 startCount()
                 logMe("started", tag)
             }
+        } catch (e: Exception) {
+            Log.e("AudioRecorderHelper", "startRecording: ${e.localizedMessage}")
         }
     }
 
@@ -76,7 +76,7 @@ class AudioRecorderHelper(
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
                         listener.onTouchDown()
-                        checkMyPermissions()
+                        checkRecordPermissions()
                         true
                     }
                     MotionEvent.ACTION_UP -> {
@@ -106,16 +106,14 @@ class AudioRecorderHelper(
 
     private fun endCount() {
         endTimerCount = System.currentTimeMillis()
-        if (endTimerCount - startTimerCount < 1500) {
+        if (endTimerCount - startTimerCount < RECORD_MIN_DURATION) {
             throw Exception("Too short record!")
         }
     }
 
-    private fun checkMyPermissions() {
+    private fun checkRecordPermissions() {
         activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.RECORD_AUDIO,
-            )
+            arrayOf(Manifest.permission.RECORD_AUDIO)
         )
     }
 
@@ -131,6 +129,10 @@ class AudioRecorderHelper(
 
     init {
         initTouchListener()
+    }
+
+    companion object {
+        const val RECORD_MIN_DURATION = 1000
     }
 }
 

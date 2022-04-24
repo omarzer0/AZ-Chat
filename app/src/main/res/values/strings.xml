@@ -54,5 +54,11 @@
     <string name="enter_the_code_you_received">Enter the code you received</string>
     <string name="no_chats_yet_start_chatting_now">No chats yet. Start chatting now</string>
     <string name="no_messages_yet_the_fun_begins_when_you_start_chatting">No messages yet!.The fun begins when you start chatting.</string>
-    <string name="this_is_an_old_version_please_update">This is an old version. Please update to the newest version</string>
+    <string name="this_is_an_old_version_please_update">There is a newer version. Please update to the newest version, It is easy and fast</string>
+    <string name="about">About</string>
+    <string name="lazy_users">Lazy users didn\'t write anything!</string>
+    <string name="lazy_user">Lazy user didn\'t write anything!</string>
+    <string name="hide_your_phone_number_for_all_users">Hide your phone number for all users</string>
+    <string name="hide_phone_number">Hide phone number</string>
+    <string name="get_the_new_version">Get the new version</string>
 </resources>

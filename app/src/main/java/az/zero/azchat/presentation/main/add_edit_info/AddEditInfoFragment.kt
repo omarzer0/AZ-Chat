@@ -1,6 +1,5 @@
 package az.zero.azchat.presentation.main.add_edit_info
 
-import android.Manifest
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -66,7 +65,7 @@ class AddEditInfoFragment : BaseFragment(R.layout.fragment_add_edit_info) {
                 return@setOnClickListener
             }
 
-            viewModel.addNewGroup(groupName,aboutGroup) { newGroup ->
+            viewModel.addNewGroup(groupName, aboutGroup) { newGroup ->
                 navigateToAction(
                     AddEditInfoFragmentDirections.actionAddEditInfoFragmentToPrivateChatRoomFragment(
                         PrivateChat(newGroup, User(), newGroup.gid!!),
@@ -77,17 +76,8 @@ class AddEditInfoFragment : BaseFragment(R.layout.fragment_add_edit_info) {
         }
 
         binding.chooseImageIv.setOnClickListener {
-            checkMyPermissions()
+            checkCameraPermissions(activityResultLauncher)
         }
-    }
-
-    private fun checkMyPermissions() {
-        activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        )
     }
 
     private val activityResultLauncher =

@@ -15,11 +15,12 @@
         <!-- Customize your theme here. -->
         <item name="textAllCaps">false</item>
         <item name="android:overScrollMode">never</item>
+        <item name="android:gravity">left</item>
 
     </style>
 
     <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@color/mainColor</item>
+        <item name="android:windowBackground">@drawable/splash_bg</item>
         <item name="colorPrimaryDark">@color/mainColor</item>
         <item name="android:navigationBarColor">@color/mainColor</item>
         <item name="android:windowAnimationStyle">@null</item>
@@ -56,7 +57,7 @@
         <item name="android:textColor">@color/secondaryTextColor</item>
         <item name="android:textSize">@dimen/_12ssp</item>
         <item name="android:textStyle">bold</item>
-        <item name="theme">@style/singleLine</item>
+        <!--        <item name="theme">@style/singleLine</item>-->
     </style>
 
     <style name="verySmallTextStyle" parent="TextAppearance.AppCompat">

@@ -8,6 +8,8 @@ import az.zero.azchat.R
 import az.zero.azchat.databinding.FragmentEmptyBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+
+// Base Fragment
 @AndroidEntryPoint
 class EmptyFragment : Fragment(R.layout.fragment_empty) {
 

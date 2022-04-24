@@ -34,8 +34,8 @@ class SendMessageHelper @Inject constructor(
     fun checkForImageOrAudioAndSend(
         messageType: MessageType,
         messageText: String,
-        imageUri: Uri?,
-        messageAudio: Uri?,
+        imageUri: String?,
+        messageAudio: String?,
         gid: String,
         notificationToken: String,
         audioDuration: Long = -1,
@@ -44,7 +44,7 @@ class SendMessageHelper @Inject constructor(
         groupName: String,
         groupImage: String
     ) {
-        val realPath = imageUri?.let { RealPathUtil.getRealPath(application, it) } ?: ""
+        val realPath = imageUri?.let { RealPathUtil.getRealPath(application, Uri.parse(it)) } ?: ""
         val userId = sharedPreferenceManger.uid
         val userName = sharedPreferenceManger.userName
         val userImage = sharedPreferenceManger.userImage
@@ -315,8 +315,8 @@ class SendMessageHelper @Inject constructor(
         gid: String,
         otherUserID: String,
         messageText: String,
-        messageImage: Uri?,
-        messageAudio: Uri?,
+        messageImage: String?,
+        messageAudio: String?,
         messageType: MessageType,
         notificationToken: String,
         onSuccess: (Boolean) -> Unit,
@@ -338,8 +338,8 @@ class SendMessageHelper @Inject constructor(
             updated = false,
             loved = false,
             seen = false,
-            imageUri = messageImage?.toString() ?: "",
-            audioUri = messageAudio?.toString() ?: "",
+            imageUri = messageImage ?: "",
+            audioUri = messageAudio ?: "",
             audioDuration
         )
 

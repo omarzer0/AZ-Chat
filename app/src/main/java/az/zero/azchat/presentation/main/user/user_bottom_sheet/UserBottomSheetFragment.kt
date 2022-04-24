@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import az.zero.azchat.R
 import az.zero.azchat.common.toastMy
 import az.zero.azchat.databinding.BottomSheetFragmentUserBinding
+import az.zero.azchat.presentation.main.user.UserFragment
 import az.zero.azchat.presentation.main.user.UserFragment.Companion.UPDATE_CODE_REQUEST
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,13 +45,15 @@ class UserBottomSheetFragment : BottomSheetDialogFragment() {
         binding.apply {
             btnUpdate.setOnClickListener {
                 val text = edText.text.toString()
-                if (text.isEmpty()) {
-                    toastMy(
-                        requireContext(),
-                        "Please enter 3 or more characters",
-                        false
-                    )
-                    return@setOnClickListener
+                if (viewModel.code != UserFragment.USER_BIO_CODE_KEY) {
+                    if (text.isEmpty() || text.length < 3) {
+                        toastMy(
+                            requireContext(),
+                            "Please enter 3 or more characters",
+                            false
+                        )
+                        return@setOnClickListener
+                    }
                 }
                 setFragmentResult(UPDATE_CODE_REQUEST, bundleOf(viewModel.code to text))
                 findNavController().navigateUp()

@@ -11,6 +11,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_hide_phone_number"
+            style="@style/headerTextStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:checked="true"
+            android:text="@string/hide_phone_number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_image_iv" />
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/user_image_iv"
             style="@style/roundShapeableImage"
@@ -46,12 +60,12 @@
             android:id="@+id/username_input_layout"
             style="@style/roundInputTextField"
             android:layout_marginStart="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_marginTop="@dimen/_12sdp"
             android:layout_marginEnd="@dimen/_12sdp"
             android:hint="@string/username"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_image_iv">
+            app:layout_constraintTop_toBottomOf="@+id/sw_hide_phone_number">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/username_et"

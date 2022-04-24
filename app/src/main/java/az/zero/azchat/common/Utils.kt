@@ -2,12 +2,19 @@ package az.zero.azchat.common
 
 import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import az.zero.azchat.R
+import az.zero.azchat.domain.models.simple_info.InfoTypes
+import az.zero.azchat.domain.models.simple_info.InfoTypes.*
 import com.bumptech.glide.Glide
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerDrawable
@@ -193,5 +200,90 @@ fun tryAsyncNow(
         } finally {
             finally?.invoke()
         }
+    }
+}
+
+
+fun openBrowser(context: Context, url: String?) {
+    if (url.isNullOrEmpty()) return
+    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    try {
+        context.startActivity(browserIntent)
+    } catch (e: Exception) {
+    }
+}
+
+fun openFacebook(context: Context, url: String): Intent? {
+    val packageManager = context.packageManager
+    var uri = Uri.parse(url)
+    return try {
+        val applicationInfo = packageManager.getApplicationInfo("com.facebook.katana", 0)
+        if (applicationInfo.enabled) {
+            uri = Uri.parse("fb://facewebmodal/f?href=$url")
+        }
+        Intent(Intent.ACTION_VIEW, uri)
+    } catch (ignored: PackageManager.NameNotFoundException) {
+        openBrowser(context, url)
+        null
+    }
+}
+
+fun openPhone(context: Context, phone: String?) {
+    val intent = Intent(Intent.ACTION_DIAL)
+    intent.data = Uri.parse("tel:$phone")
+    try {
+        context.startActivity(intent)
+    } catch (e: Exception) {
+    }
+}
+
+fun openWhats(context: Context, phone: String?) {
+    val url = "https://api.whatsapp.com/send?phone=$phone"
+    try {
+        val pm: PackageManager = context.packageManager
+        pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        context.startActivity(i)
+    } catch (e: PackageManager.NameNotFoundException) {
+        openBrowser(context, url)
+    } catch (e: Exception) {
+    }
+}
+
+fun openEmail(context: Context, email: String?) {
+    val intent = Intent(Intent.ACTION_SENDTO)
+    intent.data = Uri.parse("mailto: $email")
+    try {
+        context.startActivity(intent)
+    } catch (e: Exception) {
+    }
+}
+
+fun openLink(context: Context, type: Int, link: String) {
+    logMe("$type => ${InfoTypes.getByValue(type)}")
+    when (InfoTypes.getByValue(type)) {
+        ELSE -> return
+        BROWSER -> openBrowser(context, link)
+        FACEBOOK -> openFacebook(context, link)
+        EMAIL -> openEmail(context, link)
+        PHONE -> openPhone(context, link)
+        WHATS -> openWhats(context, link)
+    }
+}
+
+
+fun checkPermissionList(
+    fragment: Fragment,
+    whenSuccess: (() -> Unit)? = null,
+    whenFail: (() -> Unit)? = null
+): ActivityResultLauncher<Array<String>> {
+    return fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        val failedToGrant = permissions.entries.any { it.value == false }
+        if (failedToGrant) {
+            whenFail?.invoke()
+            return@registerForActivityResult
+        }
+        whenSuccess?.invoke()
     }
 }

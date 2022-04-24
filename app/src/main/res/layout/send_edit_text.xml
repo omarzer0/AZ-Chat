@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/gray"
     android:paddingStart="@dimen/_8sdp"
     android:paddingEnd="@dimen/_8sdp"
     android:paddingBottom="@dimen/_4sdp">
@@ -37,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_8sdp"
+            android:paddingTop="@dimen/_6sdp"
             android:text="@string/update_message"
             android:textColor="@color/mainColor"
             app:layout_constraintEnd_toStartOf="@+id/edit_message_cancel"
@@ -51,8 +53,9 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:maxLines="3"
             android:layout_marginBottom="@dimen/_8sdp"
+            android:gravity="left"
+            android:maxLines="3"
             android:textColor="@color/mainColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/edit_message_cancel"
@@ -78,15 +81,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_8sdp"
-        android:background="@drawable/round_background"
+        android:background="@color/gray"
         android:hint="@string/your_message"
         android:paddingStart="@dimen/_6sdp"
         android:paddingTop="@dimen/_12sdp"
         android:paddingEnd="@dimen/_6sdp"
         android:paddingBottom="@dimen/_12sdp"
         android:singleLine="false"
-        android:visibility="visible"
         android:textSize="@dimen/_12ssp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gallery_iv"
         app:layout_constraintStart_toStartOf="parent"
@@ -146,26 +149,26 @@
         app:layout_constraintTop_toTopOf="@+id/gallery_iv"
         app:tint="@color/mainColor" />
 
-<!--    <androidx.constraintlayout.widget.Group-->
-<!--        android:id="@+id/normal_group"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:visibility="visible"-->
-<!--        app:constraint_referenced_ids="write_message_ed,gallery_iv,record_iv" />-->
+    <!--    <androidx.constraintlayout.widget.Group-->
+    <!--        android:id="@+id/normal_group"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:visibility="visible"-->
+    <!--        app:constraint_referenced_ids="write_message_ed,gallery_iv,record_iv" />-->
 
-<!--    <androidx.constraintlayout.widget.Group-->
-<!--        android:id="@+id/edit_group_gone"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:visibility="visible"-->
-<!--        app:constraint_referenced_ids="gallery_iv,record_iv" />-->
+    <!--    <androidx.constraintlayout.widget.Group-->
+    <!--        android:id="@+id/edit_group_gone"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:visibility="visible"-->
+    <!--        app:constraint_referenced_ids="gallery_iv,record_iv" />-->
 
-<!--    <androidx.constraintlayout.widget.Group-->
-<!--        android:id="@+id/edit_group_show"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:visibility="gone"-->
-<!--        app:constraint_referenced_ids="edit_message_container_cv,submit_edit_message_tv" />-->
+    <!--    <androidx.constraintlayout.widget.Group-->
+    <!--        android:id="@+id/edit_group_show"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:visibility="gone"-->
+    <!--        app:constraint_referenced_ids="edit_message_container_cv,submit_edit_message_tv" />-->
 
 
     <androidx.constraintlayout.widget.Group

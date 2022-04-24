@@ -65,8 +65,10 @@ class ChatDetailsViewModel @Inject constructor(
         if (bundle[NAME_CODE_KEY] == null && bundle[ABOUT_CODE_KEY] == null) return
         val isName = bundle[NAME_CODE_KEY] != null
         val fieldToUpdate = if (isName) "name" else "about"
+
         val value: String =
             if (isName) bundle[NAME_CODE_KEY].toString() else bundle[ABOUT_CODE_KEY].toString()
+
         firestore.collection(GROUPS_ID).document(privateChat.id).update(fieldToUpdate, value)
         _event.postValue(Event(ChatDetailsEvent.UpdateText(isName, value)))
         val editedGroup = if (fieldToUpdate == "name") privateChat.group.copy(name = value)

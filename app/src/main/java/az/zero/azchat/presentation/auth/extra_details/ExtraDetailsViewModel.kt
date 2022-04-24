@@ -34,7 +34,7 @@ class ExtraDetailsViewModel @Inject constructor(
             })
     }
 
-    fun addUser(username: String, bio: String) {
+    fun addUser(username: String, bio: String, isChecked: Boolean) {
         when {
             username.trim().isEmpty() -> {
                 _event.postValue(Event(ExtraDetailsEvent.ValidateUserInputsError(R.string.enter_user_name)))
@@ -48,7 +48,8 @@ class ExtraDetailsViewModel @Inject constructor(
                 if (_imageMLD.value != null) {
                     image = _imageMLD.value.toString()
                 }
-                val user = User("", username, image, bio, emptyList(), "")
+                val user =
+                    User("", username, image, bio, emptyList(), "", numberIsHidden = isChecked)
                 repository.addUser(
                     user,
                     onAddUserSuccess = {

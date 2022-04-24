@@ -1,19 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_sv"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mainColor"
+    android:fillViewport="true"
     tools:context=".presentation.version.VersionActivity">
 
-    <TextView
-        android:id="@+id/tv_version_text"
-        style="@style/headerTextStyle"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:maxLines="99"
-        android:text="@string/this_is_an_old_version_please_update"
-        android:textColor="@color/white" />
+        android:layout_height="0dp"
+        tools:context=".presentation.version.VersionActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationView"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_version_text"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/new_version" />
+
+        <TextView
+            android:id="@+id/tv_version_header"
+            style="@style/headerTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_12sdp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/animationView"
+            tools:text="Header" />
+
+        <TextView
+            android:id="@+id/tv_version_text"
+            style="@style/headerTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_12sdp"
+            android:gravity="center"
+            android:maxLines="99"
+            android:text="@string/this_is_an_old_version_please_update"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline5" />
+
+        <TextView
+            android:id="@+id/tv_note"
+            style="@style/bodyTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/tv_version_header"
+            app:layout_constraintStart_toStartOf="@+id/tv_version_header"
+            app:layout_constraintTop_toBottomOf="@+id/tv_version_header"
+            tools:text="Note" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_simple_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_links_header"
+            tools:itemCount="6"
+            tools:listitem="@layout/item_simple_info" />
+
+        <TextView
+            android:id="@+id/tv_links_header"
+            style="@style/headerTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:gravity="start"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/tv_version_header"
+            app:layout_constraintStart_toStartOf="@+id/tv_version_header"
+            app:layout_constraintTop_toBottomOf="@+id/tv_get_the_new_version"
+            tools:text="Note" />
+
+        <TextView
+            android:id="@+id/tv_get_the_new_version"
+            style="@style/imageButtonEffect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_25sdp"
+            android:padding="@dimen/_8sdp"
+            android:text="@string/get_the_new_version"
+            android:textColor="@color/mainColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_note"
+            app:layout_constraintVertical_bias="0" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

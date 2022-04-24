@@ -1,6 +1,5 @@
 package az.zero.azchat.presentation.main.chat_details
 
-import android.Manifest
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -67,7 +66,8 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
                     if (event.isName) {
                         binding.tvChatName.text = event.value
                     } else {
-                        binding.tvChatBio.text = event.value
+                        binding.tvChatBio.text =
+                            event.value.ifEmpty { getString(R.string.lazy_users) }
                     }
                 }
             }
@@ -99,7 +99,10 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         val name = if (isGroup) group.name!! else user.name!!
         val image = if (isGroup) group.image!! else user.imageUrl!!
         var about = if (isGroup) group.about!! else user.bio!!
-        if (about.trim().isEmpty()) about = "Lazy user didn't write anything!"
+        if (about.trim().isEmpty()) {
+            about = if (isGroup) getString(R.string.lazy_users)
+            else getString(R.string.lazy_user)
+        }
 
         binding.apply {
             setImageUsingGlide(
@@ -110,9 +113,18 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
             )
             tvChatName.text = name
             tvChatBio.text = about
-            if (isGroup) tvChatNumberOfMembers.text =
-                "${group.members!!.size} ${getString(R.string.members)}"
-            else tvChatPhone.text = user.phoneNumber ?: ""
+
+            if (isGroup) {
+                aboutTv.text = getString(R.string.about)
+                tvChatNumberOfMembers.text =
+                    "${group.members!!.size} ${getString(R.string.members)}"
+            } else {
+
+                logMe("userNumberIsHidden ${user.numberIsHidden}")
+                aboutTv.text = getString(R.string.bio)
+                tvChatPhone.text = if (user.numberIsHidden) "User hid his phone number"
+                else user.phoneNumber ?: ""
+            }
         }
     }
 
@@ -128,7 +140,7 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
 
     private fun handleClicks() {
         binding.apply {
-            chooseImageIv.setOnClickListener { checkMyPermissions() }
+            chooseImageIv.setOnClickListener { checkCameraPermissions(activityResultLauncher) }
 
             ivEditName.setOnClickListener {
                 updateNameOrAbout(true)
@@ -182,15 +194,6 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         }
     }
 
-    private fun checkMyPermissions() {
-        activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        )
-    }
-
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val failedToGrant = permissions.entries.any { it.value == false }
@@ -211,8 +214,9 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
+        logMe("dest", "testtest")
         activityResultLauncher.unregister()
     }
 

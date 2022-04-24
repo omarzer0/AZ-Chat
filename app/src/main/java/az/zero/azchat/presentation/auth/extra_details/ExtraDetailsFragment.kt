@@ -12,6 +12,7 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
+import az.zero.azchat.common.tryNow
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentExtraDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,30 +34,15 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
     }
 
     private fun handleClicks() {
-//        binding.addGroupBtn.setOnClickListener {
-//            viewModel.addGroup()
-//        }
-//
-//        binding.getAllGroupBtn.setOnClickListener {
-//            viewModel.getAllGroupsByUserUID()
-//        }
-//
-//        binding.getMessagesBtn.setOnClickListener {
-//            viewModel.getMessagesByGroupId()
-//        }
-//
-//        binding.addMessageBtn.setOnClickListener {
-//            viewModel.addMessage()
-//        }
-
         binding.chooseImageIv.setOnClickListener {
-            checkMyPermissions()
+            checkCameraPermissions(activityResultLauncher)
         }
 
         binding.doneFaBtn.setOnClickListener {
             val username = binding.usernameEt.text.toString().trim()
             val bio = binding.bioEt.text.toString().trim()
-            viewModel.addUser(username, bio)
+            val isChecked = binding.swHidePhoneNumber.isChecked
+            viewModel.addUser(username, bio,isChecked)
         }
     }
 
@@ -107,16 +93,6 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
                 }
             }
         }
-    }
-
-
-    private fun checkMyPermissions() {
-        activityResultLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        )
     }
 
     private val activityResultLauncher =
