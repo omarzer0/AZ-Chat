@@ -64,7 +64,7 @@ class OnBoardingFragment : BaseFragment(R.layout.fragment_onboarding) {
                 if (tab.position == items.size - 1) binding.btnStart.show()
                 else binding.btnStart.hide()
 
-                Log.e("TAG", "setUpSlider: $tab.position ${items.size - 1}")
+//                Log.e("TAG", "setUpSlider: $tab.position ${items.size - 1}")
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}

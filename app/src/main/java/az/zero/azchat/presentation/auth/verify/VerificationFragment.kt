@@ -46,13 +46,13 @@ class VerificationFragment : BaseFragment(R.layout.fragment_verification) {
                         viewModel.getIfUserExist()
 
                         binding.progressBarPb.progress.gone()
-                        Log.e("TAG", ":VerificationFragment\nUID= ${event.uid}")
+//                        Log.e("TAG", ":VerificationFragment\nUID= ${event.uid}")
                         toastMy(getString(R.string.verified_successfully), true)
 
                     }
                     is VerificationEvent.VerificationFailed -> {
                         binding.progressBarPb.progress.gone()
-                        Log.e("TAG", ":VerificationFragment\nerror= ${event.msg}")
+//                        Log.e("TAG", ":VerificationFragment\nerror= ${event.msg}")
                         binding.otpEd.triggerErrorAnimation()
                     }
                     VerificationEvent.VerifyButtonClick -> {

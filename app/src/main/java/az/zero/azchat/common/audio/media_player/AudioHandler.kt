@@ -199,7 +199,6 @@ interface AudioPlaybackListener {
 }
 
 private fun logMe(msg: String, tag: String = "TAG") {
-    val showLog = IS_DEBUG
-    if (!showLog) return
-    Log.e(tag, msg)
+    val showLog = false
+    if (showLog) Log.e(tag, msg)
 }

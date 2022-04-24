@@ -133,7 +133,7 @@ class AuthRepositoryImpl @Inject constructor(
                     Log.e(TAG, "signInWithCredential: Success")
                     val user = task.result?.user
 
-                    Log.e(TAG, "signInWithPhoneAuthCredential: ${user?.uid}")
+//                    Log.e(TAG, "signInWithPhoneAuthCredential: ${user?.uid}")
                     user?.let {
                         onAutoVerifyDone?.onAutoVerifyDone(it.uid) ?: logMe("nulllllllllllllllllll")
                         onVerificationSuccess(it.uid)
