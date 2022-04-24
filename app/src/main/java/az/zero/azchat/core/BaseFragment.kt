@@ -1,6 +1,8 @@
 package az.zero.azchat.core
 
+import android.Manifest
 import android.net.Uri
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -89,5 +91,14 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
         if (requireActivity() is BaseActivity) {
             (requireActivity() as BaseActivity).loginOutFromActivity()
         }
+    }
+
+    fun checkCameraPermissions(activityResultLauncher: ActivityResultLauncher<Array<String>>) {
+        activityResultLauncher.launch(
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        )
     }
 }

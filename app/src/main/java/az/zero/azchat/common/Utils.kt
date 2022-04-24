@@ -9,6 +9,9 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import az.zero.azchat.R
 import az.zero.azchat.domain.models.simple_info.InfoTypes
 import az.zero.azchat.domain.models.simple_info.InfoTypes.*
@@ -266,5 +269,21 @@ fun openLink(context: Context, type: Int, link: String) {
         EMAIL -> openEmail(context, link)
         PHONE -> openPhone(context, link)
         WHATS -> openWhats(context, link)
+    }
+}
+
+
+fun checkPermissionList(
+    fragment: Fragment,
+    whenSuccess: (() -> Unit)? = null,
+    whenFail: (() -> Unit)? = null
+): ActivityResultLauncher<Array<String>> {
+    return fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        val failedToGrant = permissions.entries.any { it.value == false }
+        if (failedToGrant) {
+            whenFail?.invoke()
+            return@registerForActivityResult
+        }
+        whenSuccess?.invoke()
     }
 }

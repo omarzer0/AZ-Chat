@@ -1,6 +1,5 @@
 package az.zero.azchat.presentation.main.add_edit_info
 
-import android.Manifest
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,7 +9,6 @@ import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.show
 import az.zero.azchat.common.logMe
 import az.zero.azchat.common.setImageUsingGlide
-import az.zero.azchat.common.tryNow
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentAddEditInfoBinding
 import az.zero.azchat.domain.models.private_chat.PrivateChat
@@ -67,7 +65,7 @@ class AddEditInfoFragment : BaseFragment(R.layout.fragment_add_edit_info) {
                 return@setOnClickListener
             }
 
-            viewModel.addNewGroup(groupName,aboutGroup) { newGroup ->
+            viewModel.addNewGroup(groupName, aboutGroup) { newGroup ->
                 navigateToAction(
                     AddEditInfoFragmentDirections.actionAddEditInfoFragmentToPrivateChatRoomFragment(
                         PrivateChat(newGroup, User(), newGroup.gid!!),
@@ -78,18 +76,7 @@ class AddEditInfoFragment : BaseFragment(R.layout.fragment_add_edit_info) {
         }
 
         binding.chooseImageIv.setOnClickListener {
-            checkMyPermissions()
-        }
-    }
-
-    private fun checkMyPermissions() {
-        tryNow {
-            activityResultLauncher.launch(
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            )
+            checkCameraPermissions(activityResultLauncher)
         }
     }
 

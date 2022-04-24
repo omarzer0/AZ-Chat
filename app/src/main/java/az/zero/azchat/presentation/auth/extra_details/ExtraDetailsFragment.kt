@@ -34,24 +34,8 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
     }
 
     private fun handleClicks() {
-//        binding.addGroupBtn.setOnClickListener {
-//            viewModel.addGroup()
-//        }
-//
-//        binding.getAllGroupBtn.setOnClickListener {
-//            viewModel.getAllGroupsByUserUID()
-//        }
-//
-//        binding.getMessagesBtn.setOnClickListener {
-//            viewModel.getMessagesByGroupId()
-//        }
-//
-//        binding.addMessageBtn.setOnClickListener {
-//            viewModel.addMessage()
-//        }
-
         binding.chooseImageIv.setOnClickListener {
-            checkMyPermissions()
+            checkCameraPermissions(activityResultLauncher)
         }
 
         binding.doneFaBtn.setOnClickListener {
@@ -108,18 +92,6 @@ class ExtraDetailsFragment : BaseFragment(R.layout.fragment_extra_details) {
                     binding.doneFaBtn.disable()
                 }
             }
-        }
-    }
-
-
-    private fun checkMyPermissions() {
-        tryNow {
-            activityResultLauncher.launch(
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            )
         }
     }
 

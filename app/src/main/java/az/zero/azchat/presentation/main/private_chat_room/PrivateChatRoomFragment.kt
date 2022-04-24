@@ -246,7 +246,7 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
             }
 
             galleryIv.setOnClickListener {
-                checkMyPermissions()
+                checkCameraPermissions(activityResultLauncher)
             }
 
             editMessageCancel.setOnClickListener {
@@ -261,17 +261,6 @@ class PrivateChatRoomFragment : BaseFragment(R.layout.fragment_private_chat_room
                 viewModel.postAction(PrivateChatActions.CancelEditClick)
             }
 
-        }
-    }
-
-    private fun checkMyPermissions() {
-        tryNow {
-            activityResultLauncher.launch(
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            )
         }
     }
 

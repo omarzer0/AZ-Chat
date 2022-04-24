@@ -1,6 +1,5 @@
 package az.zero.azchat.presentation.main.chat_details
 
-import android.Manifest
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,10 +8,13 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import az.zero.azchat.MainNavGraphDirections
 import az.zero.azchat.R
-import az.zero.azchat.common.*
+import az.zero.azchat.common.FAKE_GROUP_NAME
+import az.zero.azchat.common.FAKE_PROFILE_NAME
 import az.zero.azchat.common.extension.gone
 import az.zero.azchat.common.extension.hideKeyboard
 import az.zero.azchat.common.extension.show
+import az.zero.azchat.common.logMe
+import az.zero.azchat.common.setImageUsingGlide
 import az.zero.azchat.core.BaseFragment
 import az.zero.azchat.databinding.FragmentChatDetailsBinding
 import az.zero.azchat.presentation.main.adapter.user.UserAdapter
@@ -64,7 +66,8 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
                     if (event.isName) {
                         binding.tvChatName.text = event.value
                     } else {
-                        binding.tvChatBio.text = event.value.ifEmpty { getString(R.string.lazy_users) }
+                        binding.tvChatBio.text =
+                            event.value.ifEmpty { getString(R.string.lazy_users) }
                     }
                 }
             }
@@ -137,7 +140,7 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
 
     private fun handleClicks() {
         binding.apply {
-            chooseImageIv.setOnClickListener { checkMyPermissions() }
+            chooseImageIv.setOnClickListener { checkCameraPermissions(activityResultLauncher) }
 
             ivEditName.setOnClickListener {
                 updateNameOrAbout(true)
@@ -191,17 +194,6 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
         }
     }
 
-    private fun checkMyPermissions() {
-        tryNow {
-            activityResultLauncher.launch(
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            )
-        }
-    }
-
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val failedToGrant = permissions.entries.any { it.value == false }
@@ -222,8 +214,9 @@ class ChatDetailsFragment : BaseFragment(R.layout.fragment_chat_details) {
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
+        logMe("dest", "testtest")
         activityResultLauncher.unregister()
     }
 

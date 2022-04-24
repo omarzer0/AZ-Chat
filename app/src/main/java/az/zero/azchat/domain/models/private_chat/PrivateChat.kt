@@ -9,6 +9,5 @@ import kotlinx.parcelize.Parcelize
 data class PrivateChat(
     val group: Group,
     val user: User,
-//    val id: Long = abs(Random().nextLong())
     val id: String
 ) : Parcelable

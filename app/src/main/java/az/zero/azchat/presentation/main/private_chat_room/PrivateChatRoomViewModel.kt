@@ -283,10 +283,11 @@ class PrivateChatRoomViewModel @Inject constructor(
             MessageLongClickAction.DELETE -> {
                 updateMessageField(message.id!!, getValueMap().apply {
                     set("deleted", true)
+                    set("messageText","")
                 })
 
                 updateHomeMessage(message, getValueMap().apply {
-                    set("lastSentMessage", message.copy(updated = true))
+                    set("lastSentMessage", message.copy(deleted = true, messageText = ""))
                 })
             }
         }

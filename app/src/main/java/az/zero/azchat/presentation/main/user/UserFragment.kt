@@ -132,7 +132,7 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
         }
 
         binding.chooseImageIv.setOnClickListener {
-            checkMyPermissions()
+            checkCameraPermissions(activityResultLauncher)
         }
 
         binding.ivUserImage.setOnClickListener {
@@ -166,17 +166,6 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
         const val USER_BIO_CODE_KEY = "USER_BIO_CODE_KEY"
     }
 
-    private fun checkMyPermissions() {
-        tryNow {
-            activityResultLauncher.launch(
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            )
-        }
-    }
-
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val failedToGrant = permissions.entries.any { it.value == false }
@@ -190,10 +179,8 @@ class UserFragment : BaseFragment(R.layout.fragment_user) {
             }
         }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
         activityResultLauncher.unregister()
-//        requireActivity().showContentNormallyUnderStatusBarWithMainColor()
     }
 }
