@@ -16,6 +16,7 @@
         <item name="textAllCaps">false</item>
         <item name="android:overScrollMode">never</item>
         <item name="android:gravity">left</item>
+        <item name="android:navigationBarColor">@color/white</item>
 
     </style>
 
