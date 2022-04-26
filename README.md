@@ -43,7 +43,7 @@
 - Video and Audio calls.
 - Bottom Sheet Fragment for Image Viewer instead of normal fragment
 - Private messages on a password-protected screen.
-- Add audio when sending a message.
+- Add audio when sending a message.(Done)
 
 ## Known issues
 - None yet! :)
